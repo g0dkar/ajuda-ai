@@ -1,5 +1,6 @@
 package ajuda.ai.model.extra;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -11,11 +12,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Pattern.Flag;
 
 import ajuda.ai.model.activity.Activity;
+import ajuda.ai.model.user.KeycloakDBUser;
 
 /**
  * Info about the creation and update of an Entity
@@ -24,7 +23,10 @@ import ajuda.ai.model.activity.Activity;
  *
  */
 @Embeddable
-public class CreationInfo {
+public class CreationInfo implements Serializable {
+	/** Serial Version UID */
+	private static final long serialVersionUID = 1L;
+
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date time;
@@ -32,14 +34,11 @@ public class CreationInfo {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate;
 	
-	@NotNull
-	@Column(nullable = false, length = 36)
-	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
-	private String creator;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	private KeycloakDBUser creator;
 	
-	@Column(length = 36)
-	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
-	private String lastUpdateBy;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private KeycloakDBUser lastUpdateBy;
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Activity creationActivity;
@@ -47,6 +46,9 @@ public class CreationInfo {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Activity lastUpdateActivity;
 	
+	/**
+	 * Before saving, set the creation time if not already set
+	 */
 	@PrePersist
 	public void beforeSave() {
 		if (time == null) {
@@ -54,6 +56,9 @@ public class CreationInfo {
 		}
 	}
 	
+	/**
+	 * Before updating, set the last update time regardless of what is already set
+	 */
 	@PreUpdate
 	public void beforeUpdate() {
 		lastUpdate = new Date();
@@ -75,19 +80,19 @@ public class CreationInfo {
 		this.lastUpdate = lastUpdate;
 	}
 
-	public String getCreator() {
+	public KeycloakDBUser getCreator() {
 		return creator;
 	}
 
-	public void setCreator(final String creator) {
+	public void setCreator(final KeycloakDBUser creator) {
 		this.creator = creator;
 	}
 
-	public String getLastUpdateBy() {
+	public KeycloakDBUser getLastUpdateBy() {
 		return lastUpdateBy;
 	}
 
-	public void setLastUpdateBy(final String lastUpdateBy) {
+	public void setLastUpdateBy(final KeycloakDBUser lastUpdateBy) {
 		this.lastUpdateBy = lastUpdateBy;
 	}
 

@@ -5,30 +5,25 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import ajuda.ai.model.Slug;
 import ajuda.ai.util.StringUtils;
-import ajuda.ai.util.keycloak.KeycloakUser;
 
 /**
- * A simple page on the Responde.Ai Website. {@link #content} is a Markdown field.
+ * Uma página de conteúdo normal em markdown.
  * 
- * @author Rafael g0dkar
+ * @author Rafael Lins - g0dkar
  *	
  */
 @Entity
-public class Page implements Serializable {
+public class Page extends Slug implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id @NotBlank
-	@Column(unique = true, length = 0xFF)
-	private String id;
-	
 	@Embedded
 	private CreationInfo creation;
 	
@@ -55,31 +50,11 @@ public class Page implements Serializable {
 			content = content.trim();
 		}
 		
-		if (id == null) {
-			id = StringUtils.asSeoName(title);
-		}
-	}
-	
-	public void setCreator(final KeycloakUser user) {
-		if (creation == null) {
-			creation = new CreationInfo();
+		if (getSlug() == null) {
+			setSlug(StringUtils.slug(title));
 		}
 		
-		creation.setCreator(user.getId());
-	}
-	
-	public void setUpdatedBy(final KeycloakUser user) {
-		if (creation != null) {
-			creation.setLastUpdateBy(user.getId());
-		}
-	}
-	
-	public String getId() {
-		return id;
-	}
-	
-	public void setId(final String id) {
-		this.id = id;
+		setDirectory(null);
 	}
 	
 	public CreationInfo getCreation() {
