@@ -52,7 +52,7 @@ public class StringUtils {
 		
 		HTML_ASCII_TABLE.put(" ", "&nbsp;");
 		HTML_ASCII_TABLE.put("“", "&ldquo;");
-		HTML_ASCII_TABLE.put("�?", "&rdquo;");
+		HTML_ASCII_TABLE.put("�?", "&rdquo;");
 		HTML_ASCII_TABLE.put("\"", "&quot;");
 		HTML_ASCII_TABLE.put("<", "&lt;");
 		HTML_ASCII_TABLE.put(">", "&gt;");
@@ -88,7 +88,7 @@ public class StringUtils {
 		HTML_ASCII_TABLE.put("¾", "&frac34;");
 		HTML_ASCII_TABLE.put("¿", "&iquest;");
 		HTML_ASCII_TABLE.put("á", "&aacute;");
-		HTML_ASCII_TABLE.put("�?", "&Aacute;");
+		HTML_ASCII_TABLE.put("�?", "&Aacute;");
 		HTML_ASCII_TABLE.put("à", "&agrave;");
 		HTML_ASCII_TABLE.put("À", "&Agrave;");
 		HTML_ASCII_TABLE.put("â", "&acirc;");
@@ -112,13 +112,13 @@ public class StringUtils {
 		HTML_ASCII_TABLE.put("ê", "&ecirc;");
 		HTML_ASCII_TABLE.put("Ê", "&Ecirc;");
 		HTML_ASCII_TABLE.put("í", "&iacute;");
-		HTML_ASCII_TABLE.put("�?", "&Iacute;");
+		HTML_ASCII_TABLE.put("�?", "&Iacute;");
 		HTML_ASCII_TABLE.put("ì", "&igrave;");
 		HTML_ASCII_TABLE.put("Ì", "&Igrave;");
 		HTML_ASCII_TABLE.put("î", "&icirc;");
 		HTML_ASCII_TABLE.put("Î", "&Icirc;");
 		HTML_ASCII_TABLE.put("ï", "&iuml;");
-		HTML_ASCII_TABLE.put("�?", "&Iuml;");
+		HTML_ASCII_TABLE.put("�?", "&Iuml;");
 		HTML_ASCII_TABLE.put("ó", "&oacute;");
 		HTML_ASCII_TABLE.put("Ó", "&Oacute;");
 		HTML_ASCII_TABLE.put("ò", "&ograve;");
@@ -143,7 +143,7 @@ public class StringUtils {
 		HTML_ASCII_TABLE.put("ñ", "&ntilde;");
 		HTML_ASCII_TABLE.put("Ñ", "&Ntilde;");
 		HTML_ASCII_TABLE.put("ý", "&yacute;");
-		HTML_ASCII_TABLE.put("�?", "&Yacute;");
+		HTML_ASCII_TABLE.put("�?", "&Yacute;");
 		HTML_ASCII_TABLE.put("ÿ", "&yuml;");
 		HTML_ASCII_TABLE.put("þ", "&thorn;");
 		HTML_ASCII_TABLE.put("Þ", "&THORN;");
@@ -479,7 +479,7 @@ public class StringUtils {
 	 * 
 	 * @return string-normalizada-corretamente
 	 */
-	public static String asSeoName(final String str) {
+	public static String slug(final String str) {
 		if (str != null) {
 			return normalize(str).replaceAll("[\\p{Punct}\\s\\-]+", "-").replaceAll("-+$", "").replaceAll("-{2,}", "-").toLowerCase();
 		}

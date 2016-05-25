@@ -9,8 +9,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -23,20 +24,31 @@ import br.com.caelum.vraptor.environment.Environment;
  * @author Rafael M. Lins
  *
  */
-@ApplicationScoped
-public class StaticConfig implements Serializable {
+@Singleton
+public class Config implements Serializable {
 	private static final DateFormat ISO_DATE = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss,zzz'Z'");
 	
 	private final Logger log;
-	private final Environment env;
+	private final Properties props;
 	
 	/** @deprecated CDI */
-	@Deprecated StaticConfig() { this(null, null); }
+	@Deprecated Config() { this(null); }
 	
 	@Inject
-	public StaticConfig(final Logger log, final Environment env) {
+	public Config(final Logger log) {
 		this.log = log;
-		this.env = env;
+		
+		if (log != null) {
+			props = new Properties();
+			try {
+				props.load(ClassLoader.getSystemResourceAsStream("environment.properties"));
+			} catch (final Exception e) {
+				log.error("Unable to load environment properties", e);
+			}
+		}
+		else {
+			props = null;
+		}
 	}
 	
 	/**
@@ -46,7 +58,7 @@ public class StaticConfig implements Serializable {
 	 * @return The configuration value or {@code null} if it doesn't exist
 	 */
 	public String get(final String path) {
-		return env.get(path);
+		return (String) props.get(path);
 	}
 	
 	/**
