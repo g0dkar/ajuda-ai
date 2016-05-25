@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<groups xmlns="http://www.isdc.ro/wro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isdc.ro/wro wro.xsd">
+	<group name="admin">
+		<js>https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-animate.js</js>
+		<js>https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-sanitize.js</js>
+		<js>https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.0.js</js>
+		<js>https://cdn.rawgit.com/angular-ui/ui-router/master/release/angular-ui-router.js</js>
+		<js>https://cdn.rawgit.com/Foxandxss/angular-toastr/master/dist/angular-toastr.js</js>
+		<js>https://cdn.rawgit.com/Foxandxss/angular-toastr/master/dist/angular-toastr.tpls.js</js>
+		<js>https://cdn.rawgit.com/codrops/FullscreenForm/master/js/classie.js</js>
+		<js>https://cdn.rawgit.com/codrops/FullscreenForm/master/js/selectFx.js</js>
+		<js>https://cdn.rawgit.com/g0dkar/FullscreenForm/master/js/fullscreenForm.js</js>
+		<js>https://cdn.rawgit.com/angular-ui/ui-select/master/dist/select.js</js>
+		<js>https://cdn.rawgit.com/monospaced/angular-elastic/master/elastic.js</js>
+		<js>https://cdn.rawgit.com/marceljuenemann/angular-drag-and-drop-lists/master/angular-drag-and-drop-lists.js</js>
+		<js>https://cdn.rawgit.com/chieffancypants/angular-loading-bar/master/src/loading-bar.js</js>
+		<js>https://cdn.rawgit.com/angular-google-chart/angular-google-chart/development/ng-google-chart.js</js>
+		<js>https://cdn.rawgit.com/facultymatt/angular-unsavedChanges/develop/dist/unsavedChanges.js</js>
+		<js>https://cdn.rawgit.com/hakimel/Ladda/master/js/spin.js</js>
+		<js>https://cdn.rawgit.com/hakimel/Ladda/master/js/ladda.js</js>
+		<js>https://cdn.rawgit.com/remotty/angular-ladda/master/dist/angular-ladda.js</js>
+		<js>/res/js/respondeai.js</js>
+		
+		<css>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css</css>
+		<css>https://cdn.rawgit.com/hakimel/Ladda/master/dist/ladda-themeless.min.css</css>
+		<css>/res/css/respondeai-icons.css</css>
+		<css>/res/css/respondeai.css</css>
+	</group>
+	
+	<group name="admin.nomin">
+		<js minimize="false">https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-animate.js</js>
+		<js minimize="false">https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-sanitize.js</js>
+		<js minimize="false">https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.0.js</js>
+		<js minimize="false">https://cdn.rawgit.com/angular-ui/ui-router/master/release/angular-ui-router.js</js>
+		<js minimize="false">https://cdn.rawgit.com/Foxandxss/angular-toastr/master/dist/angular-toastr.js</js>
+		<js minimize="false">https://cdn.rawgit.com/Foxandxss/angular-toastr/master/dist/angular-toastr.tpls.js</js>
+		<js minimize="false">https://cdn.rawgit.com/codrops/FullscreenForm/master/js/classie.js</js>
+		<js minimize="false">https://cdn.rawgit.com/codrops/FullscreenForm/master/js/selectFx.js</js>
+		<js minimize="false">https://cdn.rawgit.com/g0dkar/FullscreenForm/master/js/fullscreenForm.js</js>
+		<js minimize="false">https://cdn.rawgit.com/angular-ui/ui-select/master/dist/select.js</js>
+		<js minimize="false">https://cdn.rawgit.com/monospaced/angular-elastic/master/elastic.js</js>
+		<js minimize="false">https://cdn.rawgit.com/marceljuenemann/angular-drag-and-drop-lists/master/angular-drag-and-drop-lists.js</js>
+		<js minimize="false">https://cdn.rawgit.com/chieffancypants/angular-loading-bar/master/src/loading-bar.js</js>
+		<js minimize="false">https://cdn.rawgit.com/angular-google-chart/angular-google-chart/development/ng-google-chart.js</js>
+		<js minimize="false">https://cdn.rawgit.com/facultymatt/angular-unsavedChanges/develop/dist/unsavedChanges.js</js>
+		<js minimize="false">https://cdn.rawgit.com/hakimel/Ladda/master/js/ladda.js</js>
+		<js minimize="false">https://cdn.rawgit.com/hakimel/Ladda/master/js/spin.js</js>
+		<js minimize="false">https://cdn.rawgit.com/remotty/angular-ladda/master/dist/angular-ladda.js</js>
+		<js minimize="false">/res/js/respondeai.js</js>
+		
+		<css minimize="false">https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css</css>
+		<css minimize="false">https://cdn.rawgit.com/hakimel/Ladda/master/dist/ladda-themeless.min.css</css>
+		<css minimize="false">/res/css/respondeai.css</css>
+	</group>
+</groups>
