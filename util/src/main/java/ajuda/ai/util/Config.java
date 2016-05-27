@@ -1,5 +1,6 @@
 package ajuda.ai.util;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -11,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 
@@ -26,6 +28,9 @@ import br.com.caelum.vraptor.environment.Environment;
  */
 @Singleton
 public class Config implements Serializable {
+	/** Serial Version UID */
+	private static final long serialVersionUID = 1L;
+
 	private static final DateFormat ISO_DATE = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss,zzz'Z'");
 	
 	private final Logger log;
@@ -37,17 +42,20 @@ public class Config implements Serializable {
 	@Inject
 	public Config(final Logger log) {
 		this.log = log;
+		props = log != null ? new Properties() : null;
+	}
+	
+	@PostConstruct
+	public void refreshConfigs() {
+		log.info("Refreshing Configuration Values...");
+		final InputStream propertiesFile = getClass().getClassLoader().getResourceAsStream("environment.properties");
 		
-		if (log != null) {
-			props = new Properties();
+		if (propertiesFile != null) {
 			try {
-				props.load(ClassLoader.getSystemResourceAsStream("environment.properties"));
+				props.load(propertiesFile);
 			} catch (final Exception e) {
 				log.error("Unable to load environment properties", e);
 			}
-		}
-		else {
-			props = null;
 		}
 	}
 	

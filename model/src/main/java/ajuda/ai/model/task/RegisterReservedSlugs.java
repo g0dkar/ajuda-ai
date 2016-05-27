@@ -1,4 +1,4 @@
-package ajuda.ai.model;
+package ajuda.ai.model.task;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -6,6 +6,7 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 
@@ -34,6 +35,7 @@ public class RegisterReservedSlugs {
 	private Config conf;
 	
 	@PostConstruct
+	@Transactional
 	public void checkReservedSlugs() {
 		log.info("Checking reserved slugs...");
 		final long start = System.currentTimeMillis();
@@ -46,7 +48,7 @@ public class RegisterReservedSlugs {
 				
 				if (indexOfSlash <= 0) {
 					slug = fullSlug;
-					directory = null;
+					directory = "";
 				} else {
 					directory = fullSlug.substring(0, indexOfSlash);
 					slug = fullSlug.substring(indexOfSlash + 1);
@@ -63,8 +65,10 @@ public class RegisterReservedSlugs {
 					if (log.isDebugEnabled()) {
 						log.debug("Slug doesn't exist: {}/{} - Creating...", directory, slug);
 					}
-					final int created = em.createQuery("INSERT INTO Slug VALUES (:slug, :directory)")
+					
+					final int created = em.createNativeQuery("INSERT INTO slugs(`slug`, `directory`) VALUES (:slug, :directory)")
 							.setParameter("slug", slug).setParameter("directory", directory).executeUpdate();
+					
 					if (log.isDebugEnabled()) {
 						log.debug("Slug doesn't exist: {}/{} - Result: {}", directory, slug, created);
 					}

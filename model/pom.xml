@@ -2,6 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>model</artifactId>
+	<groupId>ajuda-ai</groupId>
 	<version>1.0</version>
 	<name>Ajuda.Ai Model</name>
 	<description>Classes do modelo do Ajuda.Ai</description>
@@ -96,11 +97,11 @@
 			<version>${hibernate.version}</version>
 			<scope>provided</scope>
 		</dependency-->
+		
 		<dependency>
 			<groupId>ajuda-ai</groupId>
 			<artifactId>util</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>
-	<groupId>ajuda-ai</groupId>
 </project>

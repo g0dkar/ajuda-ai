@@ -10,9 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Pattern.Flag;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -38,17 +40,26 @@ public abstract class Slug implements Serializable {
 	private Long id;
 	
 	/** O "diretório" do slug. Isso permite coisas como {@code https://ajuda.ai/exemplo/slug-dentro-de-exemplo} */
-	@Column(length = 255)
+	@NotNull
 	@Size(max = 255)
-	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9]", flags = { Flag.CASE_INSENSITIVE })
+	@Column(nullable = false, length = 255)
+	@Pattern(regexp = "^$|[a-z][a-z0-9\\-]*[a-z0-9]")
 	private String directory;
 	
 	/** "Endereço" desta entidade. Se {@code exemplo} for o slug podemos ter algo como {@code https://ajuda.ai/exemplo} */
 	@NotBlank
 	@Size(max = 255)
 	@Column(nullable = false, length = 255)
-	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9]", flags = { Flag.CASE_INSENSITIVE })
+	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9]")
 	private String slug;
+	
+	@PrePersist
+	@PreUpdate
+	public void saveUpdate() {
+		if (directory == null) {
+			directory = "";
+		}
+	}
 	
 	public Long getId() {
 		return id;
