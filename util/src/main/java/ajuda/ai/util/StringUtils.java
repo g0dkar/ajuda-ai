@@ -17,20 +17,15 @@ import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.markdownj.MarkdownProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -40,153 +35,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class StringUtils {
-	private static final Logger log = LoggerFactory.getLogger(StringUtils.class);
-	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-	public static Map<String, String> HTML_ASCII_TABLE;
-	
-	static {
-		HTML_ASCII_TABLE = new LinkedHashMap<String, String>(95);	// A ordem das chaves é importante
-		
-		// Este *TEM* que ser o primeiro!
-		HTML_ASCII_TABLE.put("&", "&amp;");
-		
-		HTML_ASCII_TABLE.put(" ", "&nbsp;");
-		HTML_ASCII_TABLE.put("“", "&ldquo;");
-		HTML_ASCII_TABLE.put("�?", "&rdquo;");
-		HTML_ASCII_TABLE.put("\"", "&quot;");
-		HTML_ASCII_TABLE.put("<", "&lt;");
-		HTML_ASCII_TABLE.put(">", "&gt;");
-		
-		HTML_ASCII_TABLE.put("¡", "&iexcl;");
-		HTML_ASCII_TABLE.put("¢", "&cent;");
-		HTML_ASCII_TABLE.put("£", "&pound;");
-		HTML_ASCII_TABLE.put("¤", "&curren;");
-		HTML_ASCII_TABLE.put("¥", "&yen;");
-		HTML_ASCII_TABLE.put("¦", "&brvbar;");
-		HTML_ASCII_TABLE.put("§", "&sect;");
-		HTML_ASCII_TABLE.put("¨", "&uml;");
-		HTML_ASCII_TABLE.put("©", "&copy;");
-		HTML_ASCII_TABLE.put("ª", "&ordf;");
-		HTML_ASCII_TABLE.put("«", "&laquo;");
-		HTML_ASCII_TABLE.put("¬", "&not;");
-		HTML_ASCII_TABLE.put("®", "&reg;");
-		HTML_ASCII_TABLE.put("¯", "&macr;");
-		HTML_ASCII_TABLE.put("°", "&deg;");
-		HTML_ASCII_TABLE.put("±", "&plusmn;");
-		HTML_ASCII_TABLE.put("²", "&sup2;");
-		HTML_ASCII_TABLE.put("³", "&sup3;");
-		HTML_ASCII_TABLE.put("´", "&acute;");
-		HTML_ASCII_TABLE.put("µ", "&micro;");
-		HTML_ASCII_TABLE.put("¶", "&para;");
-		HTML_ASCII_TABLE.put("·", "&middot;");
-		HTML_ASCII_TABLE.put("¸", "&cedil;");
-		HTML_ASCII_TABLE.put("¹", "&sup1;");
-		HTML_ASCII_TABLE.put("º", "&ordm;");
-		HTML_ASCII_TABLE.put("»", "&raquo;");
-		HTML_ASCII_TABLE.put("¼", "&frac14;");
-		HTML_ASCII_TABLE.put("½", "&frac12;");
-		HTML_ASCII_TABLE.put("¾", "&frac34;");
-		HTML_ASCII_TABLE.put("¿", "&iquest;");
-		HTML_ASCII_TABLE.put("á", "&aacute;");
-		HTML_ASCII_TABLE.put("�?", "&Aacute;");
-		HTML_ASCII_TABLE.put("à", "&agrave;");
-		HTML_ASCII_TABLE.put("À", "&Agrave;");
-		HTML_ASCII_TABLE.put("â", "&acirc;");
-		HTML_ASCII_TABLE.put("Â", "&Acirc;");
-		HTML_ASCII_TABLE.put("ä", "&auml;");
-		HTML_ASCII_TABLE.put("Ä", "&Auml;");
-		HTML_ASCII_TABLE.put("ã", "&atilde;");
-		HTML_ASCII_TABLE.put("Ã", "&Atilde;");
-		HTML_ASCII_TABLE.put("å", "&aring;");
-		HTML_ASCII_TABLE.put("Å", "&Aring;");
-		HTML_ASCII_TABLE.put("ç", "&ccedil;");
-		HTML_ASCII_TABLE.put("Ç", "&Ccedil;");
-		HTML_ASCII_TABLE.put("æ", "&aelig;");
-		HTML_ASCII_TABLE.put("Æ", "&AElig;");
-		HTML_ASCII_TABLE.put("é", "&eacute;");
-		HTML_ASCII_TABLE.put("É", "&Eacute;");
-		HTML_ASCII_TABLE.put("è", "&egrave;");
-		HTML_ASCII_TABLE.put("È", "&Egrave;");
-		HTML_ASCII_TABLE.put("ë", "&euml;");
-		HTML_ASCII_TABLE.put("Ë", "&Euml;");
-		HTML_ASCII_TABLE.put("ê", "&ecirc;");
-		HTML_ASCII_TABLE.put("Ê", "&Ecirc;");
-		HTML_ASCII_TABLE.put("í", "&iacute;");
-		HTML_ASCII_TABLE.put("�?", "&Iacute;");
-		HTML_ASCII_TABLE.put("ì", "&igrave;");
-		HTML_ASCII_TABLE.put("Ì", "&Igrave;");
-		HTML_ASCII_TABLE.put("î", "&icirc;");
-		HTML_ASCII_TABLE.put("Î", "&Icirc;");
-		HTML_ASCII_TABLE.put("ï", "&iuml;");
-		HTML_ASCII_TABLE.put("�?", "&Iuml;");
-		HTML_ASCII_TABLE.put("ó", "&oacute;");
-		HTML_ASCII_TABLE.put("Ó", "&Oacute;");
-		HTML_ASCII_TABLE.put("ò", "&ograve;");
-		HTML_ASCII_TABLE.put("Ò", "&Ograve;");
-		HTML_ASCII_TABLE.put("ô", "&ocirc;");
-		HTML_ASCII_TABLE.put("Ô", "&Ocirc;");
-		HTML_ASCII_TABLE.put("ö", "&ouml;");
-		HTML_ASCII_TABLE.put("Ö", "&Ouml;");
-		HTML_ASCII_TABLE.put("õ", "&otilde;");
-		HTML_ASCII_TABLE.put("Õ", "&Otilde;");
-		HTML_ASCII_TABLE.put("ú", "&uacute;");
-		HTML_ASCII_TABLE.put("Ú", "&Uacute;");
-		HTML_ASCII_TABLE.put("ù", "&ugrave;");
-		HTML_ASCII_TABLE.put("Ù", "&Ugrave;");
-		HTML_ASCII_TABLE.put("û", "&ucirc;");
-		HTML_ASCII_TABLE.put("Û", "&Ucirc;");
-		HTML_ASCII_TABLE.put("ü", "&uuml;");
-		HTML_ASCII_TABLE.put("Ü", "&Uuml;");
-		HTML_ASCII_TABLE.put("×", "&times;");
-		HTML_ASCII_TABLE.put("ø", "&oslash;");
-		HTML_ASCII_TABLE.put("Ø", "&Oslash;");
-		HTML_ASCII_TABLE.put("ñ", "&ntilde;");
-		HTML_ASCII_TABLE.put("Ñ", "&Ntilde;");
-		HTML_ASCII_TABLE.put("ý", "&yacute;");
-		HTML_ASCII_TABLE.put("�?", "&Yacute;");
-		HTML_ASCII_TABLE.put("ÿ", "&yuml;");
-		HTML_ASCII_TABLE.put("þ", "&thorn;");
-		HTML_ASCII_TABLE.put("Þ", "&THORN;");
-		HTML_ASCII_TABLE.put("÷", "&divide;");
-		HTML_ASCII_TABLE.put("€", "&euro;");
-	}
-	
-	/**
-	 * Substitui caracteres especiais pelos seus correspondentes códigos HTML
-	 * 
-	 * @param str String para codificar
-	 * @return String codificada
-	 */
-	public static String encodeHTML(String str) {
-		if (!isBlank(str)) {
-			for (final Entry<String, String> entry : HTML_ASCII_TABLE.entrySet()) {
-				if (!entry.getValue().equals("&nbsp;")) {
-					str = str.replaceAll(entry.getKey(), entry.getValue());
-				}
-			}
-		}
-		
-		return str;
-	}
-	
-	/**
-	 * Substitui códigos HTML pelos seus caracteres especiais correspondentes
-	 * 
-	 * @param str String para codificar
-	 * @return String codificada
-	 */
-	public static String decodeHTML(String str) {
-		if (!isBlank(str)) {
-			for (final Entry<String, String> entry : HTML_ASCII_TABLE.entrySet()) {
-				if (!entry.getValue().equals("&nbsp;")) {
-					str = str.replaceAll(entry.getValue(), entry.getKey());
-				}
-			}
-		}
-		
-		return str;
-	}
-	
 	/**
 	 * Codifica uma String como componente de URL
 	 * 
@@ -585,65 +433,6 @@ public class StringUtils {
 	}
 	
 	/**
-	 * Lê uma Tag HTML/XML e retorna um mapa com os atributos da mesma.
-	 * O mapa contém uma chave {@code TAGNAME} que contém o nome da tag processada.
-	 * 
-	 * @param tag Tag HTML/XML
-	 * @return Mapa dos atributos da tag
-	 */
-	public static Map<String, String> parseHTMLTag(final String tag) {
-		if (tag.matches("<[^>]+>")) {
-			final Pattern pattern = Pattern.compile("([a-zA-Z0-9\\-]+)=\"([^\"]+)\"");
-			final Matcher matcher = pattern.matcher(tag);
-			final Map<String, String> params = new HashMap<String, String>();
-			params.put("TAGNAME", tag.substring(1, tag.indexOf(' ')));
-			
-			while (matcher.find()) {
-				params.put(matcher.group(1), matcher.group(2));
-			}
-			
-			return params;
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Recebe uma tag e uma {@link #parseHTMLTag(String) lista de parâmetros} e retorna a tag montada
-	 * 
-	 * @param params Parâmetros da tag
-	 * @param shortTag Se a tag será gerada no formato "&lt;tag&gt;" ou "&lt;tag /&gt;"
-	 * @return Tag montada
-	 * @see #parseHTMLTag(String)
-	 */
-	public static String buildHTMLTag(final Map<String, String> params, final boolean shortTag) {
-		final StringBuilder str = new StringBuilder("<");
-		
-		str.append(params.get("TAGNAME"));
-		str.append(" ");
-		
-		for (final Entry<String, String> entry : params.entrySet()) {
-			if (!entry.getKey().equals("TAGNAME")) {
-				str.append(entry.getKey());
-				str.append("=\"");
-				str.append(entry.getValue());
-				str.append("\"");
-				str.append(" ");
-			}
-		}
-		
-		if (shortTag) {
-			str.append("/>");
-		}
-		else {
-			str.deleteCharAt(str.length() - 1);
-			str.append(">");
-		}
-		
-		return str.toString();
-	}
-	
-	/**
 	 * Creates the MD5 hash for a given string.
 	 * 
 	 * @param data The string to be hashed
@@ -666,19 +455,6 @@ public class StringUtils {
 	}
 	
 	/**
-	 * Escapes SQL-Like wildcard characters on the text. Please, include {@code ESCAPE <escape string>} right after the {@code LIKE}
-	 * clause. That is needed for correctly escaping LIKE wildcard characters. It is recommended to use "\" as the escape string:
-	 * {@code SELECT ... FROM ... WHERE something LIKE :text ESCAPE '\'}
-	 * 
-	 * @param text The text
-	 * @param escape The {@code ESCAPE} string (recommended: {@code \})
-	 * @return The text with the escaped wildcards
-	 */
-	public static String escapeSQLLike(final String text, final String escape) {
-		return text.replaceAll("([%\\[\\]_]+)", escape + "$1");
-	}
-	
-	/**
 	 * Downloads data from the especified URL and return it as a String
 	 * 
 	 * @param url The URL to {@code GET} data from
@@ -686,6 +462,7 @@ public class StringUtils {
 	 */
 	public static String downloadAsString(final String url) {
 		try {
+			final String lineSeparator = System.getProperty("line.separator");
 			final URL downloadURL = new URL(url);
 			final HttpURLConnection conn = (HttpURLConnection) downloadURL.openConnection();
 			conn.setConnectTimeout(1000);
@@ -696,7 +473,7 @@ public class StringUtils {
 				
 				while ((line = br.readLine()) != null) {
 					str.append(line);
-					str.append(LINE_SEPARATOR);
+					str.append(lineSeparator);
 				}
 				
 				return str.toString();
@@ -705,8 +482,7 @@ public class StringUtils {
 				return null;
 			}
 		} catch (final Exception e) {
-			if (log.isErrorEnabled()) { log.error("Error while downloading " + url, e); }
-//			else { e.printStackTrace(); }
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -742,6 +518,6 @@ public class StringUtils {
 	 * @return Clears all Markdown from the text (it processes the markdown then strips ALL HTML)
 	 */
 	public static String clearMarkdown(final String code) {
-		return decodeHTML(Jsoup.clean(markdown(code), Whitelist.none()));
+		return Jsoup.clean(markdown(code), Whitelist.none());
 	}
 }

@@ -4,8 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -45,9 +43,49 @@ public class InstitutionPost extends Slug {
 	@Column(nullable = false)
 	private boolean published;
 	
-	@PrePersist
-	@PreUpdate
-	public void saveUpdate() {
-		setDirectory(institution.getSlug());
+//	@PrePersist
+//	@PreUpdate
+//	public void saveUpdate() {
+//		setDirectory(institution.getSlug());
+//	}
+
+	public Institution getInstitution() {
+		return institution;
+	}
+
+	public void setInstitution(final Institution institution) {
+		this.institution = institution;
+	}
+
+	public KeycloakDBUser getCreator() {
+		return creator;
+	}
+
+	public void setCreator(final KeycloakDBUser creator) {
+		this.creator = creator;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(final String title) {
+		this.title = title;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(final String content) {
+		this.content = content;
+	}
+
+	public boolean isPublished() {
+		return published;
+	}
+
+	public void setPublished(final boolean published) {
+		this.published = published;
 	}
 }

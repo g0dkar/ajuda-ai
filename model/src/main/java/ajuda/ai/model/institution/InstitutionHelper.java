@@ -47,7 +47,7 @@ public class InstitutionHelper extends Slug {
 	@PreUpdate
 	@PrePersist
 	public void saveUpdate() {
-		setDirectory(institution.getSlug());
+//		setDirectory(institution.getSlug());
 		setSlug("helper-" + getId());
 	}
 

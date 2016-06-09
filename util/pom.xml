@@ -60,7 +60,7 @@
 			<id>g0dkar</id>
 			<name>Rafael Lins</name>
 			<email>rafael@ajuda.ai</email>
-			<url>https://ajuda.ai/rafael</url>
+			<url>https://ajuda.ai/sobre</url>
 			<roles>
 				<role>founder</role>
 			</roles>
@@ -68,12 +68,6 @@
 	</developers>
 	
 	<dependencies>
-		<dependency>
-			<groupId>org.mindrot</groupId>
-			<artifactId>jbcrypt</artifactId>
-			<version>0.3m</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>br.com.caelum</groupId>
 			<artifactId>vraptor</artifactId>
@@ -125,12 +119,6 @@
 			<artifactId>keycloak-core</artifactId>
 			<version>${keycloak.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>1.16</version>
 		</dependency>
 	</dependencies>
 </project>

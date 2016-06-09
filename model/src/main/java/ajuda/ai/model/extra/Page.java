@@ -54,7 +54,7 @@ public class Page extends Slug implements Serializable {
 			setSlug(StringUtils.slug(title));
 		}
 		
-		setDirectory(null);
+//		setDirectory(null);
 	}
 	
 	public CreationInfo getCreation() {
