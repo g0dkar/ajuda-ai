@@ -6,76 +6,75 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Pattern.Flag;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import ajuda.ai.model.institution.Institution;
+import ajuda.ai.model.institution.InstitutionHelp;
+
 @Entity
 @Table(indexes = { @Index(columnList = "user", name = "user") })
-public class BillingInvoice implements Serializable {
+public class Payment implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
-	@Column(nullable = false, length = 36)
-	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
-	private String user;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	private Institution institution;
+	
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	private InstitutionHelp help;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateTime;
+	private Date timestamp;
 	
 	@NotBlank
 	@Size(max = 0xFF)
 	@Column(nullable = false, length = 0xFF)
 	private String description;
 	
+	@Enumerated(EnumType.STRING)
+	private PaymentServiceEnum paymentService;
+	
+	@NotBlank
+	@Column(nullable = false, length = 64)
 	private String paymentServiceId;
+	
+	@Min(0)
+	@Max(1000000)
+	@Column(nullable = false)
 	private int value;
+	
+	@Column(nullable = false)
 	private boolean paid;
-	private int valuePaid;
+	
+	@Column(nullable = false)
 	private boolean readyForAccounting;
+	
+	@Column(nullable = false)
 	private boolean cancelled;
 	
-	@OneToMany(mappedBy = "invoice", orphanRemoval = true, fetch = FetchType.EAGER)
-	private List<BillingEvent> events;
+	@OrderBy("timestamp DESC")
+	@OneToMany(mappedBy = "payment", orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<PaymentEvent> events;
 	
-	/**
-	 * Update the accountancy info of this Invoice
-	 */
-	@PreUpdate
-	@PrePersist
-	public void beforeSave() {
-		valuePaid = 0;
-		readyForAccounting = false;
-		for (final BillingEvent billingEvent : events) {
-			if (billingEvent.getPaymentService().isPaid(billingEvent.getStatus())) {
-				valuePaid += billingEvent.getValue();
-			}
-			
-			if (!readyForAccounting) {
-				readyForAccounting = billingEvent.getPaymentService().isReadyForAccounting(billingEvent.getStatus());
-			}
-		}
-		
-		paid = valuePaid >= value;
-	}
-
 	public Long getId() {
 		return id;
 	}
@@ -84,20 +83,20 @@ public class BillingInvoice implements Serializable {
 		this.id = id;
 	}
 
-	public String getUser() {
-		return user;
+	public InstitutionHelp getHelp() {
+		return help;
 	}
 
-	public void setUser(final String user) {
-		this.user = user;
+	public void setHelp(final InstitutionHelp help) {
+		this.help = help;
 	}
 
-	public Date getDateTime() {
-		return dateTime;
+	public Date getTimestamp() {
+		return timestamp;
 	}
 
-	public void setDateTime(final Date dateTime) {
-		this.dateTime = dateTime;
+	public void setTimestamp(final Date timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public String getDescription() {
@@ -106,6 +105,14 @@ public class BillingInvoice implements Serializable {
 
 	public void setDescription(final String description) {
 		this.description = description;
+	}
+
+	public PaymentServiceEnum getPaymentService() {
+		return paymentService;
+	}
+
+	public void setPaymentService(final PaymentServiceEnum paymentService) {
+		this.paymentService = paymentService;
 	}
 
 	public String getPaymentServiceId() {
@@ -132,14 +139,6 @@ public class BillingInvoice implements Serializable {
 		this.paid = paid;
 	}
 
-	public int getValuePaid() {
-		return valuePaid;
-	}
-
-	public void setValuePaid(final int valuePaid) {
-		this.valuePaid = valuePaid;
-	}
-
 	public boolean isReadyForAccounting() {
 		return readyForAccounting;
 	}
@@ -156,11 +155,19 @@ public class BillingInvoice implements Serializable {
 		this.cancelled = cancelled;
 	}
 
-	public List<BillingEvent> getEvents() {
+	public List<PaymentEvent> getEvents() {
 		return events;
 	}
 
-	public void setEvents(final List<BillingEvent> events) {
+	public void setEvents(final List<PaymentEvent> events) {
 		this.events = events;
+	}
+
+	public Institution getInstitution() {
+		return institution;
+	}
+
+	public void setInstitution(final Institution institution) {
+		this.institution = institution;
 	}
 }

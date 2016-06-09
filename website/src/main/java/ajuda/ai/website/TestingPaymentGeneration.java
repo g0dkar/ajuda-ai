@@ -11,7 +11,7 @@ import br.com.uol.pagseguro.domain.paymentrequest.PaymentRequestItem;
 import br.com.uol.pagseguro.exception.PagSeguroServiceException;
 import br.com.uol.pagseguro.properties.PagSeguroConfig;
 
-public class Blergh {
+public class TestingPaymentGeneration {
 	/**
 	 * PagSeguro
 	 */

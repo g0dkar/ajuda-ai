@@ -2,11 +2,7 @@ package ajuda.ai.model.billing;
 
 public enum PaymentServiceEnum {
 	MOIP {
-		public int status(final String status) {
-			return 0;
-		}
-		
-		public String statusDescription(final int status) {
+		public String status(final int status) {
 			switch (status) {
 				case 1: return "Autorizado";
 				case 2: return "Iniciado";
@@ -33,30 +29,36 @@ public enum PaymentServiceEnum {
 	},
 	
 	PAG_SEGURO {
-		public int status(final String status) {
-			return 0;
-		}
-		
-		public String statusDescription(final int status) {
-			return null;
+		public String status(final int status) {
+			switch (status) {
+				case 1: return "Aguardando Pagamento";
+				case 2: return "Em Análise";
+				case 3: return "Paga";
+				case 4: return "Paga";
+				case 5: return "Em Disputa";
+				case 6: return "Devolvida";
+				case 7: return "Cancelada";
+				case 8: return "Devolvida";
+				case 9: return "Pagamento Contestado";
+				default: return "Desconhecido";
+			}
 		}
 		
 		public boolean isPaid(final int status) {
-			return false;
+			return status == 3 || status == 4;
 		}
 		
 		public boolean isReadyForAccounting(final int status) {
-			return false;
+			return status == 4;
 		}
 		
 		public boolean isCancelled(final int status) {
-			return false;
+			return status == 6 || status == 7 || status == 8;
 		}
 	};
 	
+	public abstract String status(int status);
 	public abstract boolean isPaid(int status);
 	public abstract boolean isReadyForAccounting(int status);
 	public abstract boolean isCancelled(int status);
-	public abstract int status(String status);
-	public abstract String statusDescription(int status);
 }

@@ -3,14 +3,14 @@ package ajuda.ai.website.util;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Singleton;
 
 import org.infinispan.Cache;
 import org.infinispan.lifecycle.ComponentStatus;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.stats.CacheContainerStats;
 
-@ApplicationScoped
+@Singleton
 public class CacheService {
 	@Resource(lookup = "java:/cache/respondeai")
 	private EmbeddedCacheManager cacheManager;

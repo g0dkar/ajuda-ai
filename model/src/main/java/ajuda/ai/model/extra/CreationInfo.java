@@ -3,18 +3,15 @@ package ajuda.ai.model.extra;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import ajuda.ai.model.activity.Activity;
-import ajuda.ai.model.user.KeycloakDBUser;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Pattern.Flag;
 
 /**
  * Info about the creation and update of an Entity
@@ -34,17 +31,14 @@ public class CreationInfo implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	private KeycloakDBUser creator;
+	@NotNull
+	@Column(nullable = false, length = 36)
+	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
+	private String creator;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	private KeycloakDBUser lastUpdateBy;
-	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Activity creationActivity;
-	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Activity lastUpdateActivity;
+	@Column(length = 36)
+	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
+	private String lastUpdateBy;
 	
 	/**
 	 * Before saving, set the creation time if not already set
@@ -80,35 +74,19 @@ public class CreationInfo implements Serializable {
 		this.lastUpdate = lastUpdate;
 	}
 
-	public KeycloakDBUser getCreator() {
+	public String getCreator() {
 		return creator;
 	}
 
-	public void setCreator(final KeycloakDBUser creator) {
+	public void setCreator(final String creator) {
 		this.creator = creator;
 	}
 
-	public KeycloakDBUser getLastUpdateBy() {
+	public String getLastUpdateBy() {
 		return lastUpdateBy;
 	}
 
-	public void setLastUpdateBy(final KeycloakDBUser lastUpdateBy) {
+	public void setLastUpdateBy(final String lastUpdateBy) {
 		this.lastUpdateBy = lastUpdateBy;
-	}
-
-	public Activity getCreationActivity() {
-		return creationActivity;
-	}
-
-	public void setCreationActivity(final Activity creationActivity) {
-		this.creationActivity = creationActivity;
-	}
-
-	public Activity getLastUpdateActivity() {
-		return lastUpdateActivity;
-	}
-
-	public void setLastUpdateActivity(final Activity lastUpdateActivity) {
-		this.lastUpdateActivity = lastUpdateActivity;
 	}
 }

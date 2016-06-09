@@ -1,16 +1,19 @@
 package ajuda.ai.model.institution;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
 import ajuda.ai.model.Slug;
-import ajuda.ai.model.user.KeycloakDBUser;
+import ajuda.ai.model.extra.CreationInfo;
 
 /**
  * Um post feito por uma {@link Institution Instituição} na página da mesma.
@@ -27,9 +30,8 @@ public class InstitutionPost extends Slug {
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Institution institution;
 	
-	@NotNull
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	private KeycloakDBUser creator;
+	@Embedded
+	private CreationInfo creationInfo;
 	
 	@NotBlank
 	@Size(max = 0xFF)
@@ -43,12 +45,18 @@ public class InstitutionPost extends Slug {
 	@Column(nullable = false)
 	private boolean published;
 	
-//	@PrePersist
-//	@PreUpdate
-//	public void saveUpdate() {
-//		setDirectory(institution.getSlug());
-//	}
-
+	/**
+	 * Make sure this post slug has the {@link #institution} prefix
+	 */
+	@PrePersist
+	@PreUpdate
+	public void beforeSave() {
+		final String slugPrefix = institution.getSlug() + "/";
+		if (!getSlug().startsWith(slugPrefix)) {
+			setSlug(slugPrefix + getSlug());
+		}
+	}
+	
 	public Institution getInstitution() {
 		return institution;
 	}
@@ -57,12 +65,12 @@ public class InstitutionPost extends Slug {
 		this.institution = institution;
 	}
 
-	public KeycloakDBUser getCreator() {
-		return creator;
+	public CreationInfo getCreationInfo() {
+		return creationInfo;
 	}
 
-	public void setCreator(final KeycloakDBUser creator) {
-		this.creator = creator;
+	public void setCreationInfo(final CreationInfo creationInfo) {
+		this.creationInfo = creationInfo;
 	}
 
 	public String getTitle() {

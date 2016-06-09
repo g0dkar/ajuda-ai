@@ -29,31 +29,15 @@ public abstract class Slug implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	/** O "diretório" do slug. Isso permite coisas como {@code https://ajuda.ai/exemplo/slug-dentro-de-exemplo} */
-//	@NotNull
-//	@Size(max = 255)
-//	@Column(nullable = false, length = 255)
-//	@Pattern(regexp = "^$|[a-z][a-z0-9\\-]*[a-z0-9]")
-//	private String directory;
 	
 	/** "Endereço" desta entidade. Se {@code exemplo} for o slug podemos ter algo como {@code https://ajuda.ai/exemplo} */
 	@NotBlank
-	@Size(max = 255)
+	@Size(min = 2, max = 255)
 	@Column(nullable = false, length = 255)
-	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9]")
+	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9](/[a-z][a-z0-9\\-]*[a-z0-9])?")
 	private String slug;
-	
-//	@PrePersist
-//	@PreUpdate
-//	public void saveUpdate() {
-//		if (directory == null) {
-//			directory = "";
-//		}
-//	}
 	
 	public Long getId() {
 		return id;
@@ -62,14 +46,6 @@ public abstract class Slug implements Serializable {
 	public void setId(final Long id) {
 		this.id = id;
 	}
-	
-//	public String getDirectory() {
-//		return directory;
-//	}
-//
-//	public void setDirectory(final String directory) {
-//		this.directory = directory != null ? directory.toLowerCase() : null;
-//	}
 	
 	public String getSlug() {
 		return slug;

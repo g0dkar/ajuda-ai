@@ -3,22 +3,27 @@ package ajuda.ai.model.institution;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Pattern.Flag;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
 import ajuda.ai.model.Slug;
+import ajuda.ai.model.billing.PaymentServiceEnum;
 import ajuda.ai.model.extra.CreationInfo;
-import ajuda.ai.model.user.KeycloakDBUser;
 
 /**
- * Representa uma Instituição que será ajudada por seus {@link InstitutionHelper Ajudantes}
+ * Representa uma Instituição que será ajudada por seus {@link InstitutionHelp Ajudantes}
  * 
  * @author Rafael Lins - g0dkar
  *
@@ -45,92 +50,83 @@ public class Institution extends Slug {
 	private InstitutionPost pinnedPost;
 	
 	@OneToMany(mappedBy = "institution", orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<InstitutionHelper> helpers;
+	private Set<InstitutionHelp> helpers;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	private Set<KeycloakDBUser> leaders;
+	@ElementCollection
+	@Column(length = 36)
+	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
+	private Set<String> leaders;
+	
+	@NotNull
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private PaymentServiceEnum paymentService;
+	
+	@NotBlank
+	@Column(nullable = false, length = 1024)
+	private String paymentServiceData;
 
-	/**
-	 * @return the creation
-	 */
 	public CreationInfo getCreation() {
 		return creation;
 	}
 
-	/**
-	 * @param creation the creation to set
-	 */
 	public void setCreation(final CreationInfo creation) {
 		this.creation = creation;
 	}
 
-	/**
-	 * @return the name
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(final String name) {
 		this.name = name;
 	}
 
-	/**
-	 * @return the description
-	 */
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-	 * @param description the description to set
-	 */
 	public void setDescription(final String description) {
 		this.description = description;
 	}
 
-	/**
-	 * @return the pinnedPost
-	 */
 	public InstitutionPost getPinnedPost() {
 		return pinnedPost;
 	}
 
-	/**
-	 * @param pinnedPost the pinnedPost to set
-	 */
 	public void setPinnedPost(final InstitutionPost pinnedPost) {
 		this.pinnedPost = pinnedPost;
 	}
 
-	/**
-	 * @return the helpers
-	 */
-	public Set<InstitutionHelper> getHelpers() {
+	public Set<InstitutionHelp> getHelpers() {
 		return helpers;
 	}
 
-	/**
-	 * @param helpers the helpers to set
-	 */
-	public void setHelpers(final Set<InstitutionHelper> helpers) {
+	public void setHelpers(final Set<InstitutionHelp> helpers) {
 		this.helpers = helpers;
 	}
 
-	/**
-	 * @return the leaders
-	 */
-	public Set<KeycloakDBUser> getLeaders() {
+	public Set<String> getLeaders() {
 		return leaders;
 	}
 
-	/**
-	 * @param leaders the leaders to set
-	 */
-	public void setLeaders(final Set<KeycloakDBUser> leaders) {
+	public void setLeaders(final Set<String> leaders) {
 		this.leaders = leaders;
+	}
+
+	public PaymentServiceEnum getPaymentService() {
+		return paymentService;
+	}
+
+	public void setPaymentService(final PaymentServiceEnum paymentService) {
+		this.paymentService = paymentService;
+	}
+
+	public String getPaymentServiceData() {
+		return paymentServiceData;
+	}
+
+	public void setPaymentServiceData(final String paymentServiceData) {
+		this.paymentServiceData = paymentServiceData;
 	}
 }
