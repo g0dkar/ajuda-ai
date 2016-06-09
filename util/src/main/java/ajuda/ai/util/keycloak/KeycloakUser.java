@@ -1,6 +1,7 @@
 package ajuda.ai.util.keycloak;
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -30,9 +31,22 @@ public class KeycloakUser implements Serializable {
 	@Inject
 	public KeycloakUser(final HttpServletRequest request) {
 		if (request != null) {
-			final KeycloakPrincipal<KeycloakSecurityContext> principal = (KeycloakPrincipal) request.getUserPrincipal();
-			id = principal.getName();
-			accessToken = principal.getKeycloakSecurityContext().getToken();
+			final Principal principal = request.getUserPrincipal();
+			if (principal != null) {
+				if (request.getUserPrincipal() instanceof KeycloakPrincipal) {
+					final KeycloakPrincipal<KeycloakSecurityContext> keycloakPrincipal = (KeycloakPrincipal) principal;
+					id = keycloakPrincipal.getName();
+					accessToken = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+				}
+				else {
+					id = principal.getName();
+					accessToken = null;
+				}
+			}
+			else {
+				id = null;
+				accessToken = null;
+			}
 		}
 		else {
 			id = null;

@@ -7,13 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -29,7 +24,6 @@ import org.hibernate.validator.constraints.NotBlank;
  *
  */
 @Entity
-@Table(name = "slugs", indexes = { @Index(columnList = "slug, directory", name = "unique_slug_dir", unique = true) })
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Slug implements Serializable {
 	/** Serial Version UID */
@@ -40,11 +34,11 @@ public abstract class Slug implements Serializable {
 	private Long id;
 	
 	/** O "diretório" do slug. Isso permite coisas como {@code https://ajuda.ai/exemplo/slug-dentro-de-exemplo} */
-	@NotNull
-	@Size(max = 255)
-	@Column(nullable = false, length = 255)
-	@Pattern(regexp = "^$|[a-z][a-z0-9\\-]*[a-z0-9]")
-	private String directory;
+//	@NotNull
+//	@Size(max = 255)
+//	@Column(nullable = false, length = 255)
+//	@Pattern(regexp = "^$|[a-z][a-z0-9\\-]*[a-z0-9]")
+//	private String directory;
 	
 	/** "Endereço" desta entidade. Se {@code exemplo} for o slug podemos ter algo como {@code https://ajuda.ai/exemplo} */
 	@NotBlank
@@ -53,13 +47,13 @@ public abstract class Slug implements Serializable {
 	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9]")
 	private String slug;
 	
-	@PrePersist
-	@PreUpdate
-	public void saveUpdate() {
-		if (directory == null) {
-			directory = "";
-		}
-	}
+//	@PrePersist
+//	@PreUpdate
+//	public void saveUpdate() {
+//		if (directory == null) {
+//			directory = "";
+//		}
+//	}
 	
 	public Long getId() {
 		return id;
@@ -69,13 +63,13 @@ public abstract class Slug implements Serializable {
 		this.id = id;
 	}
 	
-	public String getDirectory() {
-		return directory;
-	}
-	
-	public void setDirectory(final String directory) {
-		this.directory = directory != null ? directory.toLowerCase() : null;
-	}
+//	public String getDirectory() {
+//		return directory;
+//	}
+//
+//	public void setDirectory(final String directory) {
+//		this.directory = directory != null ? directory.toLowerCase() : null;
+//	}
 	
 	public String getSlug() {
 		return slug;
