@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.Singleton;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
@@ -20,7 +20,7 @@ import ajuda.ai.util.StringUtils;
  * @author Rafael Lins
  *
  */
-@Singleton
+@RequestScoped
 public class UserStorage implements Serializable {
 	private static final long serialVersionUID = 1L;
 	

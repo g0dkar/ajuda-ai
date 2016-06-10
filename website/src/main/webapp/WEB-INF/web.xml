@@ -20,8 +20,8 @@
 	
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>Responde.Ai Admin</web-resource-name>
-			<url-pattern>/api/*</url-pattern>
+			<web-resource-name>Ajuda.Ai Admin</web-resource-name>
+			<url-pattern>/admin/*</url-pattern>
 		</web-resource-collection>
 		
 		<auth-constraint>

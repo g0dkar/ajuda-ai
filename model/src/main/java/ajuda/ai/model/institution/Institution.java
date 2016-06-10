@@ -23,7 +23,7 @@ import ajuda.ai.model.billing.PaymentServiceEnum;
 import ajuda.ai.model.extra.CreationInfo;
 
 /**
- * Representa uma Instituição que será ajudada por seus {@link InstitutionHelp Ajudantes}
+ * Representa uma Instituição que será ajudada por seus {@link InstitutionHelper Ajudantes}
  * 
  * @author Rafael Lins - g0dkar
  *
@@ -50,7 +50,7 @@ public class Institution extends Slug {
 	private InstitutionPost pinnedPost;
 	
 	@OneToMany(mappedBy = "institution", orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<InstitutionHelp> helpers;
+	private Set<InstitutionHelper> helpers;
 	
 	@ElementCollection
 	@Column(length = 36)
@@ -98,11 +98,11 @@ public class Institution extends Slug {
 		this.pinnedPost = pinnedPost;
 	}
 
-	public Set<InstitutionHelp> getHelpers() {
+	public Set<InstitutionHelper> getHelpers() {
 		return helpers;
 	}
 
-	public void setHelpers(final Set<InstitutionHelp> helpers) {
+	public void setHelpers(final Set<InstitutionHelper> helpers) {
 		this.helpers = helpers;
 	}
 

@@ -9,16 +9,18 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+
+import ajuda.ai.model.billing.Payment;
 
 /**
  * Representa uma pessoa que está ajudando uma {@link Institution Instituição}
@@ -27,7 +29,8 @@ import org.hibernate.validator.constraints.NotBlank;
  *
  */
 @Entity
-public class InstitutionHelp implements Serializable {
+@Table(indexes = { @Index(name = "unique_email_per_institution", columnList = "institution, email", unique = true) })
+public class InstitutionHelper implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
 	
@@ -43,11 +46,6 @@ public class InstitutionHelp implements Serializable {
 	@Column(nullable = false)
 	private Date timestamp;
 	
-	@Min(1)
-	@Max(10000000)
-	@Column(nullable = false)
-	private int value;
-	
 	@NotBlank
 	@Size(max = 255)
 	@Column(nullable = false, length = 255)
@@ -62,12 +60,8 @@ public class InstitutionHelp implements Serializable {
 	@Column(nullable = false)
 	private boolean allowPublish;
 	
-	@Column(nullable = false)
-	private boolean available;
-	
-	@NotNull
-	@Column(nullable = false, length = 128)
-	private String paymentId;
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private Payment lastPayment;
 	
 	public Long getId() {
 		return id;
@@ -93,14 +87,6 @@ public class InstitutionHelp implements Serializable {
 		this.timestamp = timestamp;
 	}
 
-	public int getValue() {
-		return value;
-	}
-
-	public void setValue(final int value) {
-		this.value = value;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -117,14 +103,6 @@ public class InstitutionHelp implements Serializable {
 		this.email = email;
 	}
 
-	public boolean isAvailable() {
-		return available;
-	}
-
-	public void setAvailable(final boolean available) {
-		this.available = available;
-	}
-
 	public boolean isAllowPublish() {
 		return allowPublish;
 	}
@@ -133,11 +111,11 @@ public class InstitutionHelp implements Serializable {
 		this.allowPublish = allowPublish;
 	}
 
-	public String getPaymentId() {
-		return paymentId;
+	public Payment getLastPayment() {
+		return lastPayment;
 	}
 
-	public void setPaymentId(final String paymentId) {
-		this.paymentId = paymentId;
+	public void setLastPayment(final Payment lastPayment) {
+		this.lastPayment = lastPayment;
 	}
 }

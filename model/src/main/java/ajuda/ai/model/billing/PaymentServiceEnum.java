@@ -26,6 +26,10 @@ public enum PaymentServiceEnum {
 		public boolean isCancelled(final int status) {
 			return status == 5 || status == 7;
 		}
+		
+		public String getThanksTransactionIdParameter() {
+			return "";
+		}
 	},
 	
 	PAG_SEGURO {
@@ -55,10 +59,15 @@ public enum PaymentServiceEnum {
 		public boolean isCancelled(final int status) {
 			return status == 6 || status == 7 || status == 8;
 		}
+		
+		public String getThanksTransactionIdParameter() {
+			return "transaction_id";
+		}
 	};
 	
 	public abstract String status(int status);
 	public abstract boolean isPaid(int status);
 	public abstract boolean isReadyForAccounting(int status);
 	public abstract boolean isCancelled(int status);
+	public abstract String getThanksTransactionIdParameter();
 }

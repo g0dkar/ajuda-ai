@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.ejb.Schedule;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -29,7 +28,6 @@ import br.com.uol.pagseguro.service.NotificationService;
  * @author Rafael Lins
  *
  */
-@Named
 public class CheckPagSeguroPayments {
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
 	

@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
 
 import ajuda.ai.model.institution.Institution;
-import ajuda.ai.model.institution.InstitutionHelp;
+import ajuda.ai.model.institution.InstitutionHelper;
 
 @Entity
 @Table(indexes = { @Index(columnList = "user", name = "user") })
@@ -40,7 +40,7 @@ public class Payment implements Serializable {
 	private Institution institution;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	private InstitutionHelp help;
+	private InstitutionHelper institutionHelper;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
@@ -83,12 +83,12 @@ public class Payment implements Serializable {
 		this.id = id;
 	}
 
-	public InstitutionHelp getHelp() {
-		return help;
+	public InstitutionHelper getInstitutionHelper() {
+		return institutionHelper;
 	}
 
-	public void setHelp(final InstitutionHelp help) {
-		this.help = help;
+	public void setInstitutionHelper(final InstitutionHelper institutionHelper) {
+		this.institutionHelper = institutionHelper;
 	}
 
 	public Date getTimestamp() {

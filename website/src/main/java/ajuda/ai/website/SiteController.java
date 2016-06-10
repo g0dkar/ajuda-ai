@@ -37,12 +37,12 @@ public class SiteController {
 	}
 	
 	@Path("/sobre")
-	public void sobre() {
+	public void about() {
 		
 	}
 	
 	@Path("/contato")
-	public void contato() {
+	public void contact() {
 		
 	}
 }
