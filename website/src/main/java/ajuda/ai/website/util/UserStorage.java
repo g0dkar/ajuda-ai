@@ -43,7 +43,7 @@ public class UserStorage implements Serializable {
 	}
 	
 	public UserRepresentation get(final String id) {
-		final Cache<String, UserRepresentation> cache = cs.getCache("userstorage");
+		final Cache<String, UserRepresentation> cache = cs.getCache("users");
 		UserRepresentation user = cache.get(id);
 		
 		if (user != null) {

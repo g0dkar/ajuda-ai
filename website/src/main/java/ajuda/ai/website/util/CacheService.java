@@ -12,7 +12,7 @@ import org.infinispan.stats.CacheContainerStats;
 
 @Singleton
 public class CacheService {
-	@Resource(lookup = "java:/cache/respondeai")
+	@Resource(lookup = "java:/cache/ajuda-ai")
 	private EmbeddedCacheManager cacheManager;
 	
 	public EmbeddedCacheManager getManager() {

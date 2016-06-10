@@ -41,39 +41,28 @@ public class RegisterReservedSlugs {
 		final long start = System.currentTimeMillis();
 		final String[] slugs = (HARDCODED_SLUGS + "," + conf.get(RESERVED_SLUGS_CONF, "")).split("\\s*,\\s*");
 		
-		for (final String fullSlug : slugs) {
-			if (fullSlug.length() > 0) {
-				final int indexOfSlash = fullSlug.indexOf('/');
-				final String directory, slug;
-				
-				if (indexOfSlash <= 0) {
-					slug = fullSlug;
-					directory = "";
-				} else {
-					directory = fullSlug.substring(0, indexOfSlash);
-					slug = fullSlug.substring(indexOfSlash + 1);
-				}
-				
+		for (final String slug : slugs) {
+			if (slug.length() > 0) {
 				if (log.isDebugEnabled()) {
-					log.debug("Checking for slug: {}/{}", directory, slug);
+					log.debug("Checking for slug: /{}", slug);
 				}
 				final int exists = ((Number) em
-						.createQuery("SELECT count(*) FROM Slug WHERE slug = :slug AND directory = :directory")
-						.setParameter("slug", slug).setParameter("directory", directory).getSingleResult()).intValue();
+						.createQuery("SELECT count(*) FROM Slug WHERE slug = :slug")
+						.setParameter("slug", slug).getSingleResult()).intValue();
 				
 				if (exists == 0) {
 					if (log.isDebugEnabled()) {
-						log.debug("Slug doesn't exist: {}/{} - Creating...", directory, slug);
+						log.debug("Slug doesn't exist: /{} - Creating...", slug);
 					}
 					
-					final int created = em.createNativeQuery("INSERT INTO slugs(`slug`, `directory`) VALUES (:slug, :directory)")
-							.setParameter("slug", slug).setParameter("directory", directory).executeUpdate();
+					final int created = em.createNativeQuery("INSERT INTO slug(`slug`) VALUES (:slug)")
+							.setParameter("slug", slug).executeUpdate();
 					
 					if (log.isDebugEnabled()) {
-						log.debug("Slug doesn't exist: {}/{} - Result: {}", directory, slug, created);
+						log.debug("Slug doesn't exist: /{} - INSERT Result: {}", slug, created);
 					}
 				} else if (log.isDebugEnabled()) {
-					log.debug("Slug exists: {}/{}", directory, slug);
+					log.debug("Slug exists: /{}", slug);
 				}
 			}
 		}

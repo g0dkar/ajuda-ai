@@ -12,11 +12,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
@@ -29,7 +27,6 @@ import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionHelper;
 
 @Entity
-@Table(indexes = { @Index(columnList = "user", name = "user") })
 public class Payment implements Serializable {
 	private static final long serialVersionUID = 1L;
 	

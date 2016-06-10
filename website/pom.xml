@@ -36,7 +36,7 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Dependencies>org.hibernate,org.slf4j,com.google.guava export</Dependencies>
+							<Dependencies>org.hibernate,org.slf4j,com.google.guava,org.infinispan export</Dependencies>
 						</manifestEntries>
 					</archive>
 				</configuration>
