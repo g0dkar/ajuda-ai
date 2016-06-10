@@ -33,6 +33,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/pagseguro-api-2.5.2.jar" sourcepath="D:/Downloads/pagseguro-java-2.5.2/java-2.5.2/source/pagseguro-api/src"/>
 	<classpathentry kind="output" path="src/main/webapp/WEB-INF/classes"/>
 </classpath>
