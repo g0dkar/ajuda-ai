@@ -2,17 +2,45 @@
 <%@ taglib prefix="ajudaai" tagdir="/WEB-INF/tags/ajudaai" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <ajudaai:page>
-	<div id="page-index">
+	<div id="page-institution" ng-controller="InstitutionController">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="hero">
-						<img src="/res/img/about-header.jpg" class="hero-img">
-						<h1 class="hero-floating-title"><strong><c:out value="${institution.name}" /></strong> precisa da sua ajuda!</h1>
+						<!--img src="/res/img/ama-header.jpg" class="hero-img"-->
+						<img src="http://4.bp.blogspot.com/-vCjZ1ZNuRJw/VmxGLPHls5I/AAAAAAAABWc/yBSGgUqnsmQ/s1600-r/banner_AMA1.jpg" class="hero-img">
+						
 						<div class="hero-page-title">
-							<div class="container">
-								<div class="row">
-									<div class="col-xs-12">Teste</div>
+							<div class="hero-page-title-logo">
+								<div class="container">
+									<div class="row">
+										<div class="col-xs-12 col-sm-3 col-md-2">
+											<div class="institution-logo">
+												<img src="<c:out value="${institution.logo}" default="/res/img/institution-default.jpg"></c:out>" alt="Logo" title="Logo da Instituição/ONG que você pode ajudar">
+											</div>
+										</div>
+										<div class="col-xs-12 col-sm-9 col-md-10">
+											<h1 class="hero-title"><strong><c:out value="${institution.name}" /></strong> precisa da sua ajuda!</h1>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="hero-page-title-info">
+								<div class="container">
+									<div class="row">
+										<div class="col-xs-12 col-offset-sm-3 col-sm-2" ng-class="{loadingInfo:'loading'}">
+											<div class="institution-donors" ng-bind="donations.count | number" title="Quantidade de pessoas que fizeram doações a esta Instituição/ONG"></div>
+											<div class="institution-donors-caption"><ng-pluralize count="donations.count" when="{'0': 'nenhum ajudante :(', 'one': 'ajudante', 'other': 'ajudantes'}"></ng-pluralize></div>
+										</div>
+										<div class="col-xs-12 col-sm-2" ng-class="{loadingInfo:'loading'}">
+											<div class="institution-value" ng-bind="donations.value | currency" title="Valor arrecadado para esta Instituição/ONG"></div>
+											<div class="institution-value-caption">arrecadados</div>
+										</div>
+										<div class="col-xs-12 col-offset-sm-2 col-sm-3">
+											<div class="donate-button" ng-click="donate()">Faça uma Doação</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -25,27 +53,12 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="page-content">
-						<h1 class="page-title">Projeto Ajuda.Ai</h1>
-						<h4 class="page-subtitle">Nosso objetivo é ser o <a href="https://patreon.com/" target="_blank">Patreon</a> das Doações a Instituições/ONGs no Brasil</h4>
+						<h1 class="page-title">Sobre quem você pode ajudar</h1>
+						<h4 class="page-subtitle">Conheça um pouco do trabalho que você pode ajudar a continuar</h4>
 						
 						<hr>
 						
-						<p>Olá! Este é o Projeto Ajuda.Ai. O objetivo dele é ser o Patreon das Doações a Instituições/ONGs no Brasil (e futuramente no mundo!) e é totalmente <strong>sem fins lucrativos</strong>.</p>
-						<p>Estamos começando e vamos implementá-lo devagar e sempre :)</p>
-						
-						<h2>De onde veio a ideia? <small>por Rafael Lins</small></h2>
-						<p>Gostamos muito de coisas práticas. E convenhamos, ajudar (financeiramente) não é nada tão pratico assim. A forma mais prática que conheço é uma transferência online, usando o aplicativo do Banco no celular. Ainda assim tenho que lembrar agência e conta (tenho uma memória terrivelmente fraca, especialmente para números), e ter atenção no nome, digitar umas senhas. E, claro, ter o dinheiro na conta na hora da transferência :P</p>
-						<p>E se ajudar essas instituições pudesse ser tão simples, fácil, rápido e prático quanto fazer compras na Internet? Apenas clicar no link da instituição, se eu gostar e puder clico em "Ajudar", digo com quanto gostaria de ajudar e pronto. Forma de Pagamento? Ah... estou sem grana <em>agora</em> então põe no cartão de crédito. GG.</p>
-						<p>E foi disso que surgiu o Projeto Ajuda.Ai :)</p>
-						
-						<h2>Sem fins lucrativos?</h2>
-						<p>Sim. Sem fins lucrativos. Somos uma ligação direta entre as pessoas que querem ajudar e as instituições que precisam de ajuda, sem taxas nem nada. Atualmente temos um site onde hospedamos esse sistema e todos os custos mensais do mesmo são bancados por mim, Rafael Lins (@g0dkar). É minha forma de contribuir :)</p>
-						
-						<hr>
-						
-						<h1 class="page-title" id="desenvolvedores">Os Desenvolvedores</h1>
-						<h4 class="page-subtitle">Quem fez essa coisa toda?</h4>
-						<p>Nós fizemos isso!</p>
+						${institutionDescriptionMarkdown}
 					</div>
 				</div>
 			</div>

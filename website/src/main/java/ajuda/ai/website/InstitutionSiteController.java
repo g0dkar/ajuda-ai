@@ -1,9 +1,13 @@
 package ajuda.ai.website;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.institution.Institution;
@@ -11,10 +15,12 @@ import ajuda.ai.model.institution.InstitutionHelper;
 import ajuda.ai.model.institution.InstitutionPost;
 import ajuda.ai.util.StringUtils;
 import ajuda.ai.util.keycloak.KeycloakUser;
-import ajuda.ai.website.paymentServices.PagSeguroPayment;
+import ajuda.ai.website.paymentServices.PaymentProcessor;
 import ajuda.ai.website.paymentServices.PaymentService;
 import ajuda.ai.website.util.PersistenceService;
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
@@ -29,22 +35,24 @@ import br.com.caelum.vraptor.view.Results;
  *
  */
 @Controller
-@Path("/{[a-z][a-z0-9\\-]*[a-z0-9]:slug}")
+@Path("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}")
 public class InstitutionSiteController {
 	private final Result result;
 	private final Validator validator;
 	private final PersistenceService ps;
 	private final HttpServletRequest request;
+	private final PaymentService paymentService;
 	
 	/** @deprecated CDI */ @Deprecated
-	InstitutionSiteController() { this(null, null, null, null, null); }
+	InstitutionSiteController() { this(null, null, null, null, null, null); }
 	
 	@Inject
-	public InstitutionSiteController(final Result result, final Validator validator, final KeycloakUser user, final PersistenceService ps, final HttpServletRequest request) {
+	public InstitutionSiteController(final Result result, final Validator validator, final KeycloakUser user, final PersistenceService ps, final HttpServletRequest request, final PaymentService paymentService) {
 		this.result = result;
 		this.validator = validator;
 		this.ps = ps;
 		this.request = request;
+		this.paymentService = paymentService;
 		
 		if (result != null) {
 			result.include("user", user);
@@ -55,12 +63,13 @@ public class InstitutionSiteController {
 		return (Institution) ps.createQuery("FROM Institution WHERE slug = :slug").setParameter("slug", slug).getSingleResult();
 	}
 	
-	@Path({ "", "/" })
+	@Path("/")
 	public void institution(final String slug) {
 		final Institution institution = findInstitution(slug);
 		
 		if (institution != null) {
 			result.include("institution", institution);
+			result.include("institutionDescriptionMarkdown", StringUtils.markdown(institution.getDescription()));
 		}
 		else {
 			result.include("notFound", true);
@@ -68,7 +77,7 @@ public class InstitutionSiteController {
 		}
 	}
 	
-	@Path("/{[a-z][a-z0-9\\-]*[a-z0-9]:post}")
+	@Path(value = "/{post:[a-z][a-z0-9\\-]*[a-z0-9]}", priority = Path.LOW)
 	public void post(final String slug, final String post) {
 		final Institution institution = findInstitution(slug);
 		
@@ -76,6 +85,8 @@ public class InstitutionSiteController {
 			final InstitutionPost institutionPost = (InstitutionPost) ps.createQuery("FROM InstitutionPost WHERE slug = :slug").setParameter("slug", slug + "/" + post).getSingleResult();
 			if (institutionPost != null) {
 				result.include("institution", institution);
+				result.include("institutionPost", institutionPost);
+				result.include("institutionPostMarkdown", StringUtils.markdown(institutionPost.getContent()));
 			}
 			else {
 				result.include("notFound", true);
@@ -88,7 +99,9 @@ public class InstitutionSiteController {
 		}
 	}
 	
-	@Post("/doar")
+	@Transactional
+	@Post("/api/doar")
+	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
 	public void donate(final String slug, final String value, final String name, final String email, final String phone) {
 		final Institution institution = findInstitution(slug);
 		
@@ -105,16 +118,10 @@ public class InstitutionSiteController {
 				ps.persist(helper);
 			}
 			
-			final PaymentService paymentService;
+			final PaymentProcessor paymentProcessor = paymentService.get(institution.getPaymentService());
 			
-			switch (institution.getPaymentService()) {
-				case MOIP: paymentService = null; break;
-				case PAG_SEGURO: paymentService = new PagSeguroPayment(); break;
-				default: paymentService = null;
-			}
-			
-			if (paymentService != null) {
-				final Payment payment = paymentService.createPayment(institution, helper, helpValue, name, email, phone);
+			if (paymentProcessor != null) {
+				final Payment payment = paymentProcessor.createPayment(institution, helper, helpValue, name, email, phone);
 				
 				if (payment != null) {
 					if (!validator.validate(payment).hasErrors()) {
@@ -154,6 +161,25 @@ public class InstitutionSiteController {
 		else {
 			result.include("notFound", true);
 			result.redirectTo(SiteController.class).index();
+		}
+	}
+	
+	@Get("/api/info-doacoes")
+	public void donationInfo(final String slug) {
+		final Institution institution = findInstitution(slug);
+		
+		if (institution != null) {
+			final int helpers = ((Number) ps.createQuery("SELECT count(*) FROM InstitutionHelper WHERE institution = :institution").setParameter("institution", institution).getSingleResult()).intValue();
+			final Number value = (Number) ps.createQuery("SELECT sum(value) FROM Payment WHERE institution = :institution").setParameter("institution", institution).getSingleResult();
+			
+			final Map<String, Object> response = new HashMap<>(2);
+			response.put("count", helpers);
+			response.put("value", value != null ? new BigDecimal(value.longValue()).divide(BigDecimal.TEN).doubleValue() : 0.0);
+			
+			result.use(Results.json()).withoutRoot().from(response).serialize();
+		}
+		else {
+			result.notFound();
 		}
 	}
 }

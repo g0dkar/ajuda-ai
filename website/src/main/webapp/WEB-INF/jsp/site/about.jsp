@@ -2,7 +2,7 @@
 <%@ taglib prefix="ajudaai" tagdir="/WEB-INF/tags/ajudaai" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <ajudaai:page>
-	<div id="page-index">
+	<div id="page-about">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-xs-12">
@@ -45,7 +45,7 @@
 							</div>
 							<div class="col-md-8">
 								<h3 style="margin-top:0;padding-top:0"><a href="https://facebook.com/g0dkar" title="Link ao Facebook de Rafael Lins" target="_blank">Rafael Lins</a></h3>
-								<p>Fiz o código e algumas telas. Sou só um cara tentando trazer uma diferença positiva ao mundo...</p>
+								<p>Fiz o código e algumas telas. Sou só um cara tentando trazer uma diferença positiva ao mundo :)</p>
 								<blockquote>
 									<p style="margin-bottom:15px">Ou descubro uma maneira ou crio uma.</p>
 									<footer><a href="https://pt.wikipedia.org/wiki/An%C3%ADbal" title="Conheça mais sobre Aníbal, General Púnico" target="_blank">Aníbal</a> quando disseram que era impossível cruzar os Alpes em Elefantes</footer>

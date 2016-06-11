@@ -29,7 +29,22 @@
 		}
 	}]);
 	
-	app.controller("DonateController", ["$scope", "$http", function ($scope, $http) {
+	app.controller("InstitutionController", ["$scope", "$http", "$interval", function ($scope, $http, $interval) {
+		var nextSlash = location.pathname.indexOf("/", 1);
+		var institutionSlug = nextSlash > 0 ? location.pathname.substring(0, nextSlash) : location.pathname;
+		$scope.donations = null;
+		$scope.loadingInfo = true;
 		
+		function updateDonations() {
+			$scope.loadingInfo = true;
+			
+			$http.get(institutionSlug + "/api/info-doacoes").then(function (response) {
+				$scope.donations = response.data;
+				$scope.loadingInfo = false;
+			}, function () { $scope.loadingInfo = false; });
+		};
+		
+		updateDonations();
+		$interval(updateDonations, 60000);	// 1 min
 	}]);
 })(angular);
