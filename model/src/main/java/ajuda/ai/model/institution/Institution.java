@@ -12,8 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Pattern.Flag;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -46,7 +44,7 @@ public class Institution extends Slug {
 	@Column(nullable = false, columnDefinition = "MEDIUMTEXT")
 	private String description;
 	
-	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private InstitutionPost pinnedPost;
 	
 	@OneToMany(mappedBy = "institution", orphanRemoval = true, fetch = FetchType.LAZY)
@@ -54,7 +52,6 @@ public class Institution extends Slug {
 	
 	@ElementCollection
 	@Column(length = 36)
-	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
 	private Set<String> leaders;
 	
 	@NotNull
