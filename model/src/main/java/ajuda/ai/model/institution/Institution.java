@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
 
 import ajuda.ai.model.Slug;
 import ajuda.ai.model.billing.PaymentServiceEnum;
@@ -35,8 +36,8 @@ public class Institution extends Slug {
 	private CreationInfo creation;
 	
 	@NotBlank
-	@Size(max = 255)
-	@Column(nullable = false, length = 255)
+	@Size(max = 64)
+	@Column(nullable = false, length = 64)
 	private String name;
 	
 	@NotBlank
@@ -62,6 +63,10 @@ public class Institution extends Slug {
 	@NotBlank
 	@Column(nullable = false, length = 1024)
 	private String paymentServiceData;
+	
+	@URL
+	@Column(length = 1024)
+	private String logo;
 
 	public CreationInfo getCreation() {
 		return creation;
@@ -125,5 +130,13 @@ public class Institution extends Slug {
 
 	public void setPaymentServiceData(final String paymentServiceData) {
 		this.paymentServiceData = paymentServiceData;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(final String logo) {
+		this.logo = logo;
 	}
 }
