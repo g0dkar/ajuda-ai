@@ -78,9 +78,9 @@ nav, #footer {
 	-webkit-transition: background-color .1s ease;
 	-moz-transition: background-color .1s ease;
 	transition: background-color .1s ease;
-	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.7); 
-	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.7); 
-	box-shadow: 0 1px 2px rgba(0,0,0,.7); 
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.7);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.7);
+	box-shadow: 0 1px 2px rgba(0,0,0,.7);
 }
 .nav-link-btn:hover {
 	background: none;
@@ -143,6 +143,55 @@ nav, #footer {
 	background: rgba(255,255,255,.9);
 	padding: 25px;
 	margin: 0;
+}
+.hero .hero-page-title-logo {
+	position: absolute;
+	width: 100%;
+	bottom: 30px;
+	color: #fff;
+	text-shadow: 0 1px 2px #000;
+}
+.hero .hero-page-title-logo h1 {
+	font-size: 32px;
+}
+.hero .hero-page-title-logo .institution-logo > img {
+	width: 100%;
+	max-width: 200px;
+	border-radius: 100%;
+	border: 2px solid #fff;
+	box-shadow: 0px 0px 5px #000;
+}
+.hero .institution-donors, .hero .institution-value {
+	margin-top: 5px;
+	line-height: 55px;
+	font-size: 2.6em;
+	font-weight: 600;
+	color: #000;
+}
+.hero .institution-donors-caption, .hero .institution-value-caption {
+	font-size: 90%;
+	color: #607d8b;
+	height: 30px;
+}
+.hero .donate-button {
+	margin: 10px;
+	height: 70px;
+	line-height: 70px;
+	border-radius: 3px;
+	background: #2e7d32;
+	color: #fff;
+	text-shadow: 0 1px 0 rgba(0,0,0,.5);
+	text-align: center;
+	font-size: 24px;
+	cursor: pointer;
+	background: #43a047;
+	border-bottom: 2px solid rgba(0,0,0,.3);
+	-webkit-transition: background-color .1s ease;
+	-moz-transition: background-color .1s ease;
+	transition: background-color .1s ease;
+}
+.hero .donate-button:hover {
+	background: #4caf50;
 }
 .page-content {
 	background: #fff;

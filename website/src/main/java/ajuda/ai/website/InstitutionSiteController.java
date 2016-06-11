@@ -126,7 +126,7 @@ public class InstitutionSiteController {
 				if (payment != null) {
 					if (!validator.validate(payment).hasErrors()) {
 						ps.persist(payment);
-						helper.setLastPayment(payment);
+						ps.createQuery("UPDATE InstitutionHelper SET lastPayment = :payment WHERE id = :id").setParameter("payment", payment).setParameter("id", helper.getId());
 						result.use(Results.json()).withoutRoot().from(payment).serialize();
 					}
 				}
@@ -170,7 +170,7 @@ public class InstitutionSiteController {
 		
 		if (institution != null) {
 			final int helpers = ((Number) ps.createQuery("SELECT count(*) FROM InstitutionHelper WHERE institution = :institution").setParameter("institution", institution).getSingleResult()).intValue();
-			final Number value = (Number) ps.createQuery("SELECT sum(value) FROM Payment WHERE institution = :institution").setParameter("institution", institution).getSingleResult();
+			final Number value = (Number) ps.createQuery("SELECT sum(value) FROM Payment WHERE institution = :institution AND paid = true AND cancelled = false").setParameter("institution", institution).getSingleResult();
 			
 			final Map<String, Object> response = new HashMap<>(2);
 			response.put("count", helpers);
