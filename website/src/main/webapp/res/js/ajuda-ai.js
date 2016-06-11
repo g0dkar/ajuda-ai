@@ -28,4 +28,8 @@
 			else { return 5000; }
 		}
 	}]);
+	
+	app.controller("DonateController", ["$scope", "$http", function ($scope, $http) {
+		
+	}]);
 })(angular);

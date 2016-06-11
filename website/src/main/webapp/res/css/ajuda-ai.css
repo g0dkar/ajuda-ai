@@ -19,7 +19,7 @@ nav {
 	box-shadow: 0 1px 2px rgba(0,0,0,.4);
 	z-index: 100000;
 }
-nav, footer {
+nav, #footer {
 	color: #fff;
 	background: #263238;
 }
@@ -165,7 +165,7 @@ nav, footer {
 	font-size: 1.2em;
 	margin-bottom: 1.5em;
 }
-.page-content > hr, footer hr {
+.page-content > hr, #footer hr {
 	margin: 15px -15px;
 }
 .page-content > :first-child {
@@ -174,34 +174,37 @@ nav, footer {
 .page-content > :last-child {
 	margin-bottom: 0;
 }
-footer {
+.page-content blockquote {
+	margin-bottom: 0;
+}
+#footer {
 	padding: 15px 0;
 }
-footer hr {
+#footer hr {
 	border-color: #455a64;
 }
-footer h4 {
+#footer h4 {
 	margin-top: 0;
 	padding-top: 0;
 	font-weight: 300;
 }
-footer a {
+#footer a {
 	color: #b0bec5;
 	-webkit-transition: color .1s ease;
 	-moz-transition: color .1s ease;
 	transition: color .1s ease;
 }
-footer a:hover, footer .link-sistema {
+#footer a:hover, #footer .link-sistema {
 	color: #fff;
 }
-footer .link-sistema {
+#footer .link-sistema {
 	font-weight: 400;
 }
-footer small, footer small > a {
+#footer small, #footer small > a {
 	font-weight: 300;
 	color: #90a4ae;
 }
-footer ul {
+#footer ul {
 	list-style: none;
 	padding-left: 0;
 	margin-bottom: 0;

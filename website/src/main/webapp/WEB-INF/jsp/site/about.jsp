@@ -34,11 +34,52 @@
 						<h2>Sem fins lucrativos?</h2>
 						<p>Sim. Sem fins lucrativos. Somos uma ligação direta entre as pessoas que querem ajudar e as instituições que precisam de ajuda, sem taxas nem nada. Atualmente temos um site onde hospedamos esse sistema e todos os custos mensais do mesmo são bancados por mim, Rafael Lins (@g0dkar). É minha forma de contribuir :)</p>
 						
-						<hr>
+						<hr id="desenvolvedores">
 						
-						<h1 class="page-title" id="desenvolvedores">Os Desenvolvedores</h1>
+						<h1 class="page-title">Os Desenvolvedores</h1>
 						<h4 class="page-subtitle">Quem fez essa coisa toda?</h4>
-						<p>Nós fizemos isso! (falta escrever isso)</p>
+						
+						<div class="row" style="margin-bottom:30px">
+							<div class="col-md-4 text-center">
+								<a href="https://facebook.com/g0dkar" title="Link ao Facebook de Rafael Lins" target="_blank"><img src="/res/img/about-rafael.jpg" width="200" height="200" alt="Imagem do Perfil do Facebook de Rafael Lins" style="border-radius:100%" /></a>
+							</div>
+							<div class="col-md-8">
+								<h3 style="margin-top:0;padding-top:0"><a href="https://facebook.com/g0dkar" title="Link ao Facebook de Rafael Lins" target="_blank">Rafael Lins</a></h3>
+								<p>Fiz o código e algumas telas. Sou só um cara tentando trazer uma diferença positiva ao mundo...</p>
+								<blockquote>
+									<p style="margin-bottom:15px">Ou descubro uma maneira ou crio uma.</p>
+									<footer><a href="https://pt.wikipedia.org/wiki/An%C3%ADbal" title="Conheça mais sobre Aníbal, General Púnico" target="_blank">Aníbal</a> quando disseram que era impossível cruzar os Alpes em Elefantes</footer>
+								</blockquote>
+							</div>
+						</div>
+						
+						<div class="row" style="margin-bottom:30px">
+							<div class="col-md-4 text-center">
+								<a href="https://facebook.com/candidosales" title="Link ao Facebook de Cândido Sales" target="_blank"><img src="/res/img/about-candido.jpg" width="200" height="200" alt="Imagem do Perfil do Facebook de Cândido Sales" style="border-radius:100%" /></a>
+							</div>
+							<div class="col-md-8">
+								<h3 style="margin-top:0;padding-top:0"><a href="https://facebook.com/candidosales" title="Link ao Facebook de Cândido Sales" target="_blank">Cândido Sales</a></h3>
+								<p>Falta o Cândido me passar o que ele quer aqui...</p>
+								<blockquote>
+									<p style="margin-bottom:15px">Falta isso também.</p>
+									<footer>E isso.</footer>
+								</blockquote>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-4 text-center">
+								<a href="https://facebook.com/felipe.resende.967" title="Link ao Facebook de Felipe Resende" target="_blank"><img src="/res/img/about-felipe.jpg" width="200" height="200" alt="Imagem do Perfil do Facebook de Felipe Resende" style="border-radius:100%" /></a>
+							</div>
+							<div class="col-md-8">
+								<h3 style="margin-top:0;padding-top:0"><a href="https://facebook.com/felipe.resende.967" title="Link ao Facebook de Felipe Resende" target="_blank">Felipe Resende</a></h3>
+								<p>Falta o Felipe me passar o que ele quer aqui...</p>
+								<blockquote>
+									<p style="margin-bottom:15px">Falta isso também.</p>
+									<footer>E isso.</footer>
+								</blockquote>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
