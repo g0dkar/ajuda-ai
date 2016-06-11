@@ -92,9 +92,14 @@ nav, footer {
 	margin: 0 -15px;
 	background: #fff;
 	overflow: hidden;
+	position: relative;
+	box-shadow: 0 1px 4px rgba(0,0,0,.4);
 }
-.carousel-inner > .item > a > img, .carousel-inner > .item > img {
+.carousel-inner > .item > a > img, .carousel-inner > .item > img, .hero .hero-img {
 	min-width: 100%;
+}
+.hero .hero-img {
+	height: auto;
 }
 .hero h1 {
 	font-weight: 300;
@@ -130,6 +135,15 @@ nav, footer {
 	margin: 0 0 15px 0;
 	text-align: center;
 }
+.hero .hero-floating-title {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+	background: rgba(255,255,255,.9);
+	padding: 25px;
+	margin: 0;
+}
 .page-content {
 	background: #fff;
 	padding: 15px;
@@ -143,7 +157,13 @@ nav, footer {
 }
 .page-content h2, .page-content h3, .page-content h4, .page-content h5 {
 	color: #455a64;
+}
+.page-content h2, .page-content h3, .page-content h4, .page-content h5, .page-content h2 > small, .page-content h3 > small, .page-content h4 > small, .page-content h5 > small {
 	font-weight: 300;
+}
+.page-content p {
+	font-size: 1.2em;
+	margin-bottom: 1.5em;
 }
 .page-content > hr, footer hr {
 	margin: 15px -15px;

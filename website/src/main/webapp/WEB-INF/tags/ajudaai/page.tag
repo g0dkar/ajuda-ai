@@ -72,9 +72,9 @@
 		
 		<div class="nav-div nav-right">
 			<c:if test="${user eq null}">
-				<a href="${pageContext.request.contextPath}/admin" title="Ir para a Página Inicial" class="nav-link">Sua Instituição/ONG</a>
+				<a href="${pageContext.request.contextPath}/admin" title="Acesso ao Painel de Controle" class="nav-link">Painel de Controle</a>
 			</c:if>
-			<a href="${pageContext.request.contextPath}/ama" title="Ir para a Página Inicial" class="nav-link nav-link-btn"><span class="nav-link-btn-inner">Ajuda.Ai!</span></a>
+			<a href="${pageContext.request.contextPath}/ama" title="Ajude a Associação dos Amigos dos Autistas" class="nav-link nav-link-btn"><span class="nav-link-btn-inner">Ajuda.Ai!</span></a>
 		</div>
 	</nav>
 	

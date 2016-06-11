@@ -7,7 +7,7 @@
 			image: "/res/img/index-img-01.jpg",
 			caption: "Juntamos quem <strong>quer ajudar</strong> a quem <strong>precisa de ajuda</strong>.",
 			href: "/ama",
-			button: "Ajude a AMA"
+			button: "Ajude a AMA - Associação dos Amigos dos Autistas"
 		}, {
 			id: 1,
 			image: "/res/img/index-img-02.jpg",
@@ -23,5 +23,9 @@
 		}];
 		
 		$scope.active = 0;
+		$scope.currentSlideInterval = function () {
+			if ($scope.active === 0) { return 20000; }
+			else { return 5000; }
+		}
 	}]);
 })(angular);

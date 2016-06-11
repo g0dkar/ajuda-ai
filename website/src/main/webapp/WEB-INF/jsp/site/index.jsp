@@ -7,7 +7,7 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="hero">
-						<uib-carousel active="active" interval="5000">
+						<uib-carousel active="active" interval="currentSlideInterval()">
 							<uib-slide ng-repeat="slide in slides track by slide.id" index="slide.id">
 								<img ng-src="{{::slide.image}}" style="margin:auto;">
 								<div class="carousel-caption">
