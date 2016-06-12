@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="ng-scope wf-lato-n3-active wf-lato-n4-active wf-lato-n6-active wf-active" ng-app="ajuda-ai" lang="-">
+   <head>
+      <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <style type="text/css">
+        [uib-tooltip-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-bottom > .tooltip-arrow,[uib-popover-popup].popover.top-left > .arrow,[uib-popover-popup].popover.top-right > .arrow,[uib-popover-popup].popover.bottom-left > .arrow,[uib-popover-popup].popover.bottom-right > .arrow,[uib-popover-popup].popover.left-top > .arrow,[uib-popover-popup].popover.left-bottom > .arrow,[uib-popover-popup].popover.right-top > .arrow,[uib-popover-popup].popover.right-bottom > .arrow,[uib-popover-html-popup].popover.top-left > .arrow,[uib-popover-html-popup].popover.top-right > .arrow,[uib-popover-html-popup].popover.bottom-left > .arrow,[uib-popover-html-popup].popover.bottom-right > .arrow,[uib-popover-html-popup].popover.left-top > .arrow,[uib-popover-html-popup].popover.left-bottom > .arrow,[uib-popover-html-popup].popover.right-top > .arrow,[uib-popover-html-popup].popover.right-bottom > .arrow,[uib-popover-template-popup].popover.top-left > .arrow,[uib-popover-template-popup].popover.top-right > .arrow,[uib-popover-template-popup].popover.bottom-left > .arrow,[uib-popover-template-popup].popover.bottom-right > .arrow,[uib-popover-template-popup].popover.left-top > .arrow,[uib-popover-template-popup].popover.left-bottom > .arrow,[uib-popover-template-popup].popover.right-top > .arrow,[uib-popover-template-popup].popover.right-bottom > .arrow{top:auto;bottom:auto;left:auto;right:auto;margin:0;}[uib-popover-popup].popover,[uib-popover-html-popup].popover,[uib-popover-template-popup].popover{display:block !important;}</style>
+      <style type="text/css">
+        .uib-position-measure{display:block !important;visibility:hidden !important;position:absolute !important;top:-9999px !important;left:-9999px !important;}.uib-position-scrollbar-measure{position:absolute !important;top:-9999px !important;width:50px !important;height:50px !important;overflow:scroll !important;}.uib-position-body-scrollbar-measure{overflow:scroll !important;}
+      </style>
+      <style type="text/css">
+        .ng-animate.item:not(.left):not(.right){-webkit-transition:0s ease-in-out left;transition:0s ease-in-out left}
+      </style>
+      <style type="text/css">
+        @charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}
+      </style>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Juntamos quem quer Ajudar a quem precisa de Ajuda - Ajuda.Ai!</title>
+      <meta name="robots" content="index,follow">
+      <meta name="description" content="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!">
+      <meta name="keywords" content="ajuda,instituição,ong,diferença,abrigo,associação,beneficente,doação">
+      <meta name="author" content="Rafael M. Lins">
+      <meta name="copyright" content="Rafael M. Lins, Apache License">
+      <meta name="application-name" content="Ajuda.Ai">
+      <meta property="og:title" content="Juntamos quem quer Ajudar a quem precisa de Ajuda - Ajuda.Ai!">
+      <meta property="og:description" content="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!">
+      <meta property="og:type" content="article">
+      <meta property="og:image" content="/res/img/facebook-preview.png">
+      <meta property="og:url" content="https://ajuda.ai/">
+      <meta name="twitter:card" content="summary">
+      <meta name="twitter:title" content="Juntamos quem quer Ajudar a quem precisa de Ajuda - Ajuda.Ai!">
+      <meta name="twitter:description" content="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!">
+      <meta name="twitter:image" content="/res/img/twitter-preview.png">
+      <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+      <link href="css/ui-bootstrap-custom-1.css" rel="stylesheet" type="text/css">
+      <link href="css/ajuda-ai.css" rel="stylesheet" type="text/css">
+      <link rel="icon" type="image/png" href="img/favicon.png" />
+      <script src="js/analytics.js" async=""></script>
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-79132344-1','auto');ga('send', 'pageview');
+      </script>
+      <script type="text/javascript">
+        WebFontConfig = {google:{families:["Josefin Sans:300,400,700"]}}
+      </script>
+      <link media="all" href="css/css.css" rel="stylesheet">
+      <script type="text/javascript" src="js/webfont.js"></script>
+      <script type="text/javascript" src="js/angular.js"></script>
+      <script type="text/javascript" src="js/angular-animate.js"></script>
+      <script type="text/javascript" src="js/angular-sanitize.js"></script>
+      <script type="text/javascript" src="js/angular-touch.js"></script>
+      <script type="text/javascript" src="js/ui-bootstrap-custom-1.js"></script>
+      <script type="text/javascript" src="js/ui-bootstrap-custom-tpls-1.js"></script>
+      <script type="text/javascript" src="js/ajuda-ai.js"></script>
+      <script async="" defer="defer" src="js/buttons.js"></script>
+   </head>
+   <body>
+      <noscript>
+         <div id="noscript" class="container">
+            <div class="row">
+               <div class="col-xs-12">
+                  <h1>Você está usando o NoScript? Talvez só não curte JavaScript?</h1>
+                  <p>Sem problemas! Eu <em>(também?)</em> uso o NoScript! É excelente para proteção quando navegamos pela Internet. Garanto que somos seguros, mas se não quiser arriscar, libere apenas nosso domínio <code>https://ajuda.ai/</code> e tudo vai funcionar de boa ;)</p>
+               </div>
+            </div>
+         </div>
+      </noscript>
+      <a href="#conteudo" id="jump-to-content" class="accessibility-link hidden">Ir para o Conteúdo</a>
+            <nav>
+         <div class="nav-div nav-left">
+             <a href="http://localhost/" title="Ajuda.Ai!" id="main-logo">
+                <img src="img/main-logo.png" alt="Ajuda.Ai" height="45px" width="150px">
+             </a>
+             <a href="http://localhost/" title="Ir para a Página Inicial" class="nav-link">Início</a>
+             <a href="http://localhost/sobre" title="Ir para a Página Inicial" class="nav-link">Sobre</a></div>
+         <div class="nav-div nav-right">
+             <a href="http://localhost/ama" title="Ajude a Associação dos Amigos dos Autistas" class="nav-link nav-link-btn">
+                <span class="nav-link-btn-inner">Ajuda.Ai!</span>
+             </a>
+         </div>
+      </nav>
+      <div id="content">
+         <div class="ng-scope" id="page-institution" ng-controller="InstitutionController">
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-xs-12">
+                     <div class="hero">
+                        <div class="hero-banner"> 
+                            <img src="img/banner_AMA1.jpg" class="hero-img"/>
+                        </div>
+                        <div class="hero-page-title">
+                           <div class="hero-page-title-logo">
+                              <div class="container">
+                                 <div class="row">
+                                    <div class="col-xs-12 col-sm-3 col-md-2 text-center">
+                                       <div class="institution-logo">
+                                           <img src="img/logo-ama.jpg" alt="Logo" title="Logo da Instituição/ONG que você pode ajudar"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-9 col-md-10">
+                                       <h1 class="hero-title">
+                                           <strong>AMA/PI - Associação de Amigos do Autista do Piauí</strong>
+                                           <br/>precisa da sua ajuda!
+                                        </h1>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="hero-page-title-info">
+                              <div class="container">
+                                 <div class="row">
+                                    <div class="col-xs-12 col-sm-offset-3 col-md-offset-2 col-sm-2 loadingInfo" ng-class="{loadingInfo:'loading'}">
+                                       <div class="institution-donors ng-binding" ng-bind="donations.count | number" title="Quantidade de pessoas que fizeram doações a esta Instituição/ONG">0</div>
+                                       <div class="institution-donors-caption">
+                                          <ng-pluralize count="donations.count" when="{'0': 'ajudante :(', 'one': 'ajudante', 'other': 'ajudantes'}">ajudante :(</ng-pluralize>
+                                       </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-2 loadingInfo" ng-class="{loadingInfo:'loading'}">
+                                       <div class="institution-value ng-binding" ng-bind="donations.value | currency" title="Valor arrecadado para esta Instituição/ONG">$0.00</div>
+                                       <div class="institution-value-caption">arrecadados</div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-offset-2 col-sm-3 col-md-4">
+                                       <div class="donate-button" ng-click="donate()">Faça uma Doação</div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="container">
+               <div class="row">
+                  <div class="col-xs-12">
+                     <div class="page-content">
+                        <h1 class="page-title">Saiba Mais</h1>
+                        <h4 class="page-subtitle">Conheça um pouco do trabalho que você pode ajudar a continuar</h4>
+                        <hr>
+                        <h2>O QUE É A AMA/PI</h2>
+                        <p>Entidade
+                           sem fins lucrativos, reconhecida de utilidade pública municipal - Lei 
+                           nº 2.964/00, e utilidade pública estadual pela Lei nº 5.201/08/01, 
+                           inscrita no Conselho Municipal dos Direitos da Criança e do Adolescente 
+                           de Teresina (CMDCAT) nº 094/02.
+                        </p>
+                        <h2>COMO SURGIU A IDEIA</h2>
+                        <p>Surgiu
+                           da necessidade dos pais em encontrar apoio e suporte técnico para 
+                           educação e tratamento de seus filhos autistas. Foi fundada em 29 de 
+                           Janeiro de 2000, por pais e amigos dos autistas residentes em 
+                           Teresina-PI, que superando a desinformação diante do quadro de Autismo, 
+                           reuniram-se para transformar questionamentos em ação somando forças para
+                           obter serviços estruturados nas áreas de saúde, educação especial, 
+                           trabalho e assistência social.
+                        </p>
+                        <p><a href="http://amigosautistas.blogspot.com.br/">Visite nosso site!</a></p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="modal-header">
+            <h3 class="modal-title">Doação a AMA/PI - Associação de Amigos do Autista do Piauí!</h3>
+         </div>
+         <div class="modal-body">
+            <p>Muito obrigado(a)! Independente do tamanho de sua ajuda, ela é imprescindível para manter Instituições/ONGs funcionando.</p>
+            <div class="form-horizontal">
+               <div class="form-group"><label for="name">Seu Nome</label><input class="form-control ng-pristine ng-untouched ng-valid ng-empty" id="name" ng-model="donation.name" placeholder="Seu nome :)" type="text"></div>
+               <div class="form-group"><label for="email">Seu E-mail</label><input class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-email" id="email" ng-model="donation.email" placeholder="Endereço de E-mail que será enviado o Pedido de Pagamento" type="email"></div>
+               <div class="form-group"><label for="value">Valor da Doação</label><input class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-min ng-valid-max" id="value" ng-model="donation.value" placeholder="Valor de sua Doação" min="1" max="100000" type="number"></div>
+            </div>
+         </div>
+         <div class="modal-footer"><button class="btn btn-primary" type="button" ng-click="ok()">OK</button><button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button></div>
+         <script type="text/ng-template" id="donation-modal.html"></script>
+      </div>
+         <footer id="footer">
+         <div class="container">
+            <div class="row">
+               <div class="col-xs-12 col-sm-6">
+                  <a href="https://ajuda.ai/" title="Nome do Projeto" class="link-sistema">Sistema <span class="logo-texto">ajuda.ai</span></a>
+                  <small>, por <a href="https://linkedin.com/in/rafaelmadureiralins" title="Sobre o Desenvolvedor do Sistema" target="_blank">Rafael M. Lins</a></small>
+               </div>
+               <div class="col-xs-12 col-sm-6 text-right github-button">
+                     <iframe src="img/buttons.htm" style="width: 84px; height: 20px; border: medium none;" scrolling="no" allowtransparency="true" frameborder="0"></iframe>
+               </div>
+            </div>
+            <hr>
+            <div class="row">
+               <div class="col-xs-12 col-sm-6 col-md-4">
+                  <h4>Parceiros</h4>
+                  <ul>
+                     <li><a href="http://cidadeverde.com/genteespecial" target="_blank">Gente Especial</a></li>
+                     <li><a href="http://cidadeverde.com/" target="_blank">Cidade Verde</a></li>
+                     <li><a href="http://vikstar.com.br/" target="_blank">Vikstar</a></li>
+                  </ul>
+               </div>
+               <div class="col-xs-12 col-sm-6 col-md-4">
+                  <h4>O Projeto</h4>
+                  <ul>
+                     <li><a href="https://github.com/g0dkar/ajuda-ai" title="Conheça e contribua com o código do projeto no GitHub" target="_blank">GitHub</a></li>
+                     <li><a href="mailto:rafael.lins777@gmail.com?subject=Projeto+Ajuda.Ai" title="Fale comigo :)">Contato</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </footer>
+
+   </body>
+</html>

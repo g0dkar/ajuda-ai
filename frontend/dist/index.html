@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="ng-scope wf-lato-n3-active wf-lato-n4-active wf-lato-n6-active wf-active" ng-app="ajuda-ai" lang="-">
+   <head>
+      <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <style type="text/css">
+        [uib-tooltip-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-bottom > .tooltip-arrow,[uib-popover-popup].popover.top-left > .arrow,[uib-popover-popup].popover.top-right > .arrow,[uib-popover-popup].popover.bottom-left > .arrow,[uib-popover-popup].popover.bottom-right > .arrow,[uib-popover-popup].popover.left-top > .arrow,[uib-popover-popup].popover.left-bottom > .arrow,[uib-popover-popup].popover.right-top > .arrow,[uib-popover-popup].popover.right-bottom > .arrow,[uib-popover-html-popup].popover.top-left > .arrow,[uib-popover-html-popup].popover.top-right > .arrow,[uib-popover-html-popup].popover.bottom-left > .arrow,[uib-popover-html-popup].popover.bottom-right > .arrow,[uib-popover-html-popup].popover.left-top > .arrow,[uib-popover-html-popup].popover.left-bottom > .arrow,[uib-popover-html-popup].popover.right-top > .arrow,[uib-popover-html-popup].popover.right-bottom > .arrow,[uib-popover-template-popup].popover.top-left > .arrow,[uib-popover-template-popup].popover.top-right > .arrow,[uib-popover-template-popup].popover.bottom-left > .arrow,[uib-popover-template-popup].popover.bottom-right > .arrow,[uib-popover-template-popup].popover.left-top > .arrow,[uib-popover-template-popup].popover.left-bottom > .arrow,[uib-popover-template-popup].popover.right-top > .arrow,[uib-popover-template-popup].popover.right-bottom > .arrow{top:auto;bottom:auto;left:auto;right:auto;margin:0;}[uib-popover-popup].popover,[uib-popover-html-popup].popover,[uib-popover-template-popup].popover{display:block !important;}</style>
+      <style type="text/css">
+        .uib-position-measure{display:block !important;visibility:hidden !important;position:absolute !important;top:-9999px !important;left:-9999px !important;}.uib-position-scrollbar-measure{position:absolute !important;top:-9999px !important;width:50px !important;height:50px !important;overflow:scroll !important;}.uib-position-body-scrollbar-measure{overflow:scroll !important;}
+      </style>
+      <style type="text/css">
+        .ng-animate.item:not(.left):not(.right){-webkit-transition:0s ease-in-out left;transition:0s ease-in-out left}
+      </style>
+      <style type="text/css">
+        @charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}
+      </style>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Juntamos quem quer Ajudar a quem precisa de Ajuda - Ajuda.Ai!</title>
+      <meta name="robots" content="index,follow">
+      <meta name="description" content="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!">
+      <meta name="keywords" content="ajuda,instituição,ong,diferença,abrigo,associação,beneficente,doação">
+      <meta name="author" content="Rafael M. Lins">
+      <meta name="copyright" content="Rafael M. Lins, Apache License">
+      <meta name="application-name" content="Ajuda.Ai">
+      <meta property="og:title" content="Juntamos quem quer Ajudar a quem precisa de Ajuda - Ajuda.Ai!">
+      <meta property="og:description" content="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!">
+      <meta property="og:type" content="article">
+      <meta property="og:image" content="/res/img/facebook-preview.png">
+      <meta property="og:url" content="https://ajuda.ai/">
+      <meta name="twitter:card" content="summary">
+      <meta name="twitter:title" content="Juntamos quem quer Ajudar a quem precisa de Ajuda - Ajuda.Ai!">
+      <meta name="twitter:description" content="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!">
+      <meta name="twitter:image" content="/res/img/twitter-preview.png">
+      <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+      <link href="css/ui-bootstrap-custom-1.css" rel="stylesheet" type="text/css">
+      <link href="css/ajuda-ai.css" rel="stylesheet" type="text/css">
+      <link rel="icon" type="image/png" href="img/favicon.png" />
+      <script src="js/analytics.js" async=""></script>
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-79132344-1','auto');ga('send', 'pageview');
+      </script>
+      <script type="text/javascript">
+        WebFontConfig = {google:{families:["Josefin Sans:300,400,700"]}}
+      </script>
+      <link media="all" href="css/css.css" rel="stylesheet">
+      <script type="text/javascript" src="js/webfont.js"></script>
+      <script type="text/javascript" src="js/angular.js"></script>
+      <script type="text/javascript" src="js/angular-animate.js"></script>
+      <script type="text/javascript" src="js/angular-sanitize.js"></script>
+      <script type="text/javascript" src="js/angular-touch.js"></script>
+      <script type="text/javascript" src="js/ui-bootstrap-custom-1.js"></script>
+      <script type="text/javascript" src="js/ui-bootstrap-custom-tpls-1.js"></script>
+      <script type="text/javascript" src="js/ajuda-ai.js"></script>
+      <script async="" defer="defer" src="js/buttons.js"></script>
+   </head>
+   <body>
+      <noscript>
+         <div id="noscript" class="container">
+            <div class="row">
+               <div class="col-xs-12">
+                  <h1>Você está usando o NoScript? Talvez só não curte JavaScript?</h1>
+                  <p>Sem problemas! Eu <em>(também?)</em> uso o NoScript! É excelente para proteção quando navegamos pela Internet. Garanto que somos seguros, mas se não quiser arriscar, libere apenas nosso domínio <code>https://ajuda.ai/</code> e tudo vai funcionar de boa ;)</p>
+               </div>
+            </div>
+         </div>
+      </noscript>
+      <a href="#conteudo" id="jump-to-content" class="accessibility-link hidden">Ir para o Conteúdo</a>
+            <nav>
+         <div class="nav-div nav-left">
+             <a href="http://localhost/" title="Ajuda.Ai!" id="main-logo">
+                <img src="img/main-logo.png" alt="Ajuda.Ai" height="45px" width="150px">
+             </a>
+             <a href="http://localhost/" title="Ir para a Página Inicial" class="nav-link">Início</a>
+             <a href="http://localhost/sobre" title="Ir para a Página Inicial" class="nav-link">Sobre</a></div>
+         <div class="nav-div nav-right">
+             <a href="http://localhost/ama" title="Ajude a Associação dos Amigos dos Autistas" class="nav-link nav-link-btn">
+                <span class="nav-link-btn-inner">Ajuda.Ai!</span>
+             </a>
+         </div>
+      </nav>
+      <div id="content">
+         <div class="ng-scope" id="page-index" ng-controller="MainController">
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-xs-12">
+                     <div class="hero">
+                        <div active="active" interval="currentSlideInterval()" ng-mouseenter="pause()" ng-mouseleave="play()" class="carousel ng-isolate-scope" ng-swipe-right="prev()" ng-swipe-left="next()">
+                           <div class="carousel-inner" ng-transclude="true">
+                              <!-- ngRepeat: slide in slides track by slide.id -->
+                              <div style="" ng-repeat="slide in slides track by slide.id" index="slide.id" ng-class="{'active': active}" class="item text-center ng-scope ng-isolate-scope active" ng-transclude="">
+                                 <img src="img/index-img-01.jpg" class="ng-scope" ng-src="img/index-img-01.jpg" style="margin:auto;"/>
+                                 <div class="carousel-caption ng-scope">
+                                    <h1 class="ng-binding" ng-bind-html="::slide.caption">Juntamos quem <strong>quer ajudar</strong> a quem <strong>precisa de ajuda</strong>.</h1>
+                                    <p class="hero-btn-para"><a href="http://localhost/ama" ng-href="/ama" class="hero-btn ng-binding" ng-bind-html="::slide.button">Ajude a AMA - Associação dos Amigos dos Autistas</a></p>
+                                 </div>
+                              </div>
+                              <!-- end ngRepeat: slide in slides track by slide.id -->
+                              <div ng-repeat="slide in slides track by slide.id" index="slide.id" ng-class="{'active': active}" class="item text-center ng-scope ng-isolate-scope" ng-transclude="">
+                                 <img src="img/index-img-02.jpg" class="ng-scope" ng-src="img/index-img-02.jpg" style="margin:auto;">
+                                 <div class="carousel-caption ng-scope">
+                                    <h1 class="ng-binding" ng-bind-html="::slide.caption">Curtiu nosso projeto? <strong>Conheça</strong> o que é o Ajuda.Ai!</h1>
+                                    <p class="hero-btn-para"><a href="http://localhost/sobre" ng-href="/sobre" class="hero-btn ng-binding" ng-bind-html="::slide.button">Sobre o Ajuda.Ai</a></p>
+                                 </div>
+                              </div>
+                              <!-- end ngRepeat: slide in slides track by slide.id -->
+                              <div style="" ng-repeat="slide in slides track by slide.id" index="slide.id" ng-class="{'active': active}" class="item text-center ng-scope ng-isolate-scope" ng-transclude="">
+                                 <img src="img/index-img-03.jpg" class="ng-scope" ng-src="img/index-img-03.jpg" style="margin:auto;"/>
+                                 <div class="carousel-caption ng-scope">
+                                    <h1 class="ng-binding" ng-bind-html="::slide.caption">Saiba quem são <strong>os rostos</strong> (e dedos) por trás deste Projeto</h1>
+                                    <p class="hero-btn-para"><a href="http://localhost/sobre#desenvolvedores" ng-href="/sobre#desenvolvedores" class="hero-btn ng-binding" ng-bind-html="::slide.button">Conheça a gente :)</a></p>
+                                 </div>
+                              </div>
+                              <!-- end ngRepeat: slide in slides track by slide.id -->
+                           </div>
+                           <a role="button" href="" class="left carousel-control" ng-click="prev()" ng-class="{ disabled: isPrevDisabled() }" ng-show="slides.length &gt; 1">
+                           <span aria-hidden="true" class="glyphicon glyphicon-chevron-left"></span>
+                           <span class="sr-only">previous</span>
+                           </a>
+                           <a role="button" href="" class="right carousel-control" ng-click="next()" ng-class="{ disabled: isNextDisabled() }" ng-show="slides.length &gt; 1">
+                           <span aria-hidden="true" class="glyphicon glyphicon-chevron-right"></span>
+                           <span class="sr-only">next</span>
+                           </a>
+                           <ol class="carousel-indicators" ng-show="slides.length &gt; 1">
+                              <!-- ngRepeat: slide in slides | orderBy:indexOfSlide track by $index -->
+                              <li style="" class="ng-scope active" ng-repeat="slide in slides | orderBy:indexOfSlide track by $index" ng-class="{ active: isActive(slide) }" ng-click="select(slide)">
+                                 <span class="sr-only ng-binding">
+                                    slide 1 of 3<!-- ngIf: isActive(slide) --><span style="" class="ng-scope" ng-if="isActive(slide)">, currently active</span><!-- end ngIf: isActive(slide) -->
+                                 </span>
+                              </li>
+                              <!-- end ngRepeat: slide in slides | orderBy:indexOfSlide track by $index -->
+                              <li class="ng-scope" ng-repeat="slide in slides | orderBy:indexOfSlide track by $index" ng-class="{ active: isActive(slide) }" ng-click="select(slide)">
+                                 <span class="sr-only ng-binding">
+                                    slide 2 of 3<!-- ngIf: isActive(slide) -->
+                                 </span>
+                              </li>
+                              <!-- end ngRepeat: slide in slides | orderBy:indexOfSlide track by $index -->
+                              <li style="" class="ng-scope" ng-repeat="slide in slides | orderBy:indexOfSlide track by $index" ng-class="{ active: isActive(slide) }" ng-click="select(slide)">
+                                 <span class="sr-only ng-binding">
+                                    slide 3 of 3<!-- ngIf: isActive(slide) -->
+                                 </span>
+                              </li>
+                              <!-- end ngRepeat: slide in slides | orderBy:indexOfSlide track by $index -->
+                           </ol>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="container">
+               <div class="row">
+                  <div class="col-xs-12">
+                     <div class="page-content">
+                        <h1 class="page-title">Algum texto</h1>
+                        <h4 class="page-subtitle">Algum texto vai ficar aqui. Por enquanto, temos Slipsum.</h4>
+                        <hr>
+                        <p>Normally,
+                           both your asses would be dead as fucking fried chicken, but you happen 
+                           to pull this shit while I'm in a transitional period so I don't wanna 
+                           kill you, I wanna help you. But I can't give you this case, it don't 
+                           belong to me. Besides, I've already been through too much shit this 
+                           morning over this case to hand it over to your dumb ass. 
+                        </p>
+                        <p>Well, 
+                           the way they make shows is, they make one show. That show's called a 
+                           pilot. Then they show that show to the people who make shows, and on the
+                           strength of that one show they decide if they're going to make more 
+                           shows. Some pilots get picked and become television programs. Some 
+                           don't, become nothing. She starred in one of the ones that became 
+                           nothing. 
+                        </p>
+                        <p>Your bones don't break, mine do. That's clear. Your 
+                           cells react to bacteria and viruses differently than mine. You don't get
+                           sick, I do. That's also clear. But for some reason, you and I react the
+                           exact same way to water. We swallow it too fast, we choke. We get some 
+                           in our lungs, we drown. However unreal it may seem, we are connected, 
+                           you and I. We're on the same curve, just on opposite ends
+                        </p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+         <footer id="footer">
+         <div class="container">
+            <div class="row">
+               <div class="col-xs-12 col-sm-6">
+                  <a href="https://ajuda.ai/" title="Nome do Projeto" class="link-sistema">Sistema <span class="logo-texto">ajuda.ai</span></a>
+                  <small>, por <a href="https://linkedin.com/in/rafaelmadureiralins" title="Sobre o Desenvolvedor do Sistema" target="_blank">Rafael M. Lins</a></small>
+               </div>
+               <div class="col-xs-12 col-sm-6 text-right github-button">
+                     <iframe src="img/buttons.htm" style="width: 84px; height: 20px; border: medium none;" scrolling="no" allowtransparency="true" frameborder="0"></iframe>
+               </div>
+            </div>
+            <hr>
+            <div class="row">
+               <div class="col-xs-12 col-sm-6 col-md-4">
+                  <h4>Parceiros</h4>
+                  <ul>
+                     <li><a href="http://cidadeverde.com/genteespecial" target="_blank">Gente Especial</a></li>
+                     <li><a href="http://cidadeverde.com/" target="_blank">Cidade Verde</a></li>
+                     <li><a href="http://vikstar.com.br/" target="_blank">Vikstar</a></li>
+                  </ul>
+               </div>
+               <div class="col-xs-12 col-sm-6 col-md-4">
+                  <h4>O Projeto</h4>
+                  <ul>
+                     <li><a href="https://github.com/g0dkar/ajuda-ai" title="Conheça e contribua com o código do projeto no GitHub" target="_blank">GitHub</a></li>
+                     <li><a href="mailto:rafael.lins777@gmail.com?subject=Projeto+Ajuda.Ai" title="Fale comigo :)">Contato</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </footer>
+
+   </body>
+</html>
