@@ -1,5 +1,6 @@
 package ajuda.ai.model.institution;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -20,6 +21,7 @@ import org.hibernate.validator.constraints.URL;
 import ajuda.ai.model.Slug;
 import ajuda.ai.model.billing.PaymentServiceEnum;
 import ajuda.ai.model.extra.CreationInfo;
+import ajuda.ai.util.JsonUtils;
 
 /**
  * Representa uma Instituição que será ajudada por seus {@link InstitutionHelper Ajudantes}
@@ -126,6 +128,10 @@ public class Institution extends Slug {
 
 	public String getPaymentServiceData() {
 		return paymentServiceData;
+	}
+	
+	public Map<String, String> getPaymentServiceDataMap() {
+		return paymentServiceData == null ? null : JsonUtils.fromJson(paymentServiceData, Map.class);
 	}
 
 	public void setPaymentServiceData(final String paymentServiceData) {

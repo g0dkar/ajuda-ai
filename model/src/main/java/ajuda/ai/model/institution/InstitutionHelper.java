@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Pattern.Flag;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -47,8 +49,8 @@ public class InstitutionHelper implements Serializable {
 	private Date timestamp;
 	
 	@NotBlank
-	@Size(max = 255)
-	@Column(nullable = false, length = 255)
+	@Size(max = 128)
+	@Column(nullable = false, length = 128)
 	private String name;
 	
 	@Email
@@ -57,11 +59,21 @@ public class InstitutionHelper implements Serializable {
 	@Column(nullable = false, length = 255)
 	private String email;
 	
+	@Column(length = 32)
+	private String phone;
+	
 	@Column(nullable = false)
 	private boolean allowPublish;
 	
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Payment lastPayment;
+	
+	@Column(length = 36, unique = true)
+	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
+	private String reminderToken;
+	
+	@Temporal(TemporalType.DATE)
+	private Date reminderTokenDate;
 	
 	public Long getId() {
 		return id;
@@ -117,5 +129,29 @@ public class InstitutionHelper implements Serializable {
 
 	public void setLastPayment(final Payment lastPayment) {
 		this.lastPayment = lastPayment;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(final String phone) {
+		this.phone = phone;
+	}
+
+	public String getReminderToken() {
+		return reminderToken;
+	}
+
+	public void setReminderToken(final String reminderToken) {
+		this.reminderToken = reminderToken;
+	}
+
+	public Date getReminderTokenDate() {
+		return reminderTokenDate;
+	}
+
+	public void setReminderTokenDate(final Date reminderTokenDate) {
+		this.reminderTokenDate = reminderTokenDate;
 	}
 }
