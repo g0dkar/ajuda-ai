@@ -91,7 +91,7 @@
 					<div class="col-sm-6">
 						<div class="donation-option donation-option-later" ng-class="{'donation-option-selected': donationOption == 1}" ng-click="donationOption = 1">
 							<h3>Me lembre depois</h3>
-							<p>Não pode doar agora? OK! Usando essa opção você receberá um e-mail a cada semana por 1 mês lhe lembrando de fazer uma Doação (o primeiro vai agora, tudo bem?)</p>
+							<p>Não pode doar agora? OK! Usando essa opção você receberá <strong>1 e-mail a cada semana (na Segunda) por 1 mês</strong> lhe lembrando de fazer essa Doação (o primeiro vai agora, tudo bem?)</p>
 						</div>
 					</div>
 				</div>

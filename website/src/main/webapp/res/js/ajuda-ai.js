@@ -56,19 +56,16 @@
 	}]);
 	
 	app.controller("DonationModalController", ["$scope", "$http", "$window", "$uibModal", "$uibModalInstance", function ($scope, $http, $window, $uibModal, $uibModalInstance) {
-		$scope.donation = { name: "", email: "", phone: "", value: 10 };
+		$scope.remindLater = { name: "", email: "", phone: "" };
 		
 		$scope.working = false;
-		$scope.doDonate = function doDonate(form, evt) {
+		$scope.remindLater = function remindLater(form, evt) {
 			if (form.$valid) {
 				$scope.working = true;
-				var donation = angular.copy($scope.donation);
-				donation.value = donation.value * 100;
-				
-				$http.post(institutionSlug + "/api/doar", donation).then(function (response) {
+				$http.post(institutionSlug + "/api/lembrar", $scope.remindLater).then(function (response) {
 					$scope.working = false;
-					if (!angular.isArray(response)) {
-					$uibModalInstance.close();
+					if (!angular.isArray(response.data)) {
+						$uibModalInstance.close();
 						$uibModal.open({
 							animation: true,
 							templateUrl: "donation-thanks.html",
@@ -76,17 +73,17 @@
 						});
 					}
 					else {
-						$window.alert("Não conseguimos efetuar seu pedido de doação.\n\nDesenvolvedores: Detalhes do erro foram gravados no log.");
+						$window.alert("Não conseguimos efetuar seu pedido de lembrete de doação.\n\nDesenvolvedores: Detalhes do erro foram gravados no log.");
 						if (console && console.log) { console.log("Erro na requisição de Doação", response); }
 					}
 				}, function (response) {
 					$scope.working = false;
-					$window.alert("Não conseguimos efetuar seu pedido de doação. Por favor, aguarde alguns instantes e tente novamente.");
+					$window.alert("Não conseguimos efetuar seu pedido de lembrete de doação. Por favor, aguarde alguns instantes e tente novamente.");
 					if (console && console.log) { console.log("Erro na requisição de Doação", response); }
 				});
 			}
 			else {
-				$window.alert("Por favor, verifique se você preencheu todos os campos obrigatórios (nome, e-mail e valor).");
+				$window.alert("Por favor, verifique se você preencheu todos os campos obrigatórios (nome e e-mail).");
 			}
 			
 			evt.preventDefault();
