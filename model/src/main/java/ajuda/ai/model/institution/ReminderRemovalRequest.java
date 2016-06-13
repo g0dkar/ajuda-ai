@@ -10,9 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 @Entity
-public class RememberRemovalRequest implements Serializable {
+public class ReminderRemovalRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +23,11 @@ public class RememberRemovalRequest implements Serializable {
 	@Column(nullable = false)
 	private Date timestamp;
 	
-	@Column(nullable = false, length = 255)
+	@Size(max = 255)
+	@Column(length = 255)
 	private String reason;
 	
+	@Size(min=36, max = 36)
 	@Column(nullable = false, length = 36)
 	private String token;
 	
