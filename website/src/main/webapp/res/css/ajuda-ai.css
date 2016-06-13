@@ -1,11 +1,11 @@
-/* If you don't want to use the WebFonts JS: @import url(https://fonts.googleapis.com/css?family=Lato:300,400,600); */
+/* If you don't want to use the WebFonts JS: @import url(https://fonts.googleapis.com/css?family=Josefin+Sans:300,400,600); */
 
 body {
 	background: #eceff1;
 	padding-top: 45px;
 }
-.wf-lato-n4-active body {
-	font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+.wf-josefinsans-n4-active body {
+	font-family: "Josefin Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 nav {
@@ -21,7 +21,7 @@ nav {
 }
 nav, #footer {
 	color: #fff;
-	background: #263238;
+	background: #155EA9;
 }
 .nav-div {
 	max-width: 50%;
@@ -35,7 +35,7 @@ nav, #footer {
 	text-align: right;
 }
 #main-logo, .nav-link {
-	color: #cfd8dc;
+	color: #fff;
 	text-decoration: none;
 	display: inline-block;
 	line-height: 45px;
@@ -48,7 +48,7 @@ nav, #footer {
 }
 #main-logo:hover, .nav-link:hover {
 	color: #fff;
-	background: #37474f;
+	background: #153654;
 	text-decoration: none;
 }
 #main-logo {
@@ -73,14 +73,11 @@ nav, #footer {
 	margin: 5px;
 	border-radius: 3px;
 	padding: 0 25px;
-	background: #2e7d32;
+	background: #00C108;
 	font-weight: 600;
 	-webkit-transition: background-color .1s ease;
 	-moz-transition: background-color .1s ease;
 	transition: background-color .1s ease;
-	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.7);
-	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.7);
-	box-shadow: 0 1px 2px rgba(0,0,0,.7);
 }
 .nav-link-btn:hover {
 	background: none;
@@ -99,7 +96,22 @@ nav, #footer {
 	min-width: 100%;
 }
 .hero .hero-img {
-	height: auto;
+	height: 300px;
+}
+
+.hero .hero-banner::after {
+	top: 0px;
+    width: 100%;
+    height: 300px;
+	position: absolute;
+	content: '';
+	left: 0;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.01+0,0.7+100 */
+	background: -moz-linear-gradient(top,  rgba(0,0,0,0.01) 0%, rgba(0,0,0,0.7) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.01) 0%,rgba(0,0,0,0.7) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(0,0,0,0.01) 0%,rgba(0,0,0,0.7) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#03000000', endColorstr='#b3000000',GradientType=0 ); /* IE6-9 */
+
 }
 .hero h1 {
 	font-weight: 300;
@@ -177,14 +189,14 @@ nav, #footer {
 	margin: 10px;
 	height: 70px;
 	line-height: 70px;
+	font-weight: bold;
 	border-radius: 3px;
-	background: #2e7d32;
 	color: #fff;
 	text-shadow: 0 1px 0 rgba(0,0,0,.5);
 	text-align: center;
 	font-size: 24px;
 	cursor: pointer;
-	background: #43a047;
+	background: #3CB141;
 	border-bottom: 2px solid rgba(0,0,0,.3);
 	-webkit-transition: background-color .1s ease;
 	-moz-transition: background-color .1s ease;
@@ -195,13 +207,13 @@ nav, #footer {
 }
 .page-content {
 	background: #fff;
-	padding: 15px;
+	padding: 30px;
 	margin: 30px 0;
 	border-radius: 3px;
 	box-shadow: 0px 1px 2px rgba(0,0,0,.1);
 }
 .page-content h1 {
-	color: #4caf50;
+	color: #E21E3C;
 	font-weight: 600;
 }
 .page-content h2, .page-content h3, .page-content h4, .page-content h5 {
@@ -226,11 +238,61 @@ nav, #footer {
 .page-content blockquote {
 	margin-bottom: 0;
 }
+.modal-dialog {
+	margin-top: 55px !important;
+}
+.modal-body > p:first-child {
+	font-size: 1.25em;
+}
+.donate-modal-body {
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+.donation-option {
+	margin: 15px 0;
+	border: 1px solid #90A4AE;
+	padding: 15px;
+	text-align: center;
+	background: #ECEFF1;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+	box-shadow: 0 1px 2px rgba(0,0,0,.1);
+	-webkit-transition: all .2s ease;
+	-moz-transition: all .2s ease;
+	transition: all .2s ease;
+}
+.donation-option h3 {
+	color: #000;
+	font-weight: 600;
+	margin-top: 0;
+}
+.donation-option-later {
+	cursor: pointer;
+}
+.donation-option:hover, .donation-option-selected {
+	background: #fff;
+	border-color: #78909C;
+	-webkit-box-shadow: 0 2px 4px rgba(0,0,0,.2);
+	-moz-box-shadow: 0 2px 4px rgba(0,0,0,.2);
+	box-shadow: 0 2px 4px rgba(0,0,0,.2);
+}
+.donation-option-selected, .donation-option-selected:hover {
+	background: #E8F5E9;
+	border-color: #4CAF50;
+}
+.donate-form {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px dashed #607D8B;
+}
 #footer {
 	padding: 15px 0;
 }
 #footer hr {
-	border-color: #455a64;
+	border-color: #6CABFF;
 }
 #footer h4 {
 	margin-top: 0;
@@ -251,7 +313,7 @@ nav, #footer {
 }
 #footer small, #footer small > a {
 	font-weight: 300;
-	color: #90a4ae;
+	color: #6CABFF;
 }
 #footer ul {
 	list-style: none;
@@ -260,4 +322,7 @@ nav, #footer {
 }
 .github-button {
 	height: 20px;
+}
+.logo-texto {
+	font-weight: bold;
 }
