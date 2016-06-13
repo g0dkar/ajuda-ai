@@ -12,6 +12,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><c:out value="${title}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda" /> - Ajuda.Ai!</title>
+<link rel="icon" type="image/png" href="/res/img/favicon.png" />
 <%-- for Google --%>
 <meta name="robots" content="index,follow" />
 <meta name="description" content="<c:out value="${description}" default="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!" />" />
@@ -38,7 +39,7 @@
 <link href="${pageContext.request.contextPath}/res/css/ajuda-ai.css" rel="stylesheet" type="text/css">
 
 <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-79132344-1','auto');ga('send', 'pageview');</script>
-<script type="text/javascript">WebFontConfig = {google:{families:["Lato:300,400,600:latin"]}};</script>
+<script type="text/javascript">WebFontConfig = {google:{families:["Josefin+Sans:300,400,600:latin"]}};</script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.min.js"></script>
