@@ -4,1073 +4,824 @@
 
  * Version: 1.3.3 - 2016-05-22
  * License: MIT
- */angular.module("ui.bootstrap", ["ui.bootstrap.tpls","ui.bootstrap.carousel","ui.bootstrap.tooltip","ui.bootstrap.position","ui.bootstrap.stackedMap"]);
-angular.module("ui.bootstrap.tpls", ["uib/template/carousel/carousel.html","uib/template/carousel/slide.html","uib/template/tooltip/tooltip-html-popup.html","uib/template/tooltip/tooltip-popup.html","uib/template/tooltip/tooltip-template-popup.html"]);
-angular.module('ui.bootstrap.carousel', [])
+ */angular.module("ui.bootstrap", ["ui.bootstrap.tpls","ui.bootstrap.modal","ui.bootstrap.stackedMap","ui.bootstrap.position","ui.bootstrap.carousel"]);
+angular.module("ui.bootstrap.tpls", ["uib/template/modal/backdrop.html","uib/template/modal/window.html","uib/template/carousel/carousel.html","uib/template/carousel/slide.html"]);
+angular.module('ui.bootstrap.modal', ['ui.bootstrap.stackedMap', 'ui.bootstrap.position'])
+/**
+ * A helper, internal data structure that stores all references attached to key
+ */
+  .factory('$$multiMap', function() {
+    return {
+      createNew: function() {
+        var map = {};
 
-.controller('UibCarouselController', ['$scope', '$element', '$interval', '$timeout', '$animate', function($scope, $element, $interval, $timeout, $animate) {
-  var self = this,
-    slides = self.slides = $scope.slides = [],
-    SLIDE_DIRECTION = 'uib-slideDirection',
-    currentIndex = $scope.active,
-    currentInterval, isPlaying, bufferedTransitions = [];
+        return {
+          entries: function() {
+            return Object.keys(map).map(function(key) {
+              return {
+                key: key,
+                value: map[key]
+              };
+            });
+          },
+          get: function(key) {
+            return map[key];
+          },
+          hasKey: function(key) {
+            return !!map[key];
+          },
+          keys: function() {
+            return Object.keys(map);
+          },
+          put: function(key, value) {
+            if (!map[key]) {
+              map[key] = [];
+            }
 
-  var destroyed = false;
+            map[key].push(value);
+          },
+          remove: function(key, value) {
+            var values = map[key];
 
-  self.addSlide = function(slide, element) {
-    slides.push({
-      slide: slide,
-      element: element
-    });
-    slides.sort(function(a, b) {
-      return +a.slide.index - +b.slide.index;
-    });
-    //if this is the first slide or the slide is set to active, select it
-    if (slide.index === $scope.active || slides.length === 1 && !angular.isNumber($scope.active)) {
-      if ($scope.$currentTransition) {
-        $scope.$currentTransition = null;
+            if (!values) {
+              return;
+            }
+
+            var idx = values.indexOf(value);
+
+            if (idx !== -1) {
+              values.splice(idx, 1);
+            }
+
+            if (!values.length) {
+              delete map[key];
+            }
+          }
+        };
       }
+    };
+  })
 
-      currentIndex = slide.index;
-      $scope.active = slide.index;
-      setActive(currentIndex);
-      self.select(slides[findSlideIndex(slide)]);
-      if (slides.length === 1) {
-        $scope.play();
+/**
+ * Pluggable resolve mechanism for the modal resolve resolution
+ * Supports UI Router's $resolve service
+ */
+  .provider('$uibResolve', function() {
+    var resolve = this;
+    this.resolver = null;
+
+    this.setResolver = function(resolver) {
+      this.resolver = resolver;
+    };
+
+    this.$get = ['$injector', '$q', function($injector, $q) {
+      var resolver = resolve.resolver ? $injector.get(resolve.resolver) : null;
+      return {
+        resolve: function(invocables, locals, parent, self) {
+          if (resolver) {
+            return resolver.resolve(invocables, locals, parent, self);
+          }
+
+          var promises = [];
+
+          angular.forEach(invocables, function(value) {
+            if (angular.isFunction(value) || angular.isArray(value)) {
+              promises.push($q.resolve($injector.invoke(value)));
+            } else if (angular.isString(value)) {
+              promises.push($q.resolve($injector.get(value)));
+            } else {
+              promises.push($q.resolve(value));
+            }
+          });
+
+          return $q.all(promises).then(function(resolves) {
+            var resolveObj = {};
+            var resolveIter = 0;
+            angular.forEach(invocables, function(value, key) {
+              resolveObj[key] = resolves[resolveIter++];
+            });
+
+            return resolveObj;
+          });
+        }
+      };
+    }];
+  })
+
+/**
+ * A helper directive for the $modal service. It creates a backdrop element.
+ */
+  .directive('uibModalBackdrop', ['$animate', '$injector', '$uibModalStack',
+  function($animate, $injector, $modalStack) {
+    return {
+      replace: true,
+      templateUrl: 'uib/template/modal/backdrop.html',
+      compile: function(tElement, tAttrs) {
+        tElement.addClass(tAttrs.backdropClass);
+        return linkFn;
+      }
+    };
+
+    function linkFn(scope, element, attrs) {
+      if (attrs.modalInClass) {
+        $animate.addClass(element, attrs.modalInClass);
+
+        scope.$on($modalStack.NOW_CLOSING_EVENT, function(e, setIsAsync) {
+          var done = setIsAsync();
+          if (scope.modalOptions.animation) {
+            $animate.removeClass(element, attrs.modalInClass).then(done);
+          } else {
+            done();
+          }
+        });
       }
     }
-  };
+  }])
 
-  self.getCurrentIndex = function() {
-    for (var i = 0; i < slides.length; i++) {
-      if (slides[i].slide.index === currentIndex) {
-        return i;
+  .directive('uibModalWindow', ['$uibModalStack', '$q', '$animateCss', '$document',
+  function($modalStack, $q, $animateCss, $document) {
+    return {
+      scope: {
+        index: '@'
+      },
+      replace: true,
+      transclude: true,
+      templateUrl: function(tElement, tAttrs) {
+        return tAttrs.templateUrl || 'uib/template/modal/window.html';
+      },
+      link: function(scope, element, attrs) {
+        element.addClass(attrs.windowClass || '');
+        element.addClass(attrs.windowTopClass || '');
+        scope.size = attrs.size;
+
+        scope.close = function(evt) {
+          var modal = $modalStack.getTop();
+          if (modal && modal.value.backdrop &&
+            modal.value.backdrop !== 'static' &&
+            evt.target === evt.currentTarget) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            $modalStack.dismiss(modal.key, 'backdrop click');
+          }
+        };
+
+        // moved from template to fix issue #2280
+        element.on('click', scope.close);
+
+        // This property is only added to the scope for the purpose of detecting when this directive is rendered.
+        // We can detect that by using this property in the template associated with this directive and then use
+        // {@link Attribute#$observe} on it. For more details please see {@link TableColumnResize}.
+        scope.$isRendered = true;
+
+        // Deferred object that will be resolved when this modal is render.
+        var modalRenderDeferObj = $q.defer();
+        // Observe function will be called on next digest cycle after compilation, ensuring that the DOM is ready.
+        // In order to use this way of finding whether DOM is ready, we need to observe a scope property used in modal's template.
+        attrs.$observe('modalRender', function(value) {
+          if (value === 'true') {
+            modalRenderDeferObj.resolve();
+          }
+        });
+
+        modalRenderDeferObj.promise.then(function() {
+          var animationPromise = null;
+
+          if (attrs.modalInClass) {
+            animationPromise = $animateCss(element, {
+              addClass: attrs.modalInClass
+            }).start();
+
+            scope.$on($modalStack.NOW_CLOSING_EVENT, function(e, setIsAsync) {
+              var done = setIsAsync();
+              $animateCss(element, {
+                removeClass: attrs.modalInClass
+              }).start().then(done);
+            });
+          }
+
+
+          $q.when(animationPromise).then(function() {
+            // Notify {@link $modalStack} that modal is rendered.
+            var modal = $modalStack.getTop();
+            if (modal) {
+              $modalStack.modalRendered(modal.key);
+            }
+
+            /**
+             * If something within the freshly-opened modal already has focus (perhaps via a
+             * directive that causes focus). then no need to try and focus anything.
+             */
+            if (!($document[0].activeElement && element[0].contains($document[0].activeElement))) {
+              var inputWithAutofocus = element[0].querySelector('[autofocus]');
+              /**
+               * Auto-focusing of a freshly-opened modal element causes any child elements
+               * with the autofocus attribute to lose focus. This is an issue on touch
+               * based devices which will show and then hide the onscreen keyboard.
+               * Attempts to refocus the autofocus element via JavaScript will not reopen
+               * the onscreen keyboard. Fixed by updated the focusing logic to only autofocus
+               * the modal element if the modal does not contain an autofocus element.
+               */
+              if (inputWithAutofocus) {
+                inputWithAutofocus.focus();
+              } else {
+                element[0].focus();
+              }
+            }
+          });
+        });
       }
-    }
-  };
+    };
+  }])
 
-  self.next = $scope.next = function() {
-    var newIndex = (self.getCurrentIndex() + 1) % slides.length;
-
-    if (newIndex === 0 && $scope.noWrap()) {
-      $scope.pause();
-      return;
-    }
-
-    return self.select(slides[newIndex], 'next');
-  };
-
-  self.prev = $scope.prev = function() {
-    var newIndex = self.getCurrentIndex() - 1 < 0 ? slides.length - 1 : self.getCurrentIndex() - 1;
-
-    if ($scope.noWrap() && newIndex === slides.length - 1) {
-      $scope.pause();
-      return;
-    }
-
-    return self.select(slides[newIndex], 'prev');
-  };
-
-  self.removeSlide = function(slide) {
-    var index = findSlideIndex(slide);
-
-    var bufferedIndex = bufferedTransitions.indexOf(slides[index]);
-    if (bufferedIndex !== -1) {
-      bufferedTransitions.splice(bufferedIndex, 1);
-    }
-
-    //get the index of the slide inside the carousel
-    slides.splice(index, 1);
-    if (slides.length > 0 && currentIndex === index) {
-      if (index >= slides.length) {
-        currentIndex = slides.length - 1;
-        $scope.active = currentIndex;
-        setActive(currentIndex);
-        self.select(slides[slides.length - 1]);
-      } else {
-        currentIndex = index;
-        $scope.active = currentIndex;
-        setActive(currentIndex);
-        self.select(slides[index]);
-      }
-    } else if (currentIndex > index) {
-      currentIndex--;
-      $scope.active = currentIndex;
-    }
-
-    //clean the active value when no more slide
-    if (slides.length === 0) {
-      currentIndex = null;
-      $scope.active = null;
-      clearBufferedTransitions();
-    }
-  };
-
-  /* direction: "prev" or "next" */
-  self.select = $scope.select = function(nextSlide, direction) {
-    var nextIndex = findSlideIndex(nextSlide.slide);
-    //Decide direction if it's not given
-    if (direction === undefined) {
-      direction = nextIndex > self.getCurrentIndex() ? 'next' : 'prev';
-    }
-    //Prevent this user-triggered transition from occurring if there is already one in progress
-    if (nextSlide.slide.index !== currentIndex &&
-      !$scope.$currentTransition) {
-      goNext(nextSlide.slide, nextIndex, direction);
-    } else if (nextSlide && nextSlide.slide.index !== currentIndex && $scope.$currentTransition) {
-      bufferedTransitions.push(slides[nextIndex]);
-    }
-  };
-
-  /* Allow outside people to call indexOf on slides array */
-  $scope.indexOfSlide = function(slide) {
-    return +slide.slide.index;
-  };
-
-  $scope.isActive = function(slide) {
-    return $scope.active === slide.slide.index;
-  };
-
-  $scope.isPrevDisabled = function() {
-    return $scope.active === 0 && $scope.noWrap();
-  };
-
-  $scope.isNextDisabled = function() {
-    return $scope.active === slides.length - 1 && $scope.noWrap();
-  };
-
-  $scope.pause = function() {
-    if (!$scope.noPause) {
-      isPlaying = false;
-      resetTimer();
-    }
-  };
-
-  $scope.play = function() {
-    if (!isPlaying) {
-      isPlaying = true;
-      restartTimer();
-    }
-  };
-
-  $scope.$on('$destroy', function() {
-    destroyed = true;
-    resetTimer();
-  });
-
-  $scope.$watch('noTransition', function(noTransition) {
-    $animate.enabled($element, !noTransition);
-  });
-
-  $scope.$watch('interval', restartTimer);
-
-  $scope.$watchCollection('slides', resetTransition);
-
-  $scope.$watch('active', function(index) {
-    if (angular.isNumber(index) && currentIndex !== index) {
-      for (var i = 0; i < slides.length; i++) {
-        if (slides[i].slide.index === index) {
-          index = i;
-          break;
+  .directive('uibModalAnimationClass', function() {
+    return {
+      compile: function(tElement, tAttrs) {
+        if (tAttrs.modalAnimation) {
+          tElement.addClass(tAttrs.uibModalAnimationClass);
         }
       }
+    };
+  })
 
-      var slide = slides[index];
-      if (slide) {
-        setActive(index);
-        self.select(slides[index]);
-        currentIndex = index;
+  .directive('uibModalTransclude', function() {
+    return {
+      link: function(scope, element, attrs, controller, transclude) {
+        transclude(scope.$parent, function(clone) {
+          element.empty();
+          element.append(clone);
+        });
       }
-    }
-  });
+    };
+  })
 
-  function clearBufferedTransitions() {
-    while (bufferedTransitions.length) {
-      bufferedTransitions.shift();
-    }
-  }
+  .factory('$uibModalStack', ['$animate', '$animateCss', '$document',
+    '$compile', '$rootScope', '$q', '$$multiMap', '$$stackedMap', '$uibPosition',
+    function($animate, $animateCss, $document, $compile, $rootScope, $q, $$multiMap, $$stackedMap, $uibPosition) {
+      var OPENED_MODAL_CLASS = 'modal-open';
 
-  function getSlideByIndex(index) {
-    for (var i = 0, l = slides.length; i < l; ++i) {
-      if (slides[i].index === index) {
-        return slides[i];
-      }
-    }
-  }
+      var backdropDomEl, backdropScope;
+      var openedWindows = $$stackedMap.createNew();
+      var openedClasses = $$multiMap.createNew();
+      var $modalStack = {
+        NOW_CLOSING_EVENT: 'modal.stack.now-closing'
+      };
+      var topModalIndex = 0;
+      var previousTopOpenedModal = null;
 
-  function setActive(index) {
-    for (var i = 0; i < slides.length; i++) {
-      slides[i].slide.active = i === index;
-    }
-  }
+      //Modal focus behavior
+      var tabableSelector = 'a[href], area[href], input:not([disabled]), ' +
+        'button:not([disabled]),select:not([disabled]), textarea:not([disabled]), ' +
+        'iframe, object, embed, *[tabindex], *[contenteditable=true]';
+      var scrollbarPadding;
 
-  function goNext(slide, index, direction) {
-    if (destroyed) {
-      return;
-    }
-
-    angular.extend(slide, {direction: direction});
-    angular.extend(slides[currentIndex].slide || {}, {direction: direction});
-    if ($animate.enabled($element) && !$scope.$currentTransition &&
-      slides[index].element && self.slides.length > 1) {
-      slides[index].element.data(SLIDE_DIRECTION, slide.direction);
-      var currentIdx = self.getCurrentIndex();
-
-      if (angular.isNumber(currentIdx) && slides[currentIdx].element) {
-        slides[currentIdx].element.data(SLIDE_DIRECTION, slide.direction);
+      function isVisible(element) {
+        return !!(element.offsetWidth ||
+          element.offsetHeight ||
+          element.getClientRects().length);
       }
 
-      $scope.$currentTransition = true;
-      $animate.on('addClass', slides[index].element, function(element, phase) {
-        if (phase === 'close') {
-          $scope.$currentTransition = null;
-          $animate.off('addClass', element);
-          if (bufferedTransitions.length) {
-            var nextSlide = bufferedTransitions.pop().slide;
-            var nextIndex = nextSlide.index;
-            var nextDirection = nextIndex > self.getCurrentIndex() ? 'next' : 'prev';
-            clearBufferedTransitions();
-
-            goNext(nextSlide, nextIndex, nextDirection);
+      function backdropIndex() {
+        var topBackdropIndex = -1;
+        var opened = openedWindows.keys();
+        for (var i = 0; i < opened.length; i++) {
+          if (openedWindows.get(opened[i]).value.backdrop) {
+            topBackdropIndex = i;
           }
         }
-      });
-    }
 
-    $scope.active = slide.index;
-    currentIndex = slide.index;
-    setActive(index);
-
-    //every time you change slides, reset the timer
-    restartTimer();
-  }
-
-  function findSlideIndex(slide) {
-    for (var i = 0; i < slides.length; i++) {
-      if (slides[i].slide === slide) {
-        return i;
-      }
-    }
-  }
-
-  function resetTimer() {
-    if (currentInterval) {
-      $interval.cancel(currentInterval);
-      currentInterval = null;
-    }
-  }
-
-  function resetTransition(slides) {
-    if (!slides.length) {
-      $scope.$currentTransition = null;
-      clearBufferedTransitions();
-    }
-  }
-
-  function restartTimer() {
-    resetTimer();
-    var interval = +$scope.interval;
-    if (!isNaN(interval) && interval > 0) {
-      currentInterval = $interval(timerFn, interval);
-    }
-  }
-
-  function timerFn() {
-    var interval = +$scope.interval;
-    if (isPlaying && !isNaN(interval) && interval > 0 && slides.length) {
-      $scope.next();
-    } else {
-      $scope.pause();
-    }
-  }
-}])
-
-.directive('uibCarousel', function() {
-  return {
-    transclude: true,
-    replace: true,
-    controller: 'UibCarouselController',
-    controllerAs: 'carousel',
-    templateUrl: function(element, attrs) {
-      return attrs.templateUrl || 'uib/template/carousel/carousel.html';
-    },
-    scope: {
-      active: '=',
-      interval: '=',
-      noTransition: '=',
-      noPause: '=',
-      noWrap: '&'
-    }
-  };
-})
-
-.directive('uibSlide', function() {
-  return {
-    require: '^uibCarousel',
-    transclude: true,
-    replace: true,
-    templateUrl: function(element, attrs) {
-      return attrs.templateUrl || 'uib/template/carousel/slide.html';
-    },
-    scope: {
-      actual: '=?',
-      index: '=?'
-    },
-    link: function (scope, element, attrs, carouselCtrl) {
-      carouselCtrl.addSlide(scope, element);
-      //when the scope is destroyed then remove the slide from the current slides array
-      scope.$on('$destroy', function() {
-        carouselCtrl.removeSlide(scope);
-      });
-    }
-  };
-})
-
-.animation('.item', ['$animateCss',
-function($animateCss) {
-  var SLIDE_DIRECTION = 'uib-slideDirection';
-
-  function removeClass(element, className, callback) {
-    element.removeClass(className);
-    if (callback) {
-      callback();
-    }
-  }
-
-  return {
-    beforeAddClass: function(element, className, done) {
-      if (className === 'active') {
-        var stopped = false;
-        var direction = element.data(SLIDE_DIRECTION);
-        var directionClass = direction === 'next' ? 'left' : 'right';
-        var removeClassFn = removeClass.bind(this, element,
-          directionClass + ' ' + direction, done);
-        element.addClass(direction);
-
-        $animateCss(element, {addClass: directionClass})
-          .start()
-          .done(removeClassFn);
-
-        return function() {
-          stopped = true;
-        };
-      }
-      done();
-    },
-    beforeRemoveClass: function (element, className, done) {
-      if (className === 'active') {
-        var stopped = false;
-        var direction = element.data(SLIDE_DIRECTION);
-        var directionClass = direction === 'next' ? 'left' : 'right';
-        var removeClassFn = removeClass.bind(this, element, directionClass, done);
-
-        $animateCss(element, {addClass: directionClass})
-          .start()
-          .done(removeClassFn);
-
-        return function() {
-          stopped = true;
-        };
-      }
-      done();
-    }
-  };
-}]);
-
-/**
- * The following features are still outstanding: animation as a
- * function, placement as a function, inside, support for more triggers than
- * just mouse enter/leave, html tooltips, and selector delegation.
- */
-angular.module('ui.bootstrap.tooltip', ['ui.bootstrap.position', 'ui.bootstrap.stackedMap'])
-
-/**
- * The $tooltip service creates tooltip- and popover-like directives as well as
- * houses global options for them.
- */
-.provider('$uibTooltip', function() {
-  // The default options tooltip and popover.
-  var defaultOptions = {
-    placement: 'top',
-    placementClassPrefix: '',
-    animation: true,
-    popupDelay: 0,
-    popupCloseDelay: 0,
-    useContentExp: false
-  };
-
-  // Default hide triggers for each show trigger
-  var triggerMap = {
-    'mouseenter': 'mouseleave',
-    'click': 'click',
-    'outsideClick': 'outsideClick',
-    'focus': 'blur',
-    'none': ''
-  };
-
-  // The options specified to the provider globally.
-  var globalOptions = {};
-
-  /**
-   * `options({})` allows global configuration of all tooltips in the
-   * application.
-   *
-   *   var app = angular.module( 'App', ['ui.bootstrap.tooltip'], function( $tooltipProvider ) {
-   *     // place tooltips left instead of top by default
-   *     $tooltipProvider.options( { placement: 'left' } );
-   *   });
-   */
-	this.options = function(value) {
-		angular.extend(globalOptions, value);
-	};
-
-  /**
-   * This allows you to extend the set of trigger mappings available. E.g.:
-   *
-   *   $tooltipProvider.setTriggers( { 'openTrigger': 'closeTrigger' } );
-   */
-  this.setTriggers = function setTriggers(triggers) {
-    angular.extend(triggerMap, triggers);
-  };
-
-  /**
-   * This is a helper function for translating camel-case to snake_case.
-   */
-  function snake_case(name) {
-    var regexp = /[A-Z]/g;
-    var separator = '-';
-    return name.replace(regexp, function(letter, pos) {
-      return (pos ? separator : '') + letter.toLowerCase();
-    });
-  }
-
-  /**
-   * Returns the actual instance of the $tooltip service.
-   * TODO support multiple triggers
-   */
-  this.$get = ['$window', '$compile', '$timeout', '$document', '$uibPosition', '$interpolate', '$rootScope', '$parse', '$$stackedMap', function($window, $compile, $timeout, $document, $position, $interpolate, $rootScope, $parse, $$stackedMap) {
-    var openedTooltips = $$stackedMap.createNew();
-    $document.on('keypress', keypressListener);
-
-    $rootScope.$on('$destroy', function() {
-      $document.off('keypress', keypressListener);
-    });
-
-    function keypressListener(e) {
-      if (e.which === 27) {
-        var last = openedTooltips.top();
-        if (last) {
-          last.value.close();
-          openedTooltips.removeTop();
-          last = null;
+        // If any backdrop exist, ensure that it's index is always
+        // right below the top modal
+        if (topBackdropIndex > -1 && topBackdropIndex < topModalIndex) {
+          topBackdropIndex = topModalIndex;
         }
-      }
-    }
-
-    return function $tooltip(ttType, prefix, defaultTriggerShow, options) {
-      options = angular.extend({}, defaultOptions, globalOptions, options);
-
-      /**
-       * Returns an object of show and hide triggers.
-       *
-       * If a trigger is supplied,
-       * it is used to show the tooltip; otherwise, it will use the `trigger`
-       * option passed to the `$tooltipProvider.options` method; else it will
-       * default to the trigger supplied to this directive factory.
-       *
-       * The hide trigger is based on the show trigger. If the `trigger` option
-       * was passed to the `$tooltipProvider.options` method, it will use the
-       * mapped trigger from `triggerMap` or the passed trigger if the map is
-       * undefined; otherwise, it uses the `triggerMap` value of the show
-       * trigger; else it will just use the show trigger.
-       */
-      function getTriggers(trigger) {
-        var show = (trigger || options.trigger || defaultTriggerShow).split(' ');
-        var hide = show.map(function(trigger) {
-          return triggerMap[trigger] || trigger;
-        });
-        return {
-          show: show,
-          hide: hide
-        };
+        return topBackdropIndex;
       }
 
-      var directiveName = snake_case(ttType);
+      $rootScope.$watch(backdropIndex, function(newBackdropIndex) {
+        if (backdropScope) {
+          backdropScope.index = newBackdropIndex;
+        }
+      });
 
-      var startSym = $interpolate.startSymbol();
-      var endSym = $interpolate.endSymbol();
-      var template =
-        '<div '+ directiveName + '-popup ' +
-          'uib-title="' + startSym + 'title' + endSym + '" ' +
-          (options.useContentExp ?
-            'content-exp="contentExp()" ' :
-            'content="' + startSym + 'content' + endSym + '" ') +
-          'placement="' + startSym + 'placement' + endSym + '" ' +
-          'popup-class="' + startSym + 'popupClass' + endSym + '" ' +
-          'animation="animation" ' +
-          'is-open="isOpen" ' +
-          'origin-scope="origScope" ' +
-          'class="uib-position-measure"' +
-          '>' +
-        '</div>';
+      function removeModalWindow(modalInstance, elementToReceiveFocus) {
+        var modalWindow = openedWindows.get(modalInstance).value;
+        var appendToElement = modalWindow.appendTo;
 
-      return {
-        compile: function(tElem, tAttrs) {
-          var tooltipLinker = $compile(template);
+        //clean up the stack
+        openedWindows.remove(modalInstance);
+        previousTopOpenedModal = openedWindows.top();
+        if (previousTopOpenedModal) {
+          topModalIndex = parseInt(previousTopOpenedModal.value.modalDomEl.attr('index'), 10);
+        }
 
-          return function link(scope, element, attrs, tooltipCtrl) {
-            var tooltip;
-            var tooltipLinkedScope;
-            var transitionTimeout;
-            var showTimeout;
-            var hideTimeout;
-            var positionTimeout;
-            var appendToBody = angular.isDefined(options.appendToBody) ? options.appendToBody : false;
-            var triggers = getTriggers(undefined);
-            var hasEnableExp = angular.isDefined(attrs[prefix + 'Enable']);
-            var ttScope = scope.$new(true);
-            var repositionScheduled = false;
-            var isOpenParse = angular.isDefined(attrs[prefix + 'IsOpen']) ? $parse(attrs[prefix + 'IsOpen']) : false;
-            var contentParse = options.useContentExp ? $parse(attrs[ttType]) : false;
-            var observers = [];
-            var lastPlacement;
-
-            var positionTooltip = function() {
-              // check if tooltip exists and is not empty
-              if (!tooltip || !tooltip.html()) { return; }
-
-              if (!positionTimeout) {
-                positionTimeout = $timeout(function() {
-                  var ttPosition = $position.positionElements(element, tooltip, ttScope.placement, appendToBody);
-                  tooltip.css({ top: ttPosition.top + 'px', left: ttPosition.left + 'px' });
-
-                  if (!tooltip.hasClass(ttPosition.placement.split('-')[0])) {
-                    tooltip.removeClass(lastPlacement.split('-')[0]);
-                    tooltip.addClass(ttPosition.placement.split('-')[0]);
-                  }
-
-                  if (!tooltip.hasClass(options.placementClassPrefix + ttPosition.placement)) {
-                    tooltip.removeClass(options.placementClassPrefix + lastPlacement);
-                    tooltip.addClass(options.placementClassPrefix + ttPosition.placement);
-                  }
-
-                  // first time through tt element will have the
-                  // uib-position-measure class or if the placement
-                  // has changed we need to position the arrow.
-                  if (tooltip.hasClass('uib-position-measure')) {
-                    $position.positionArrow(tooltip, ttPosition.placement);
-                    tooltip.removeClass('uib-position-measure');
-                  } else if (lastPlacement !== ttPosition.placement) {
-                    $position.positionArrow(tooltip, ttPosition.placement);
-                  }
-                  lastPlacement = ttPosition.placement;
-
-                  positionTimeout = null;
-                }, 0, false);
-              }
-            };
-
-            // Set up the correct scope to allow transclusion later
-            ttScope.origScope = scope;
-
-            // By default, the tooltip is not open.
-            // TODO add ability to start tooltip opened
-            ttScope.isOpen = false;
-            openedTooltips.add(ttScope, {
-              close: hide
-            });
-
-            function toggleTooltipBind() {
-              if (!ttScope.isOpen) {
-                showTooltipBind();
-              } else {
-                hideTooltipBind();
-              }
-            }
-
-            // Show the tooltip with delay if specified, otherwise show it immediately
-            function showTooltipBind() {
-              if (hasEnableExp && !scope.$eval(attrs[prefix + 'Enable'])) {
-                return;
-              }
-
-              cancelHide();
-              prepareTooltip();
-
-              if (ttScope.popupDelay) {
-                // Do nothing if the tooltip was already scheduled to pop-up.
-                // This happens if show is triggered multiple times before any hide is triggered.
-                if (!showTimeout) {
-                  showTimeout = $timeout(show, ttScope.popupDelay, false);
-                }
-              } else {
-                show();
-              }
-            }
-
-            function hideTooltipBind() {
-              cancelShow();
-
-              if (ttScope.popupCloseDelay) {
-                if (!hideTimeout) {
-                  hideTimeout = $timeout(hide, ttScope.popupCloseDelay, false);
-                }
-              } else {
-                hide();
-              }
-            }
-
-            // Show the tooltip popup element.
-            function show() {
-              cancelShow();
-              cancelHide();
-
-              // Don't show empty tooltips.
-              if (!ttScope.content) {
-                return angular.noop;
-              }
-
-              createTooltip();
-
-              // And show the tooltip.
-              ttScope.$evalAsync(function() {
-                ttScope.isOpen = true;
-                assignIsOpen(true);
-                positionTooltip();
-              });
-            }
-
-            function cancelShow() {
-              if (showTimeout) {
-                $timeout.cancel(showTimeout);
-                showTimeout = null;
-              }
-
-              if (positionTimeout) {
-                $timeout.cancel(positionTimeout);
-                positionTimeout = null;
-              }
-            }
-
-            // Hide the tooltip popup element.
-            function hide() {
-              if (!ttScope) {
-                return;
-              }
-
-              // First things first: we don't show it anymore.
-              ttScope.$evalAsync(function() {
-                if (ttScope) {
-                  ttScope.isOpen = false;
-                  assignIsOpen(false);
-                  // And now we remove it from the DOM. However, if we have animation, we
-                  // need to wait for it to expire beforehand.
-                  // FIXME: this is a placeholder for a port of the transitions library.
-                  // The fade transition in TWBS is 150ms.
-                  if (ttScope.animation) {
-                    if (!transitionTimeout) {
-                      transitionTimeout = $timeout(removeTooltip, 150, false);
-                    }
-                  } else {
-                    removeTooltip();
-                  }
-                }
-              });
-            }
-
-            function cancelHide() {
-              if (hideTimeout) {
-                $timeout.cancel(hideTimeout);
-                hideTimeout = null;
-              }
-
-              if (transitionTimeout) {
-                $timeout.cancel(transitionTimeout);
-                transitionTimeout = null;
-              }
-            }
-
-            function createTooltip() {
-              // There can only be one tooltip element per directive shown at once.
-              if (tooltip) {
-                return;
-              }
-
-              tooltipLinkedScope = ttScope.$new();
-              tooltip = tooltipLinker(tooltipLinkedScope, function(tooltip) {
-                if (appendToBody) {
-                  $document.find('body').append(tooltip);
-                } else {
-                  element.after(tooltip);
-                }
-              });
-
-              prepObservers();
-            }
-
-            function removeTooltip() {
-              cancelShow();
-              cancelHide();
-              unregisterObservers();
-
-              if (tooltip) {
-                tooltip.remove();
-                tooltip = null;
-              }
-              if (tooltipLinkedScope) {
-                tooltipLinkedScope.$destroy();
-                tooltipLinkedScope = null;
-              }
-            }
-
-            /**
-             * Set the initial scope values. Once
-             * the tooltip is created, the observers
-             * will be added to keep things in sync.
-             */
-            function prepareTooltip() {
-              ttScope.title = attrs[prefix + 'Title'];
-              if (contentParse) {
-                ttScope.content = contentParse(scope);
-              } else {
-                ttScope.content = attrs[ttType];
-              }
-
-              ttScope.popupClass = attrs[prefix + 'Class'];
-              ttScope.placement = angular.isDefined(attrs[prefix + 'Placement']) ? attrs[prefix + 'Placement'] : options.placement;
-              var placement = $position.parsePlacement(ttScope.placement);
-              lastPlacement = placement[1] ? placement[0] + '-' + placement[1] : placement[0];
-
-              var delay = parseInt(attrs[prefix + 'PopupDelay'], 10);
-              var closeDelay = parseInt(attrs[prefix + 'PopupCloseDelay'], 10);
-              ttScope.popupDelay = !isNaN(delay) ? delay : options.popupDelay;
-              ttScope.popupCloseDelay = !isNaN(closeDelay) ? closeDelay : options.popupCloseDelay;
-            }
-
-            function assignIsOpen(isOpen) {
-              if (isOpenParse && angular.isFunction(isOpenParse.assign)) {
-                isOpenParse.assign(scope, isOpen);
-              }
-            }
-
-            ttScope.contentExp = function() {
-              return ttScope.content;
-            };
-
-            /**
-             * Observe the relevant attributes.
-             */
-            attrs.$observe('disabled', function(val) {
-              if (val) {
-                cancelShow();
-              }
-
-              if (val && ttScope.isOpen) {
-                hide();
-              }
-            });
-
-            if (isOpenParse) {
-              scope.$watch(isOpenParse, function(val) {
-                if (ttScope && !val === ttScope.isOpen) {
-                  toggleTooltipBind();
-                }
-              });
-            }
-
-            function prepObservers() {
-              observers.length = 0;
-
-              if (contentParse) {
-                observers.push(
-                  scope.$watch(contentParse, function(val) {
-                    ttScope.content = val;
-                    if (!val && ttScope.isOpen) {
-                      hide();
-                    }
-                  })
-                );
-
-                observers.push(
-                  tooltipLinkedScope.$watch(function() {
-                    if (!repositionScheduled) {
-                      repositionScheduled = true;
-                      tooltipLinkedScope.$$postDigest(function() {
-                        repositionScheduled = false;
-                        if (ttScope && ttScope.isOpen) {
-                          positionTooltip();
-                        }
-                      });
-                    }
-                  })
-                );
-              } else {
-                observers.push(
-                  attrs.$observe(ttType, function(val) {
-                    ttScope.content = val;
-                    if (!val && ttScope.isOpen) {
-                      hide();
-                    } else {
-                      positionTooltip();
-                    }
-                  })
-                );
-              }
-
-              observers.push(
-                attrs.$observe(prefix + 'Title', function(val) {
-                  ttScope.title = val;
-                  if (ttScope.isOpen) {
-                    positionTooltip();
-                  }
-                })
-              );
-
-              observers.push(
-                attrs.$observe(prefix + 'Placement', function(val) {
-                  ttScope.placement = val ? val : options.placement;
-                  if (ttScope.isOpen) {
-                    positionTooltip();
-                  }
-                })
-              );
-            }
-
-            function unregisterObservers() {
-              if (observers.length) {
-                angular.forEach(observers, function(observer) {
-                  observer();
-                });
-                observers.length = 0;
-              }
-            }
-
-            // hide tooltips/popovers for outsideClick trigger
-            function bodyHideTooltipBind(e) {
-              if (!ttScope || !ttScope.isOpen || !tooltip) {
-                return;
-              }
-              // make sure the tooltip/popover link or tool tooltip/popover itself were not clicked
-              if (!element[0].contains(e.target) && !tooltip[0].contains(e.target)) {
-                hideTooltipBind();
-              }
-            }
-
-            var unregisterTriggers = function() {
-              triggers.show.forEach(function(trigger) {
-                if (trigger === 'outsideClick') {
-                  element.off('click', toggleTooltipBind);
-                } else {
-                  element.off(trigger, showTooltipBind);
-                  element.off(trigger, toggleTooltipBind);
-                }
-              });
-              triggers.hide.forEach(function(trigger) {
-                if (trigger === 'outsideClick') {
-                  $document.off('click', bodyHideTooltipBind);
-                } else {
-                  element.off(trigger, hideTooltipBind);
-                }
-              });
-            };
-
-            function prepTriggers() {
-              var val = attrs[prefix + 'Trigger'];
-              unregisterTriggers();
-
-              triggers = getTriggers(val);
-
-              if (triggers.show !== 'none') {
-                triggers.show.forEach(function(trigger, idx) {
-                  if (trigger === 'outsideClick') {
-                    element.on('click', toggleTooltipBind);
-                    $document.on('click', bodyHideTooltipBind);
-                  } else if (trigger === triggers.hide[idx]) {
-                    element.on(trigger, toggleTooltipBind);
-                  } else if (trigger) {
-                    element.on(trigger, showTooltipBind);
-                    element.on(triggers.hide[idx], hideTooltipBind);
-                  }
-
-                  element.on('keypress', function(e) {
-                    if (e.which === 27) {
-                      hideTooltipBind();
-                    }
-                  });
-                });
-              }
-            }
-
-            prepTriggers();
-
-            var animation = scope.$eval(attrs[prefix + 'Animation']);
-            ttScope.animation = angular.isDefined(animation) ? !!animation : options.animation;
-
-            var appendToBodyVal;
-            var appendKey = prefix + 'AppendToBody';
-            if (appendKey in attrs && attrs[appendKey] === undefined) {
-              appendToBodyVal = true;
+        removeAfterAnimate(modalWindow.modalDomEl, modalWindow.modalScope, function() {
+          var modalBodyClass = modalWindow.openedClass || OPENED_MODAL_CLASS;
+          openedClasses.remove(modalBodyClass, modalInstance);
+          var areAnyOpen = openedClasses.hasKey(modalBodyClass);
+          appendToElement.toggleClass(modalBodyClass, areAnyOpen);
+          if (!areAnyOpen && scrollbarPadding && scrollbarPadding.heightOverflow && scrollbarPadding.scrollbarWidth) {
+            if (scrollbarPadding.originalRight) {
+              appendToElement.css({paddingRight: scrollbarPadding.originalRight + 'px'});
             } else {
-              appendToBodyVal = scope.$eval(attrs[appendKey]);
+              appendToElement.css({paddingRight: ''});
             }
+            scrollbarPadding = null;
+          }
+          toggleTopWindowClass(true);
+        }, modalWindow.closedDeferred);
+        checkRemoveBackdrop();
 
-            appendToBody = angular.isDefined(appendToBodyVal) ? appendToBodyVal : appendToBody;
+        //move focus to specified element if available, or else to body
+        if (elementToReceiveFocus && elementToReceiveFocus.focus) {
+          elementToReceiveFocus.focus();
+        } else if (appendToElement.focus) {
+          appendToElement.focus();
+        }
+      }
 
-            // Make sure tooltip is destroyed and removed.
-            scope.$on('$destroy', function onDestroyTooltip() {
-              unregisterTriggers();
-              removeTooltip();
-              openedTooltips.remove(ttScope);
-              ttScope = null;
-            });
+      // Add or remove "windowTopClass" from the top window in the stack
+      function toggleTopWindowClass(toggleSwitch) {
+        var modalWindow;
+
+        if (openedWindows.length() > 0) {
+          modalWindow = openedWindows.top().value;
+          modalWindow.modalDomEl.toggleClass(modalWindow.windowTopClass || '', toggleSwitch);
+        }
+      }
+
+      function checkRemoveBackdrop() {
+        //remove backdrop if no longer needed
+        if (backdropDomEl && backdropIndex() === -1) {
+          var backdropScopeRef = backdropScope;
+          removeAfterAnimate(backdropDomEl, backdropScope, function() {
+            backdropScopeRef = null;
+          });
+          backdropDomEl = undefined;
+          backdropScope = undefined;
+        }
+      }
+
+      function removeAfterAnimate(domEl, scope, done, closedDeferred) {
+        var asyncDeferred;
+        var asyncPromise = null;
+        var setIsAsync = function() {
+          if (!asyncDeferred) {
+            asyncDeferred = $q.defer();
+            asyncPromise = asyncDeferred.promise;
+          }
+
+          return function asyncDone() {
+            asyncDeferred.resolve();
           };
-        }
-      };
-    };
-  }];
-})
+        };
+        scope.$broadcast($modalStack.NOW_CLOSING_EVENT, setIsAsync);
 
-// This is mostly ngInclude code but with a custom scope
-.directive('uibTooltipTemplateTransclude', [
-         '$animate', '$sce', '$compile', '$templateRequest',
-function ($animate, $sce, $compile, $templateRequest) {
-  return {
-    link: function(scope, elem, attrs) {
-      var origScope = scope.$eval(attrs.tooltipTemplateTranscludeScope);
+        // Note that it's intentional that asyncPromise might be null.
+        // That's when setIsAsync has not been called during the
+        // NOW_CLOSING_EVENT broadcast.
+        return $q.when(asyncPromise).then(afterAnimating);
 
-      var changeCounter = 0,
-        currentScope,
-        previousElement,
-        currentElement;
+        function afterAnimating() {
+          if (afterAnimating.done) {
+            return;
+          }
+          afterAnimating.done = true;
 
-      var cleanupLastIncludeContent = function() {
-        if (previousElement) {
-          previousElement.remove();
-          previousElement = null;
-        }
-
-        if (currentScope) {
-          currentScope.$destroy();
-          currentScope = null;
-        }
-
-        if (currentElement) {
-          $animate.leave(currentElement).then(function() {
-            previousElement = null;
-          });
-          previousElement = currentElement;
-          currentElement = null;
-        }
-      };
-
-      scope.$watch($sce.parseAsResourceUrl(attrs.uibTooltipTemplateTransclude), function(src) {
-        var thisChangeId = ++changeCounter;
-
-        if (src) {
-          //set the 2nd param to true to ignore the template request error so that the inner
-          //contents and scope can be cleaned up.
-          $templateRequest(src, true).then(function(response) {
-            if (thisChangeId !== changeCounter) { return; }
-            var newScope = origScope.$new();
-            var template = response;
-
-            var clone = $compile(template)(newScope, function(clone) {
-              cleanupLastIncludeContent();
-              $animate.enter(clone, elem);
-            });
-
-            currentScope = newScope;
-            currentElement = clone;
-
-            currentScope.$emit('$includeContentLoaded', src);
-          }, function() {
-            if (thisChangeId === changeCounter) {
-              cleanupLastIncludeContent();
-              scope.$emit('$includeContentError', src);
+          $animate.leave(domEl).then(function() {
+            domEl.remove();
+            if (closedDeferred) {
+              closedDeferred.resolve();
             }
           });
-          scope.$emit('$includeContentRequested', src);
-        } else {
-          cleanupLastIncludeContent();
+
+          scope.$destroy();
+          if (done) {
+            done();
+          }
         }
+      }
+
+      $document.on('keydown', keydownListener);
+
+      $rootScope.$on('$destroy', function() {
+        $document.off('keydown', keydownListener);
       });
 
-      scope.$on('$destroy', cleanupLastIncludeContent);
-    }
-  };
-}])
+      function keydownListener(evt) {
+        if (evt.isDefaultPrevented()) {
+          return evt;
+        }
 
+        var modal = openedWindows.top();
+        if (modal) {
+          switch (evt.which) {
+            case 27: {
+              if (modal.value.keyboard) {
+                evt.preventDefault();
+                $rootScope.$apply(function() {
+                  $modalStack.dismiss(modal.key, 'escape key press');
+                });
+              }
+              break;
+            }
+            case 9: {
+              var list = $modalStack.loadFocusElementList(modal);
+              var focusChanged = false;
+              if (evt.shiftKey) {
+                if ($modalStack.isFocusInFirstItem(evt, list) || $modalStack.isModalFocused(evt, modal)) {
+                  focusChanged = $modalStack.focusLastFocusableElement(list);
+                }
+              } else {
+                if ($modalStack.isFocusInLastItem(evt, list)) {
+                  focusChanged = $modalStack.focusFirstFocusableElement(list);
+                }
+              }
+
+              if (focusChanged) {
+                evt.preventDefault();
+                evt.stopPropagation();
+              }
+
+              break;
+            }
+          }
+        }
+      }
+
+      $modalStack.open = function(modalInstance, modal) {
+        var modalOpener = $document[0].activeElement,
+          modalBodyClass = modal.openedClass || OPENED_MODAL_CLASS;
+
+        toggleTopWindowClass(false);
+
+        // Store the current top first, to determine what index we ought to use
+        // for the current top modal
+        previousTopOpenedModal = openedWindows.top();
+
+        openedWindows.add(modalInstance, {
+          deferred: modal.deferred,
+          renderDeferred: modal.renderDeferred,
+          closedDeferred: modal.closedDeferred,
+          modalScope: modal.scope,
+          backdrop: modal.backdrop,
+          keyboard: modal.keyboard,
+          openedClass: modal.openedClass,
+          windowTopClass: modal.windowTopClass,
+          animation: modal.animation,
+          appendTo: modal.appendTo
+        });
+
+        openedClasses.put(modalBodyClass, modalInstance);
+
+        var appendToElement = modal.appendTo,
+            currBackdropIndex = backdropIndex();
+
+        if (!appendToElement.length) {
+          throw new Error('appendTo element not found. Make sure that the element passed is in DOM.');
+        }
+
+        if (currBackdropIndex >= 0 && !backdropDomEl) {
+          backdropScope = $rootScope.$new(true);
+          backdropScope.modalOptions = modal;
+          backdropScope.index = currBackdropIndex;
+          backdropDomEl = angular.element('<div uib-modal-backdrop="modal-backdrop"></div>');
+          backdropDomEl.attr('backdrop-class', modal.backdropClass);
+          if (modal.animation) {
+            backdropDomEl.attr('modal-animation', 'true');
+          }
+          $compile(backdropDomEl)(backdropScope);
+          $animate.enter(backdropDomEl, appendToElement);
+          scrollbarPadding = $uibPosition.scrollbarPadding(appendToElement);
+          if (scrollbarPadding.heightOverflow && scrollbarPadding.scrollbarWidth) {
+            appendToElement.css({paddingRight: scrollbarPadding.right + 'px'});
+          }
+        }
+
+        // Set the top modal index based on the index of the previous top modal
+        topModalIndex = previousTopOpenedModal ? parseInt(previousTopOpenedModal.value.modalDomEl.attr('index'), 10) + 1 : 0;
+        var angularDomEl = angular.element('<div uib-modal-window="modal-window"></div>');
+        angularDomEl.attr({
+          'template-url': modal.windowTemplateUrl,
+          'window-class': modal.windowClass,
+          'window-top-class': modal.windowTopClass,
+          'size': modal.size,
+          'index': topModalIndex,
+          'animate': 'animate'
+        }).html(modal.content);
+        if (modal.animation) {
+          angularDomEl.attr('modal-animation', 'true');
+        }
+
+        appendToElement.addClass(modalBodyClass);
+        $animate.enter($compile(angularDomEl)(modal.scope), appendToElement);
+
+        openedWindows.top().value.modalDomEl = angularDomEl;
+        openedWindows.top().value.modalOpener = modalOpener;
+      };
+
+      function broadcastClosing(modalWindow, resultOrReason, closing) {
+        return !modalWindow.value.modalScope.$broadcast('modal.closing', resultOrReason, closing).defaultPrevented;
+      }
+
+      $modalStack.close = function(modalInstance, result) {
+        var modalWindow = openedWindows.get(modalInstance);
+        if (modalWindow && broadcastClosing(modalWindow, result, true)) {
+          modalWindow.value.modalScope.$$uibDestructionScheduled = true;
+          modalWindow.value.deferred.resolve(result);
+          removeModalWindow(modalInstance, modalWindow.value.modalOpener);
+          return true;
+        }
+        return !modalWindow;
+      };
+
+      $modalStack.dismiss = function(modalInstance, reason) {
+        var modalWindow = openedWindows.get(modalInstance);
+        if (modalWindow && broadcastClosing(modalWindow, reason, false)) {
+          modalWindow.value.modalScope.$$uibDestructionScheduled = true;
+          modalWindow.value.deferred.reject(reason);
+          removeModalWindow(modalInstance, modalWindow.value.modalOpener);
+          return true;
+        }
+        return !modalWindow;
+      };
+
+      $modalStack.dismissAll = function(reason) {
+        var topModal = this.getTop();
+        while (topModal && this.dismiss(topModal.key, reason)) {
+          topModal = this.getTop();
+        }
+      };
+
+      $modalStack.getTop = function() {
+        return openedWindows.top();
+      };
+
+      $modalStack.modalRendered = function(modalInstance) {
+        var modalWindow = openedWindows.get(modalInstance);
+        if (modalWindow) {
+          modalWindow.value.renderDeferred.resolve();
+        }
+      };
+
+      $modalStack.focusFirstFocusableElement = function(list) {
+        if (list.length > 0) {
+          list[0].focus();
+          return true;
+        }
+        return false;
+      };
+
+      $modalStack.focusLastFocusableElement = function(list) {
+        if (list.length > 0) {
+          list[list.length - 1].focus();
+          return true;
+        }
+        return false;
+      };
+
+      $modalStack.isModalFocused = function(evt, modalWindow) {
+        if (evt && modalWindow) {
+          var modalDomEl = modalWindow.value.modalDomEl;
+          if (modalDomEl && modalDomEl.length) {
+            return (evt.target || evt.srcElement) === modalDomEl[0];
+          }
+        }
+        return false;
+      };
+
+      $modalStack.isFocusInFirstItem = function(evt, list) {
+        if (list.length > 0) {
+          return (evt.target || evt.srcElement) === list[0];
+        }
+        return false;
+      };
+
+      $modalStack.isFocusInLastItem = function(evt, list) {
+        if (list.length > 0) {
+          return (evt.target || evt.srcElement) === list[list.length - 1];
+        }
+        return false;
+      };
+
+      $modalStack.loadFocusElementList = function(modalWindow) {
+        if (modalWindow) {
+          var modalDomE1 = modalWindow.value.modalDomEl;
+          if (modalDomE1 && modalDomE1.length) {
+            var elements = modalDomE1[0].querySelectorAll(tabableSelector);
+            return elements ?
+              Array.prototype.filter.call(elements, function(element) {
+                return isVisible(element);
+              }) : elements;
+          }
+        }
+      };
+
+      return $modalStack;
+    }])
+
+  .provider('$uibModal', function() {
+    var $modalProvider = {
+      options: {
+        animation: true,
+        backdrop: true, //can also be false or 'static'
+        keyboard: true
+      },
+      $get: ['$rootScope', '$q', '$document', '$templateRequest', '$controller', '$uibResolve', '$uibModalStack',
+        function ($rootScope, $q, $document, $templateRequest, $controller, $uibResolve, $modalStack) {
+          var $modal = {};
+
+          function getTemplatePromise(options) {
+            return options.template ? $q.when(options.template) :
+              $templateRequest(angular.isFunction(options.templateUrl) ?
+                options.templateUrl() : options.templateUrl);
+          }
+
+          var promiseChain = null;
+          $modal.getPromiseChain = function() {
+            return promiseChain;
+          };
+
+          $modal.open = function(modalOptions) {
+            var modalResultDeferred = $q.defer();
+            var modalOpenedDeferred = $q.defer();
+            var modalClosedDeferred = $q.defer();
+            var modalRenderDeferred = $q.defer();
+
+            //prepare an instance of a modal to be injected into controllers and returned to a caller
+            var modalInstance = {
+              result: modalResultDeferred.promise,
+              opened: modalOpenedDeferred.promise,
+              closed: modalClosedDeferred.promise,
+              rendered: modalRenderDeferred.promise,
+              close: function (result) {
+                return $modalStack.close(modalInstance, result);
+              },
+              dismiss: function (reason) {
+                return $modalStack.dismiss(modalInstance, reason);
+              }
+            };
+
+            //merge and clean up options
+            modalOptions = angular.extend({}, $modalProvider.options, modalOptions);
+            modalOptions.resolve = modalOptions.resolve || {};
+            modalOptions.appendTo = modalOptions.appendTo || $document.find('body').eq(0);
+
+            //verify options
+            if (!modalOptions.template && !modalOptions.templateUrl) {
+              throw new Error('One of template or templateUrl options is required.');
+            }
+
+            var templateAndResolvePromise =
+              $q.all([getTemplatePromise(modalOptions), $uibResolve.resolve(modalOptions.resolve, {}, null, null)]);
+
+            function resolveWithTemplate() {
+              return templateAndResolvePromise;
+            }
+
+            // Wait for the resolution of the existing promise chain.
+            // Then switch to our own combined promise dependency (regardless of how the previous modal fared).
+            // Then add to $modalStack and resolve opened.
+            // Finally clean up the chain variable if no subsequent modal has overwritten it.
+            var samePromise;
+            samePromise = promiseChain = $q.all([promiseChain])
+              .then(resolveWithTemplate, resolveWithTemplate)
+              .then(function resolveSuccess(tplAndVars) {
+                var providedScope = modalOptions.scope || $rootScope;
+
+                var modalScope = providedScope.$new();
+                modalScope.$close = modalInstance.close;
+                modalScope.$dismiss = modalInstance.dismiss;
+
+                modalScope.$on('$destroy', function() {
+                  if (!modalScope.$$uibDestructionScheduled) {
+                    modalScope.$dismiss('$uibUnscheduledDestruction');
+                  }
+                });
+
+                var ctrlInstance, ctrlInstantiate, ctrlLocals = {};
+
+                //controllers
+                if (modalOptions.controller) {
+                  ctrlLocals.$scope = modalScope;
+                  ctrlLocals.$scope.$resolve = {};
+                  ctrlLocals.$uibModalInstance = modalInstance;
+                  angular.forEach(tplAndVars[1], function(value, key) {
+                    ctrlLocals[key] = value;
+                    ctrlLocals.$scope.$resolve[key] = value;
+                  });
+
+                  // the third param will make the controller instantiate later,private api
+                  // @see https://github.com/angular/angular.js/blob/master/src/ng/controller.js#L126
+                  ctrlInstantiate = $controller(modalOptions.controller, ctrlLocals, true, modalOptions.controllerAs);
+                  if (modalOptions.controllerAs && modalOptions.bindToController) {
+                    ctrlInstance = ctrlInstantiate.instance;
+                    ctrlInstance.$close = modalScope.$close;
+                    ctrlInstance.$dismiss = modalScope.$dismiss;
+                    angular.extend(ctrlInstance, {
+                      $resolve: ctrlLocals.$scope.$resolve
+                    }, providedScope);
+                  }
+
+                  ctrlInstance = ctrlInstantiate();
+
+                  if (angular.isFunction(ctrlInstance.$onInit)) {
+                    ctrlInstance.$onInit();
+                  }
+                }
+
+                $modalStack.open(modalInstance, {
+                  scope: modalScope,
+                  deferred: modalResultDeferred,
+                  renderDeferred: modalRenderDeferred,
+                  closedDeferred: modalClosedDeferred,
+                  content: tplAndVars[0],
+                  animation: modalOptions.animation,
+                  backdrop: modalOptions.backdrop,
+                  keyboard: modalOptions.keyboard,
+                  backdropClass: modalOptions.backdropClass,
+                  windowTopClass: modalOptions.windowTopClass,
+                  windowClass: modalOptions.windowClass,
+                  windowTemplateUrl: modalOptions.windowTemplateUrl,
+                  size: modalOptions.size,
+                  openedClass: modalOptions.openedClass,
+                  appendTo: modalOptions.appendTo
+                });
+                modalOpenedDeferred.resolve(true);
+
+            }, function resolveError(reason) {
+              modalOpenedDeferred.reject(reason);
+              modalResultDeferred.reject(reason);
+            })['finally'](function() {
+              if (promiseChain === samePromise) {
+                promiseChain = null;
+              }
+            });
+
+            return modalInstance;
+          };
+
+          return $modal;
+        }
+      ]
+    };
+
+    return $modalProvider;
+  });
+
+angular.module('ui.bootstrap.stackedMap', [])
 /**
- * Note that it's intentional that these classes are *not* applied through $animate.
- * They must not be animated as they're expected to be present on the tooltip on
- * initialization.
+ * A helper, internal data structure that acts as a map but also allows getting / removing
+ * elements in the LIFO order
  */
-.directive('uibTooltipClasses', ['$uibPosition', function($uibPosition) {
-  return {
-    restrict: 'A',
-    link: function(scope, element, attrs) {
-      // need to set the primary position so the
-      // arrow has space during position measure.
-      // tooltip.positionTooltip()
-      if (scope.placement) {
-        // // There are no top-left etc... classes
-        // // in TWBS, so we need the primary position.
-        var position = $uibPosition.parsePlacement(scope.placement);
-        element.addClass(position[0]);
+  .factory('$$stackedMap', function() {
+    return {
+      createNew: function() {
+        var stack = [];
+
+        return {
+          add: function(key, value) {
+            stack.push({
+              key: key,
+              value: value
+            });
+          },
+          get: function(key) {
+            for (var i = 0; i < stack.length; i++) {
+              if (key === stack[i].key) {
+                return stack[i];
+              }
+            }
+          },
+          keys: function() {
+            var keys = [];
+            for (var i = 0; i < stack.length; i++) {
+              keys.push(stack[i].key);
+            }
+            return keys;
+          },
+          top: function() {
+            return stack[stack.length - 1];
+          },
+          remove: function(key) {
+            var idx = -1;
+            for (var i = 0; i < stack.length; i++) {
+              if (key === stack[i].key) {
+                idx = i;
+                break;
+              }
+            }
+            return stack.splice(idx, 1)[0];
+          },
+          removeTop: function() {
+            return stack.splice(stack.length - 1, 1)[0];
+          },
+          length: function() {
+            return stack.length;
+          }
+        };
       }
-
-      if (scope.popupClass) {
-        element.addClass(scope.popupClass);
-      }
-
-      if (scope.animation()) {
-        element.addClass(attrs.tooltipAnimationClass);
-      }
-    }
-  };
-}])
-
-.directive('uibTooltipPopup', function() {
-  return {
-    replace: true,
-    scope: { content: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
-    templateUrl: 'uib/template/tooltip/tooltip-popup.html'
-  };
-})
-
-.directive('uibTooltip', [ '$uibTooltip', function($uibTooltip) {
-  return $uibTooltip('uibTooltip', 'tooltip', 'mouseenter');
-}])
-
-.directive('uibTooltipTemplatePopup', function() {
-  return {
-    replace: true,
-    scope: { contentExp: '&', placement: '@', popupClass: '@', animation: '&', isOpen: '&',
-      originScope: '&' },
-    templateUrl: 'uib/template/tooltip/tooltip-template-popup.html'
-  };
-})
-
-.directive('uibTooltipTemplate', ['$uibTooltip', function($uibTooltip) {
-  return $uibTooltip('uibTooltipTemplate', 'tooltip', 'mouseenter', {
-    useContentExp: true
+    };
   });
-}])
-
-.directive('uibTooltipHtmlPopup', function() {
-  return {
-    replace: true,
-    scope: { contentExp: '&', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
-    templateUrl: 'uib/template/tooltip/tooltip-html-popup.html'
-  };
-})
-
-.directive('uibTooltipHtml', ['$uibTooltip', function($uibTooltip) {
-  return $uibTooltip('uibTooltipHtml', 'tooltip', 'mouseenter', {
-    useContentExp: true
-  });
-}]);
-
 angular.module('ui.bootstrap.position', [])
 
 /**
@@ -1672,60 +1423,398 @@ angular.module('ui.bootstrap.position', [])
     };
   }]);
 
-angular.module('ui.bootstrap.stackedMap', [])
-/**
- * A helper, internal data structure that acts as a map but also allows getting / removing
- * elements in the LIFO order
- */
-  .factory('$$stackedMap', function() {
-    return {
-      createNew: function() {
-        var stack = [];
+angular.module('ui.bootstrap.carousel', [])
 
-        return {
-          add: function(key, value) {
-            stack.push({
-              key: key,
-              value: value
-            });
-          },
-          get: function(key) {
-            for (var i = 0; i < stack.length; i++) {
-              if (key === stack[i].key) {
-                return stack[i];
-              }
-            }
-          },
-          keys: function() {
-            var keys = [];
-            for (var i = 0; i < stack.length; i++) {
-              keys.push(stack[i].key);
-            }
-            return keys;
-          },
-          top: function() {
-            return stack[stack.length - 1];
-          },
-          remove: function(key) {
-            var idx = -1;
-            for (var i = 0; i < stack.length; i++) {
-              if (key === stack[i].key) {
-                idx = i;
-                break;
-              }
-            }
-            return stack.splice(idx, 1)[0];
-          },
-          removeTop: function() {
-            return stack.splice(stack.length - 1, 1)[0];
-          },
-          length: function() {
-            return stack.length;
+.controller('UibCarouselController', ['$scope', '$element', '$interval', '$timeout', '$animate', function($scope, $element, $interval, $timeout, $animate) {
+  var self = this,
+    slides = self.slides = $scope.slides = [],
+    SLIDE_DIRECTION = 'uib-slideDirection',
+    currentIndex = $scope.active,
+    currentInterval, isPlaying, bufferedTransitions = [];
+
+  var destroyed = false;
+
+  self.addSlide = function(slide, element) {
+    slides.push({
+      slide: slide,
+      element: element
+    });
+    slides.sort(function(a, b) {
+      return +a.slide.index - +b.slide.index;
+    });
+    //if this is the first slide or the slide is set to active, select it
+    if (slide.index === $scope.active || slides.length === 1 && !angular.isNumber($scope.active)) {
+      if ($scope.$currentTransition) {
+        $scope.$currentTransition = null;
+      }
+
+      currentIndex = slide.index;
+      $scope.active = slide.index;
+      setActive(currentIndex);
+      self.select(slides[findSlideIndex(slide)]);
+      if (slides.length === 1) {
+        $scope.play();
+      }
+    }
+  };
+
+  self.getCurrentIndex = function() {
+    for (var i = 0; i < slides.length; i++) {
+      if (slides[i].slide.index === currentIndex) {
+        return i;
+      }
+    }
+  };
+
+  self.next = $scope.next = function() {
+    var newIndex = (self.getCurrentIndex() + 1) % slides.length;
+
+    if (newIndex === 0 && $scope.noWrap()) {
+      $scope.pause();
+      return;
+    }
+
+    return self.select(slides[newIndex], 'next');
+  };
+
+  self.prev = $scope.prev = function() {
+    var newIndex = self.getCurrentIndex() - 1 < 0 ? slides.length - 1 : self.getCurrentIndex() - 1;
+
+    if ($scope.noWrap() && newIndex === slides.length - 1) {
+      $scope.pause();
+      return;
+    }
+
+    return self.select(slides[newIndex], 'prev');
+  };
+
+  self.removeSlide = function(slide) {
+    var index = findSlideIndex(slide);
+
+    var bufferedIndex = bufferedTransitions.indexOf(slides[index]);
+    if (bufferedIndex !== -1) {
+      bufferedTransitions.splice(bufferedIndex, 1);
+    }
+
+    //get the index of the slide inside the carousel
+    slides.splice(index, 1);
+    if (slides.length > 0 && currentIndex === index) {
+      if (index >= slides.length) {
+        currentIndex = slides.length - 1;
+        $scope.active = currentIndex;
+        setActive(currentIndex);
+        self.select(slides[slides.length - 1]);
+      } else {
+        currentIndex = index;
+        $scope.active = currentIndex;
+        setActive(currentIndex);
+        self.select(slides[index]);
+      }
+    } else if (currentIndex > index) {
+      currentIndex--;
+      $scope.active = currentIndex;
+    }
+
+    //clean the active value when no more slide
+    if (slides.length === 0) {
+      currentIndex = null;
+      $scope.active = null;
+      clearBufferedTransitions();
+    }
+  };
+
+  /* direction: "prev" or "next" */
+  self.select = $scope.select = function(nextSlide, direction) {
+    var nextIndex = findSlideIndex(nextSlide.slide);
+    //Decide direction if it's not given
+    if (direction === undefined) {
+      direction = nextIndex > self.getCurrentIndex() ? 'next' : 'prev';
+    }
+    //Prevent this user-triggered transition from occurring if there is already one in progress
+    if (nextSlide.slide.index !== currentIndex &&
+      !$scope.$currentTransition) {
+      goNext(nextSlide.slide, nextIndex, direction);
+    } else if (nextSlide && nextSlide.slide.index !== currentIndex && $scope.$currentTransition) {
+      bufferedTransitions.push(slides[nextIndex]);
+    }
+  };
+
+  /* Allow outside people to call indexOf on slides array */
+  $scope.indexOfSlide = function(slide) {
+    return +slide.slide.index;
+  };
+
+  $scope.isActive = function(slide) {
+    return $scope.active === slide.slide.index;
+  };
+
+  $scope.isPrevDisabled = function() {
+    return $scope.active === 0 && $scope.noWrap();
+  };
+
+  $scope.isNextDisabled = function() {
+    return $scope.active === slides.length - 1 && $scope.noWrap();
+  };
+
+  $scope.pause = function() {
+    if (!$scope.noPause) {
+      isPlaying = false;
+      resetTimer();
+    }
+  };
+
+  $scope.play = function() {
+    if (!isPlaying) {
+      isPlaying = true;
+      restartTimer();
+    }
+  };
+
+  $scope.$on('$destroy', function() {
+    destroyed = true;
+    resetTimer();
+  });
+
+  $scope.$watch('noTransition', function(noTransition) {
+    $animate.enabled($element, !noTransition);
+  });
+
+  $scope.$watch('interval', restartTimer);
+
+  $scope.$watchCollection('slides', resetTransition);
+
+  $scope.$watch('active', function(index) {
+    if (angular.isNumber(index) && currentIndex !== index) {
+      for (var i = 0; i < slides.length; i++) {
+        if (slides[i].slide.index === index) {
+          index = i;
+          break;
+        }
+      }
+
+      var slide = slides[index];
+      if (slide) {
+        setActive(index);
+        self.select(slides[index]);
+        currentIndex = index;
+      }
+    }
+  });
+
+  function clearBufferedTransitions() {
+    while (bufferedTransitions.length) {
+      bufferedTransitions.shift();
+    }
+  }
+
+  function getSlideByIndex(index) {
+    for (var i = 0, l = slides.length; i < l; ++i) {
+      if (slides[i].index === index) {
+        return slides[i];
+      }
+    }
+  }
+
+  function setActive(index) {
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].slide.active = i === index;
+    }
+  }
+
+  function goNext(slide, index, direction) {
+    if (destroyed) {
+      return;
+    }
+
+    angular.extend(slide, {direction: direction});
+    angular.extend(slides[currentIndex].slide || {}, {direction: direction});
+    if ($animate.enabled($element) && !$scope.$currentTransition &&
+      slides[index].element && self.slides.length > 1) {
+      slides[index].element.data(SLIDE_DIRECTION, slide.direction);
+      var currentIdx = self.getCurrentIndex();
+
+      if (angular.isNumber(currentIdx) && slides[currentIdx].element) {
+        slides[currentIdx].element.data(SLIDE_DIRECTION, slide.direction);
+      }
+
+      $scope.$currentTransition = true;
+      $animate.on('addClass', slides[index].element, function(element, phase) {
+        if (phase === 'close') {
+          $scope.$currentTransition = null;
+          $animate.off('addClass', element);
+          if (bufferedTransitions.length) {
+            var nextSlide = bufferedTransitions.pop().slide;
+            var nextIndex = nextSlide.index;
+            var nextDirection = nextIndex > self.getCurrentIndex() ? 'next' : 'prev';
+            clearBufferedTransitions();
+
+            goNext(nextSlide, nextIndex, nextDirection);
           }
+        }
+      });
+    }
+
+    $scope.active = slide.index;
+    currentIndex = slide.index;
+    setActive(index);
+
+    //every time you change slides, reset the timer
+    restartTimer();
+  }
+
+  function findSlideIndex(slide) {
+    for (var i = 0; i < slides.length; i++) {
+      if (slides[i].slide === slide) {
+        return i;
+      }
+    }
+  }
+
+  function resetTimer() {
+    if (currentInterval) {
+      $interval.cancel(currentInterval);
+      currentInterval = null;
+    }
+  }
+
+  function resetTransition(slides) {
+    if (!slides.length) {
+      $scope.$currentTransition = null;
+      clearBufferedTransitions();
+    }
+  }
+
+  function restartTimer() {
+    resetTimer();
+    var interval = +$scope.interval;
+    if (!isNaN(interval) && interval > 0) {
+      currentInterval = $interval(timerFn, interval);
+    }
+  }
+
+  function timerFn() {
+    var interval = +$scope.interval;
+    if (isPlaying && !isNaN(interval) && interval > 0 && slides.length) {
+      $scope.next();
+    } else {
+      $scope.pause();
+    }
+  }
+}])
+
+.directive('uibCarousel', function() {
+  return {
+    transclude: true,
+    replace: true,
+    controller: 'UibCarouselController',
+    controllerAs: 'carousel',
+    templateUrl: function(element, attrs) {
+      return attrs.templateUrl || 'uib/template/carousel/carousel.html';
+    },
+    scope: {
+      active: '=',
+      interval: '=',
+      noTransition: '=',
+      noPause: '=',
+      noWrap: '&'
+    }
+  };
+})
+
+.directive('uibSlide', function() {
+  return {
+    require: '^uibCarousel',
+    transclude: true,
+    replace: true,
+    templateUrl: function(element, attrs) {
+      return attrs.templateUrl || 'uib/template/carousel/slide.html';
+    },
+    scope: {
+      actual: '=?',
+      index: '=?'
+    },
+    link: function (scope, element, attrs, carouselCtrl) {
+      carouselCtrl.addSlide(scope, element);
+      //when the scope is destroyed then remove the slide from the current slides array
+      scope.$on('$destroy', function() {
+        carouselCtrl.removeSlide(scope);
+      });
+    }
+  };
+})
+
+.animation('.item', ['$animateCss',
+function($animateCss) {
+  var SLIDE_DIRECTION = 'uib-slideDirection';
+
+  function removeClass(element, className, callback) {
+    element.removeClass(className);
+    if (callback) {
+      callback();
+    }
+  }
+
+  return {
+    beforeAddClass: function(element, className, done) {
+      if (className === 'active') {
+        var stopped = false;
+        var direction = element.data(SLIDE_DIRECTION);
+        var directionClass = direction === 'next' ? 'left' : 'right';
+        var removeClassFn = removeClass.bind(this, element,
+          directionClass + ' ' + direction, done);
+        element.addClass(direction);
+
+        $animateCss(element, {addClass: directionClass})
+          .start()
+          .done(removeClassFn);
+
+        return function() {
+          stopped = true;
         };
       }
-    };
-  });
+      done();
+    },
+    beforeRemoveClass: function (element, className, done) {
+      if (className === 'active') {
+        var stopped = false;
+        var direction = element.data(SLIDE_DIRECTION);
+        var directionClass = direction === 'next' ? 'left' : 'right';
+        var removeClassFn = removeClass.bind(this, element, directionClass, done);
+
+        $animateCss(element, {addClass: directionClass})
+          .start()
+          .done(removeClassFn);
+
+        return function() {
+          stopped = true;
+        };
+      }
+      done();
+    }
+  };
+}]);
+
+angular.module("uib/template/modal/backdrop.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/modal/backdrop.html",
+    "<div class=\"modal-backdrop\"\n" +
+    "     uib-modal-animation-class=\"fade\"\n" +
+    "     modal-in-class=\"in\"\n" +
+    "     ng-style=\"{'z-index': 1040 + (index && 1 || 0) + index*10}\"\n" +
+    "></div>\n" +
+    "");
+}]);
+
+angular.module("uib/template/modal/window.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("uib/template/modal/window.html",
+    "<div modal-render=\"{{$isRendered}}\" tabindex=\"-1\" role=\"dialog\" class=\"modal\"\n" +
+    "    uib-modal-animation-class=\"fade\"\n" +
+    "    modal-in-class=\"in\"\n" +
+    "    ng-style=\"{'z-index': 1050 + index*10, display: 'block'}\">\n" +
+    "    <div class=\"modal-dialog {{size ? 'modal-' + size : ''}}\"><div class=\"modal-content\" uib-modal-transclude></div></div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
 angular.module("uib/template/carousel/carousel.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("uib/template/carousel/carousel.html",
     "<div ng-mouseenter=\"pause()\" ng-mouseleave=\"play()\" class=\"carousel\" ng-swipe-right=\"prev()\" ng-swipe-left=\"next()\">\n" +
@@ -1754,44 +1843,5 @@ angular.module("uib/template/carousel/slide.html", []).run(["$templateCache", fu
     "  }\" class=\"item text-center\" ng-transclude></div>\n" +
     "");
 }]);
-
-angular.module("uib/template/tooltip/tooltip-html-popup.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("uib/template/tooltip/tooltip-html-popup.html",
-    "<div class=\"tooltip\"\n" +
-    "  tooltip-animation-class=\"fade\"\n" +
-    "  uib-tooltip-classes\n" +
-    "  ng-class=\"{ in: isOpen() }\">\n" +
-    "  <div class=\"tooltip-arrow\"></div>\n" +
-    "  <div class=\"tooltip-inner\" ng-bind-html=\"contentExp()\"></div>\n" +
-    "</div>\n" +
-    "");
-}]);
-
-angular.module("uib/template/tooltip/tooltip-popup.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("uib/template/tooltip/tooltip-popup.html",
-    "<div class=\"tooltip\"\n" +
-    "  tooltip-animation-class=\"fade\"\n" +
-    "  uib-tooltip-classes\n" +
-    "  ng-class=\"{ in: isOpen() }\">\n" +
-    "  <div class=\"tooltip-arrow\"></div>\n" +
-    "  <div class=\"tooltip-inner\" ng-bind=\"content\"></div>\n" +
-    "</div>\n" +
-    "");
-}]);
-
-angular.module("uib/template/tooltip/tooltip-template-popup.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("uib/template/tooltip/tooltip-template-popup.html",
-    "<div class=\"tooltip\"\n" +
-    "  tooltip-animation-class=\"fade\"\n" +
-    "  uib-tooltip-classes\n" +
-    "  ng-class=\"{ in: isOpen() }\">\n" +
-    "  <div class=\"tooltip-arrow\"></div>\n" +
-    "  <div class=\"tooltip-inner\"\n" +
-    "    uib-tooltip-template-transclude=\"contentExp()\"\n" +
-    "    tooltip-template-transclude-scope=\"originScope()\"></div>\n" +
-    "</div>\n" +
-    "");
-}]);
-angular.module('ui.bootstrap.carousel').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibCarouselCss && angular.element(document).find('head').prepend('<style type="text/css">.ng-animate.item:not(.left):not(.right){-webkit-transition:0s ease-in-out left;transition:0s ease-in-out left}</style>'); angular.$$uibCarouselCss = true; });
-angular.module('ui.bootstrap.tooltip').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibTooltipCss && angular.element(document).find('head').prepend('<style type="text/css">[uib-tooltip-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-html-popup].tooltip.right-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.top-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-left > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.bottom-right > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.left-bottom > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-top > .tooltip-arrow,[uib-tooltip-template-popup].tooltip.right-bottom > .tooltip-arrow,[uib-popover-popup].popover.top-left > .arrow,[uib-popover-popup].popover.top-right > .arrow,[uib-popover-popup].popover.bottom-left > .arrow,[uib-popover-popup].popover.bottom-right > .arrow,[uib-popover-popup].popover.left-top > .arrow,[uib-popover-popup].popover.left-bottom > .arrow,[uib-popover-popup].popover.right-top > .arrow,[uib-popover-popup].popover.right-bottom > .arrow,[uib-popover-html-popup].popover.top-left > .arrow,[uib-popover-html-popup].popover.top-right > .arrow,[uib-popover-html-popup].popover.bottom-left > .arrow,[uib-popover-html-popup].popover.bottom-right > .arrow,[uib-popover-html-popup].popover.left-top > .arrow,[uib-popover-html-popup].popover.left-bottom > .arrow,[uib-popover-html-popup].popover.right-top > .arrow,[uib-popover-html-popup].popover.right-bottom > .arrow,[uib-popover-template-popup].popover.top-left > .arrow,[uib-popover-template-popup].popover.top-right > .arrow,[uib-popover-template-popup].popover.bottom-left > .arrow,[uib-popover-template-popup].popover.bottom-right > .arrow,[uib-popover-template-popup].popover.left-top > .arrow,[uib-popover-template-popup].popover.left-bottom > .arrow,[uib-popover-template-popup].popover.right-top > .arrow,[uib-popover-template-popup].popover.right-bottom > .arrow{top:auto;bottom:auto;left:auto;right:auto;margin:0;}[uib-popover-popup].popover,[uib-popover-html-popup].popover,[uib-popover-template-popup].popover{display:block !important;}</style>'); angular.$$uibTooltipCss = true; });
 angular.module('ui.bootstrap.position').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibPositionCss && angular.element(document).find('head').prepend('<style type="text/css">.uib-position-measure{display:block !important;visibility:hidden !important;position:absolute !important;top:-9999px !important;left:-9999px !important;}.uib-position-scrollbar-measure{position:absolute !important;top:-9999px !important;width:50px !important;height:50px !important;overflow:scroll !important;}.uib-position-body-scrollbar-measure{overflow:scroll !important;}</style>'); angular.$$uibPositionCss = true; });
+angular.module('ui.bootstrap.carousel').run(function() {!angular.$$csp().noInlineStyle && !angular.$$uibCarouselCss && angular.element(document).find('head').prepend('<style type="text/css">.ng-animate.item:not(.left):not(.right){-webkit-transition:0s ease-in-out left;transition:0s ease-in-out left}</style>'); angular.$$uibCarouselCss = true; });
