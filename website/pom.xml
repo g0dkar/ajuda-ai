@@ -185,5 +185,12 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/pagseguro-api-2.5.2.jar</systemPath>
 		</dependency>
+		
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.5.3</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>
