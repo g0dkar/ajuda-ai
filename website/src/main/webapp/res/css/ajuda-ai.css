@@ -163,9 +163,6 @@ nav, #footer {
 	color: #fff;
 	text-shadow: 0 1px 2px #000;
 }
-.hero .hero-page-title-logo h1 {
-	font-size: 32px;
-}
 .hero .hero-page-title-logo .institution-logo > img {
 	width: 100%;
 	max-width: 200px;
@@ -325,4 +322,27 @@ nav, #footer {
 }
 .logo-texto {
 	font-weight: bold;
+}
+#bug-found {
+	position: fixed;
+	right: 0;
+	top: 45px;
+	display: block;
+	padding: 5px 8px;
+	font-size: 10px;
+	font-family: Tahoma, Arial, sans-serif;
+	text-align: center;
+	background: #F44336;
+	color: #fff;
+	opacity: .65;
+	z-index: 10;
+	-webkit-border-radius: 0 0 0 3px;
+	-moz-border-radius: 0 0 0 3px;
+	border-radius: 0 0 0 3px;
+	-webkit-transition: opacity .2s ease;
+	-moz-transition: opacity .2s ease;
+	transition: opacity .2s ease;
+}
+#bug-found:hover {
+	opacity: 1;
 }

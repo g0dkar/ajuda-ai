@@ -115,6 +115,8 @@
 			</div>
 		</div>
 	</footer>
+	
+	<a href="https://github.com/g0dkar/ajuda-ai/issues/new" id="bug-found" title="Achou um erro? Reporte ele pra gente!" target="_blank">Achei um erro!</a>
 </body>
 </html>
 </compressor:html>

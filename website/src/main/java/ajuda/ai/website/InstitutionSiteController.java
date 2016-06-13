@@ -4,17 +4,17 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
-import org.jgroups.util.UUID;
-
 import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionHelper;
 import ajuda.ai.model.institution.InstitutionPost;
+import ajuda.ai.model.institution.ReminderRemovalRequest;
 import ajuda.ai.util.StringUtils;
 import ajuda.ai.util.keycloak.KeycloakUser;
 import ajuda.ai.website.paymentServices.PaymentProcessor;
@@ -225,6 +225,59 @@ public class InstitutionSiteController {
 			response.put("value", value != null ? new BigDecimal(value.longValue()).divide(BigDecimal.TEN).doubleValue() : 0.0);
 			
 			result.use(Results.json()).withoutRoot().from(response).serialize();
+		}
+		else {
+			result.notFound();
+		}
+	}
+	
+	@Transactional
+	@Path("/api/unsubscribe/{token:[a-f0-9\\-]+}")
+	public void removeReminder(final String slug, final String token) {
+		final Institution institution = findInstitution(slug);
+		
+		if (institution != null) {
+			final InstitutionHelper helper = (InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE reminderToken = :token").setParameter("token", token).getSingleResult();
+			
+			if (helper != null) {
+				helper.setReminderToken(null);
+				helper.setReminderTokenDate(null);
+				ps.merge(helper);
+				
+				final ReminderRemovalRequest removalRequest = new ReminderRemovalRequest();
+				removalRequest.setHelper(helper.getId());
+				removalRequest.setTimestamp(new Date());
+				removalRequest.setToken(token);
+				ps.persist(removalRequest);
+				
+				result.include("institution", institution);
+				result.include("removalRequest", removalRequest);
+			}
+			else {
+				result.redirectTo(this).institution(slug);
+			}
+		}
+		else {
+			result.notFound();
+		}
+	}
+	
+	@Transactional
+	@Post("/api/remove-reminder-reason")
+	public void removeReminderReason(final String slug, final String req, final String reason) {
+		final Institution institution = findInstitution(slug);
+		
+		if (institution != null) {
+			if (!StringUtils.isBlank(reason)) {
+				final ReminderRemovalRequest removalRequest = ps.find(ReminderRemovalRequest.class, StringUtils.parseLong(req, 0));
+				
+				if (removalRequest != null) {
+					removalRequest.setReason(reason);
+					ps.merge(removalRequest);
+				}
+			}
+			
+			result.redirectTo(this).institution(slug);
 		}
 		else {
 			result.notFound();

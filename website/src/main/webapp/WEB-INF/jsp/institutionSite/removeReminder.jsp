@@ -55,12 +55,35 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="page-content">
-						<h1 class="page-title">Saiba Mais ❤</h1>
-						<h4 class="page-subtitle">Conheça um pouco do trabalho que você pode ajudar a continuar</h4>
+						<h1 class="page-title">Não quer receber lembretes?</h1>
+						<h4 class="page-subtitle">Ok! Prometo que não mando mais nenhum :D</h4>
 						
 						<hr>
 						
-						${institutionDescriptionMarkdown}
+						<p>Não se preocupe, já registramos que você não quer mais receber lembretes. Caso queira recebê-los novamente, é só repetir o processo (clicar em "Faça uma Doação" e pedir para receber o lembrete)</p>
+						
+						<p>Se não for pedir demais, porque você não quer mais receber lembretes para doar para <strong>${institution.name}</strong>? Trabalhamos sempre para evitar abusos e especialmente para que você não se sinta incomodado(a) :)</p>
+						
+						<form action="/${institution.slug}/api/remove-reminder-reason" method="post">
+							<div class="form-group">
+								<select class="form-control" name="reason">
+									<option>Não pedi para receber lembretes.</option>
+									<option>Já fiz uma doação.</option>
+									<option>Não sei de onde esse e-mail veio! O q tacon tesse nu?!</option>
+									<option>Não confio nessa coisa de Ajuda.Ai.</option>
+									<option>Não gostei do conteúdo do e-mail.</option>
+									<option>Acho que recebi e-mails demais.</option>
+									<option>Não quero mais ajudar.</option>
+									<option>Não quero dizer. Só não quero mais receber esses e-mails.</option>
+									<option>Outros (não precisa especificar)</option>
+								</select>
+								<p class="help-block"><small>Ficou realmente chateado(a)? Quer nos dizer pessoalmente algo? <a href="mailto:rafael@ajuda.ai?subject=Lembretes+do+Ajuda.Ai" title="Fale com o criador do Projeto">Mande um e-mail</a> para mim (é tipo sua vingança hahaha).</small></p>
+							</div>
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary">Por isso que quero parar de receber lembretes, beleza?</button>
+								<input type="hidden" name="req" value="${removalRequest.id}" >
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -97,22 +120,22 @@
 				</div>
 			</div>
 			
-			<form action="/${institution.slug}/api/doar" method="post" name="formDonate" class="donate-form form-horizontal" ng-show="donationOption == 1" ng-submit="remindLater(formDonate, $event)">
+			<form action="/${institution.slug}/api/doar" method="post" name="formDonate" class="donate-form form-horizontal" ng-show="donationOption == 1" ng-submit="doDonate(formDonate, $event)">
 				<div class="form-group">
 					<label for="name" class="col-sm-2 control-label">Nome*</label>
 					<div class="col-sm-10">
-						<input type="text" class="form-control" id="name" ng-model="remindData.name" placeholder="Nome dessa pessoa bonita que fará a doação, não precisa ser formal" tabindex="1" required ng-disabled="working">
+						<input type="text" class="form-control" id="name" ng-model="donation.name" placeholder="Nome dessa pessoa bonita que fará a doação" tabindex="1" required ng-disabled="working">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="email" class="col-sm-2 control-label">E-mail*</label>
 					<div class="col-sm-5">
-						<input type="email" class="form-control" id="email" ng-model="remindData.email" placeholder="Mandaremos o pedido para cá" tabindex="2" required ng-disabled="working">
+						<input type="email" class="form-control" id="email" ng-model="donation.email" placeholder="Mandaremos o pedido para cá" tabindex="2" required ng-disabled="working">
 					</div>
 					
 					<label for="phone" class="col-sm-2 control-label">Telefone</label>
 					<div class="col-sm-3">
-						<input type="text" class="form-control" id="phone" ng-model="remindData.phone" placeholder="ou Celular ;P" tabindex="3" ng-disabled="working">
+						<input type="text" class="form-control" id="phone" ng-model="donation.phone" placeholder="ou Celular ;P" tabindex="3" ng-disabled="working">
 					</div>
 				</div>
 				<div class="form-group">
