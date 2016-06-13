@@ -46,23 +46,27 @@ public class SendDonationReminders {
 		query.setHint(QueryHints.FETCH_SIZE, 100);	// Pega de 100 em 100 resultados de forma transparente
 		query.setHint(QueryHints.READ_ONLY, true);	// Updates serão feitos de forma manual (e assim é mais rápido)
 		final List<InstitutionHelper> helpers = query.getResultList();
-		int enviados = 0, removidos = 0;
+		int enviados = 0, erros = 0;
 		final List<Long> remove = new LinkedList<>();
 		
 		for (final InstitutionHelper helper : helpers) {
-			final boolean enviado = mailSender.sendReminder(helper, false);
-			
-			if (enviado) {
-				enviados++;
-			}
-			else {
-				removidos++;
-				remove.add(helper.getId());
+			try {
+				final boolean enviado = mailSender.sendReminder(helper, false);
+				
+				if (enviado) {
+					enviados++;
+				}
+				else {
+					remove.add(helper.getId());
+				}
+			} catch (final Exception e) {
+				erros++;
+				log.error("Erro enviando lembrete de doação", e);
 			}
 		}
 		
 		entityManager.createQuery("UPDATE InstitutionHelper SET reminderToken = NULL, reminderTokenDate = NULL WHERE id IN (:ids)").setParameter("ids", remove).executeUpdate();
-		log.info("Lembretes enviados: {}, Removidos: {} (tempo: {}s)", enviados, removidos, tempo(start));
+		log.info("Lembretes enviados: {}, Removidos: {}, Erros: {} (tempo: {}s)", enviados, remove.size(), erros, tempo(start));
 	}
 	
 	private double tempo(final long start) {

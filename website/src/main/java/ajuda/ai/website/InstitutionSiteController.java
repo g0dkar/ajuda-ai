@@ -182,7 +182,7 @@ public class InstitutionSiteController {
 				ps.merge(helper);
 			}
 			
-			reminderMailSender.sendReminder(helper, false);
+			reminderMailSender.sendReminder(helper, true);
 			
 			result.use(Results.json()).withoutRoot().from(helper);
 		}
@@ -200,7 +200,7 @@ public class InstitutionSiteController {
 		final Institution institution = findInstitution(slug);
 		
 		final String transactionId = request.getParameter(institution.getPaymentService().getThanksTransactionIdParameter());
-		final Payment payment = (Payment) ps.createQuery("SELECT p FROM Payment p JOIN FETCH p.help WHERE p.paymentServiceId = :id").setParameter("id", transactionId).getSingleResult();
+		final Payment payment = (Payment) ps.createQuery("SELECT p FROM Payment p JOIN FETCH p.institutionHelper WHERE p.paymentServiceId = :id").setParameter("id", transactionId).getSingleResult();
 		
 		if (institution != null && payment != null) {
 			result.include("institution", institution);
