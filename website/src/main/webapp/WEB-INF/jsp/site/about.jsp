@@ -59,15 +59,15 @@
 							</div>
 							<div class="col-md-8">
 								<h3 style="margin-top:0;padding-top:0"><a href="https://facebook.com/candidosales" title="Link ao Facebook de Cândido Sales" target="_blank">Cândido Sales</a></h3>
-								<p>Falta o Cândido me passar o que ele quer aqui...</p>
+								<p>Ajudei na concepção da identidade visual e agradeço ao Rafael pelo convite em participar deste digno trabalho</p>
 								<blockquote>
-									<p style="margin-bottom:15px">Falta isso também.</p>
-									<footer>E isso.</footer>
+									<p style="margin-bottom:15px">Isto fica feliz em ser útil.</p>
+									<footer>Homem Bicentenário</footer>
 								</blockquote>
 							</div>
 						</div>
 						
-						<div class="row">
+						<%--div class="row">
 							<div class="col-md-4 text-center">
 								<a href="https://facebook.com/felipe.resende.967" title="Link ao Facebook de Felipe Resende" target="_blank"><img src="/res/img/about-felipe.jpg" width="200" height="200" alt="Imagem do Perfil do Facebook de Felipe Resende" style="border-radius:100%" /></a>
 							</div>
@@ -79,7 +79,7 @@
 									<footer>E isso.</footer>
 								</blockquote>
 							</div>
-						</div>
+						</div--%>
 					</div>
 				</div>
 			</div>

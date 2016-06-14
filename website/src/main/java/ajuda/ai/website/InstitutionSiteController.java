@@ -117,8 +117,8 @@ public class InstitutionSiteController {
 			if (helper == null) {
 				helper = new InstitutionHelper();
 				helper.setInstitution(institution);
-				helper.setName(name);
-				helper.setEmail(email);
+				helper.setName(StringUtils.stripHTML(name));
+				helper.setEmail(StringUtils.stripHTML(email));
 				helper.setTimestamp(new Date());
 				ps.persist(helper);
 			}
@@ -165,14 +165,15 @@ public class InstitutionSiteController {
 			if (helper == null) {
 				helper = new InstitutionHelper();
 				helper.setInstitution(institution);
-				helper.setName(name);
-				helper.setEmail(email);
+				helper.setName(StringUtils.stripHTML(name));
+				helper.setEmail(StringUtils.stripHTML(email));
 				helper.setTimestamp(new Date());
 				helper.setReminderToken(token);
 				helper.setReminderTokenDate(new Date());
 				ps.persist(helper);
 			}
 			else if (helper.getReminderToken() == null) {
+				helper.setName(StringUtils.stripHTML(name));
 				helper.setReminderToken(token);
 				helper.setReminderTokenDate(new Date());
 				ps.merge(helper);
@@ -272,7 +273,7 @@ public class InstitutionSiteController {
 				final ReminderRemovalRequest removalRequest = ps.find(ReminderRemovalRequest.class, StringUtils.parseLong(req, 0));
 				
 				if (removalRequest != null) {
-					removalRequest.setReason(reason);
+					removalRequest.setReason(StringUtils.stripHTML(reason));
 					ps.merge(removalRequest);
 				}
 			}

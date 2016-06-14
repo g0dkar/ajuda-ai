@@ -25,12 +25,14 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="page-content">
-						<h1 class="page-title">Algum texto</h1>
-						<h4 class="page-subtitle">Algum texto vai ficar aqui. Por enquanto, temos Slipsum.</h4>
+						<h1 class="page-title">O Projeto Ajuda.Ai</h1>
+						<h4 class="page-subtitle">Que bom que você chegou até aqui! Conheça um pouco sobre nós :)</h4>
 						<hr>
-						<p>Normally, both your asses would be dead as fucking fried chicken, but you happen to pull this shit while I'm in a transitional period so I don't wanna kill you, I wanna help you. But I can't give you this case, it don't belong to me. Besides, I've already been through too much shit this morning over this case to hand it over to your dumb ass. </p>
-						<p>Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows. Some pilots get picked and become television programs. Some don't, become nothing. She starred in one of the ones that became nothing. </p>
-						<p>Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends. </p>
+						<p>Começamos a partir de uma ideia simples. Um dia alguém me falou sobre fazer um aplicativo para celular para ajudar um pet shop. Por uma feliz coincidência vi um adesivo de uma Associação de Proteção a Animais daqui onde moro e tive a ideia:</p>
+						<p>E se tivesse um <a href="https://patreon.com.br" target="_blank" title="Site que inspirou essa ideia">Patreon</a> onde pudéssemos ajudar não artistas e outras pessoas e projetos mas sim Instituições/ONGs que fazem um trabalho bacana e sempre precisam de ajuda? A partir daí comecei a pensar e trabalhar em cima dessa ideia. Até que um dia, chegou a mim uma fantástica oportunidade.</p>
+						<p>Um amigo ligado à Organização de um evento beneficente, o <a href="http://cidadeverde.com/genteespecial" target="_blank" title="Saiba mais sobre o Gente Especial">Gente Especial</a>, organizado pela TV <a href="https://cidadeverde.com/">Cidade Verde</a> (afiliada ao SBT) me perguntou se eu tinha disponibilidade para fazer um sistema para ajudar na arrecadação de recursos para as ONGs beneficiadas e... Bem, uniu a fome à vontade de comer!</p>
+						<p>Ele praticamente descreveu minha ideia a mim, e compartilhei com ele minha ideia toda. E aqui estamos. O pontapé inicial do projeto Ajuda.Ai foi dado, graças a todas essas pessoas e a você, que está aqui nos visitando.</p>
+						<p><strong>Obrigado!</strong></p>
 					</div>
 				</div>
 			</div>

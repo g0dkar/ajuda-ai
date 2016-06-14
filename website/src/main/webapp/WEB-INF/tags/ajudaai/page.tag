@@ -25,7 +25,7 @@
 <meta property="og:title" content="<c:out value="${title}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda" /> - Ajuda.Ai!" />
 <meta property="og:description" content="<c:out value="${description}" default="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!" />" />
 <meta property="og:type" content="article" />
-<meta property="og:image" content="${pageContext.request.contextPath}/res/img/facebook-preview.png" />
+<meta property="og:image" content="https://ajuda.ai${pageContext.request.contextPath}/res/img/facebook-preview.jpg" />
 <meta property="og:url" content="https://ajuda.ai${pageContext.request.contextPath}/${slug}" />
 
 <%-- for Twitter --%>
