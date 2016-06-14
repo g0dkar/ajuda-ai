@@ -36,7 +36,7 @@ public class Payment implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	private Institution institution;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private InstitutionHelper institutionHelper;
 	
 	@Temporal(TemporalType.TIMESTAMP)

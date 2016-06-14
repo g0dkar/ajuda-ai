@@ -15,7 +15,7 @@ public class TestingPaymentGeneration {
 	/**
 	 * PagSeguro
 	 */
-	public static void mainPagSeguroEmailPagamento(final String[] args) {
+	public static void main(final String[] args) {
 		final PaymentRequest paymentRequest = new PaymentRequest();
 		
 		final Sender sender = new Sender( //
@@ -31,7 +31,7 @@ public class TestingPaymentGeneration {
 		final PaymentRequestItem item = new PaymentRequestItem(
 			null,							// Id
 			"Doação para AMA",				// Description
-			new BigDecimal("500.00"),		// Price
+			new BigDecimal("50.00"),		// Price
 			1								// Amount
 		);
 		

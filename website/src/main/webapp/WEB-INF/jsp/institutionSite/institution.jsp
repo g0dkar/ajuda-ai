@@ -81,7 +81,7 @@
 						<div class="donation-option donation-option-now">
 							<h3>Doar Agora Mesmo!</h3>
 							<p>Bacana! Clique no botão abaixo para continuar ^_^ <strong style="color:red;">DOAÇÕES SENDO TESTADAS. ELAS NÃO VÃO PARA LUGAR ALGUM.</strong></p>
-							<form action="<%-- https://pagseguro.uol.com.br/checkout/v2/donation.html?iot=button --%>" method="post">
+							<form action="https://sandbox.pagseguro.uol.com.br/checkout/v2/donation.html?iot=button" method="post">
 								<input type="hidden" name="currency" value="BRL" />
 								<input type="hidden" name="receiverEmail" value="${institution.paymentServiceDataMap['email']}" />
 								<input type="image" src="https://stc.pagseguro.uol.com.br/public/img/botoes/doacoes/209x48-doar-assina.gif" width="209" height="48" name="submit" alt="Doação via PagSeguro" ng-disabled="working" />

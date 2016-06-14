@@ -24,25 +24,30 @@ public class TransactionNotificationsController {
 	private final Logger log;
 	private final Result result;
 	private final HttpServletRequest request;
+	private final HttpServletResponse response;
 	private final PersistenceService ps;
 	private final PaymentService paymentService;
 	
 	/** @deprecated CDI */ @Deprecated
-	TransactionNotificationsController() { this(null, null, null, null, null); }
+	TransactionNotificationsController() { this(null, null, null, null, null, null); }
 	
 	@Inject
-	public TransactionNotificationsController(final Logger log, final Result result, final HttpServletRequest request, final PersistenceService ps, final PaymentService paymentService) {
+	public TransactionNotificationsController(final Logger log, final Result result, final HttpServletRequest request, final HttpServletResponse response, final PersistenceService ps, final PaymentService paymentService) {
 		this.log = log;
 		this.result = result;
 		this.request = request;
+		this.response = response;
 		this.ps = ps;
 		this.paymentService = paymentService;
 	}
 	
 	@Transactional
-	@Path("/{[a-z][a-z0-9\\-]*[a-z0-9]:slug}/api/transaction-notification")
+	@Path("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/api/transaction-notification")
 	public void notification(final String slug) {
+		log.info("Recebida uma notificação de transação! Slug = /{}, request = ", slug, request);
 		if (log.isDebugEnabled()) { log.debug("Processando notificação de transação"); }
+		
+//		response.addHeader("Access-Control-Allow-Origin", "*");
 		
 		final Institution institution = (Institution) ps.createQuery("FROM Institution WHERE slug = :slug").setParameter("slug", slug).getSingleResult();
 		

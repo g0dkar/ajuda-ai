@@ -86,35 +86,53 @@ public class PagSeguroPayment implements PaymentProcessor {
 	}
 
 	public PaymentEvent processEvent(final Institution institution, final HttpServletRequest request, final PersistenceService ps, final Result result) throws Exception {
-		if (request.getMethod().equals("POST")) {
+//		if (request.getMethod().equals("POST")) {
 			final String notificationType = request.getParameter("notificationType");
 			if (notificationType == null || notificationType.equalsIgnoreCase("transaction")) {
 				final String pagSeguroId = request.getParameter("notificationCode");
-				final Payment payment = (Payment) ps.createQuery("FROM Payment WHERE institution = :institution AND paymentServiceId = :id").setParameter("institution", institution).setParameter("id", pagSeguroId).getSingleResult();
+				final Map<String, String> credentials = JsonUtils.fromJson(institution.getPaymentServiceData(), Map.class);
+				final AccountCredentials accountCred = new AccountCredentials(credentials.get("email"), credentials.get("token"), credentials.get("token"));
+				final Transaction transaction = NotificationService.checkTransaction(accountCred, pagSeguroId);
+				final int valor = transaction.getGrossAmount().multiply(HUNDRED).intValue();
 				
-				if (payment != null) {
-					final Map<String, String> credentials = JsonUtils.fromJson(payment.getInstitution().getPaymentServiceData(), Map.class);
-					final AccountCredentials accountCred = new AccountCredentials(credentials.get("email"), credentials.get("token"));
-					final Transaction transaction = NotificationService.checkTransaction(accountCred, payment.getPaymentServiceId());
-					final PaymentEvent lastEvent = payment.getEvents().get(0);
+				Payment payment = (Payment) ps.createQuery("FROM Payment WHERE institution = :institution AND paymentServiceId = :id").setParameter("institution", institution).setParameter("id", pagSeguroId).getSingleResult();
+				
+				if (payment == null) {
+					payment = new Payment();
+					payment.setInstitution(institution);
+					payment.setInstitutionHelper((InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE institution = :institution AND LOWER(email) = LOWER(:email)").setParameter("institution", institution).setParameter("email", transaction.getSender().getEmail()).getSingleResult());
+					payment.setPaymentServiceId(pagSeguroId);
+					payment.setDescription("Pagamento criado via notificação de pagamento do PagSeguro");
+					payment.setPaymentService(institution.getPaymentService());
+					payment.setTimestamp(new Date());
+					payment.setValue(valor);
+					payment.setPaid(false);
+					payment.setCancelled(false);
+					payment.setReadyForAccounting(false);
+					ps.persist(payment);
+				}
+				
+				payment.getInstitutionHelper().setLastPayment(payment);
+				ps.merge(payment.getInstitutionHelper());
+				
+				final PaymentEvent lastEvent = (payment.getEvents() == null || payment.getEvents().isEmpty()) ? null : payment.getEvents().get(0);
+				
+				if (lastEvent == null || (lastEvent.getStatus() != transaction.getStatus().getValue())) {
+					final PaymentEvent newEvent = new PaymentEvent();
+					newEvent.setCurrency("BRL");	// Apenas BRL é suportado no momento (pelo PagSeguro)
+					newEvent.setPayment(payment);
+					newEvent.setPaymentType(transaction.getPaymentMethod().getCode().getValue().toString());
+					newEvent.setPaymentTypeInfo(transaction.getPaymentMethod().getType().getType());
+					newEvent.setStatus(transaction.getStatus().getValue());
+					newEvent.setTimestamp(new Date() /*transaction.getLastEventDate()*/);
+					newEvent.setTransactionServiceId(transaction.getCode());
+					newEvent.setValue(valor);
 					
-					if (lastEvent.getStatus() != transaction.getStatus().getValue()) {
-						final PaymentEvent newEvent = new PaymentEvent();
-						newEvent.setCurrency("BRL");	// Apenas BRL é suportado no momento (pelo PagSeguro)
-						newEvent.setPayment(payment);
-						newEvent.setPaymentType(transaction.getPaymentMethod().getCode().getValue().toString());
-						newEvent.setPaymentTypeInfo(transaction.getPaymentMethod().getType().getType());
-						newEvent.setStatus(transaction.getStatus().getValue());
-						newEvent.setTimestamp(transaction.getLastEventDate());
-						newEvent.setTransactionServiceId(transaction.getCode());
-						newEvent.setValue(transaction.getGrossAmount().multiply(HUNDRED).intValue());
-						
-						result.nothing();
-						return newEvent;
-					}
+					result.nothing();
+					return newEvent;
 				}
 			}
-		}
+//		}
 		
 		return null;
 	}
