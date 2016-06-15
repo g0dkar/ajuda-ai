@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jsoup.helper.StringUtil;
+
 import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.billing.PaymentEvent;
 import ajuda.ai.model.institution.Institution;
@@ -95,12 +97,27 @@ public class PagSeguroPayment implements PaymentProcessor {
 				final Transaction transaction = NotificationService.checkTransaction(accountCred, pagSeguroId);
 				final int valor = transaction.getGrossAmount().multiply(HUNDRED).intValue();
 				
+				InstitutionHelper institutionHelper = (InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE institution = :institution AND LOWER(email) = LOWER(:email)").setParameter("institution", institution).setParameter("email", transaction.getSender().getEmail()).getSingleResult();
+				if (institutionHelper == null) {
+					institutionHelper = new InstitutionHelper();
+					institutionHelper.setAllowPublish(false);
+					institutionHelper.setEmail(transaction.getSender().getEmail());
+					institutionHelper.setName(transaction.getSender().getName());
+					institutionHelper.setInstitution(institution);
+					institutionHelper.setPhone(transaction.getSender().getPhone().toString());
+					ps.persist(institutionHelper);
+				}
+				else if (StringUtil.isBlank(institutionHelper.getPhone())) {
+					institutionHelper.setPhone(transaction.getSender().getPhone().toString());
+					ps.merge(institutionHelper);
+				}
+				
 				Payment payment = (Payment) ps.createQuery("FROM Payment WHERE institution = :institution AND paymentServiceId = :id").setParameter("institution", institution).setParameter("id", pagSeguroId).getSingleResult();
 				
 				if (payment == null) {
 					payment = new Payment();
 					payment.setInstitution(institution);
-					payment.setInstitutionHelper((InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE institution = :institution AND LOWER(email) = LOWER(:email)").setParameter("institution", institution).setParameter("email", transaction.getSender().getEmail()).getSingleResult());
+					payment.setInstitutionHelper(institutionHelper);
 					payment.setPaymentServiceId(pagSeguroId);
 					payment.setDescription("Pagamento criado via notificação de pagamento do PagSeguro");
 					payment.setPaymentService(institution.getPaymentService());
@@ -124,7 +141,7 @@ public class PagSeguroPayment implements PaymentProcessor {
 					newEvent.setPaymentType(transaction.getPaymentMethod().getCode().getValue().toString());
 					newEvent.setPaymentTypeInfo(transaction.getPaymentMethod().getType().getType());
 					newEvent.setStatus(transaction.getStatus().getValue());
-					newEvent.setTimestamp(new Date() /*transaction.getLastEventDate()*/);
+					newEvent.setTimestamp(transaction.getLastEventDate());
 					newEvent.setTransactionServiceId(transaction.getCode());
 					newEvent.setValue(valor);
 					
