@@ -66,7 +66,7 @@
 							</div>
 						</c:if>
 						
-						<form action="${pageContext.request.contextPath}/${institution.slug}/api/doar" method="post" name="formDonate" class="donate-form form-horizontal">
+						<form action="${pageContext.request.contextPath}/${institution.slug}/api/_doar" method="post" name="formDonate" class="donate-form form-horizontal">
 							<div class="form-group form-group-lg">
 								<label for="name" class="col-sm-2 control-label">Valor *</label>
 								<div class="col-sm-3">
@@ -101,7 +101,7 @@
 							
 							<div class="form-group">
 								<div class="col-sm-offset-2 col-sm-10">
-									<button class="btn btn-success btn-lg" type="submit" tabindex="5">Ajuda Aí!</button>
+									<button class="btn btn-success btn-lg" type="button" tabindex="5" disabled="disabled">Ajuda Aí!</button>
 									<p><strong style="color:#c00">Estamos <u>testando</u> as doações. Nenhum valor será realmente cobrado.</strong></p>
 								</div>
 							</div>

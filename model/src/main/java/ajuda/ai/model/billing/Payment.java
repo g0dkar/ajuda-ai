@@ -47,11 +47,11 @@ public class Payment implements Serializable {
 	@Column(nullable = false, length = 0xFF)
 	private String description;
 	
+	@Column(nullable = false, length = 32)
 	@Enumerated(EnumType.STRING)
 	private PaymentServiceEnum paymentService;
 	
-	@NotBlank
-	@Column(nullable = false, length = 64)
+	@Column(length = 64)
 	private String paymentServiceId;
 	
 	@Min(0)

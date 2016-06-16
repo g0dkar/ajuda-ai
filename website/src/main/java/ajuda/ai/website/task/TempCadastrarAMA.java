@@ -52,9 +52,12 @@ public class TempCadastrarAMA {
 			ama.getCreation().setCreator("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
 			ama.getCreation().setTime(new Date());
 			ama.setDescription("## O QUE É A AMA/PI\n\nEntidade sem fins lucrativos, reconhecida de utilidade pública municipal - Lei nº 2.964/00, e utilidade pública estadual pela Lei nº 5.201/08/01, inscrita no Conselho Municipal dos Direitos da Criança e do Adolescente de Teresina (CMDCAT) nº 094/02.\n\n## COMO SURGIU A IDEIA\n\nSurgiu da necessidade dos pais em encontrar apoio e suporte técnico para educação e tratamento de seus filhos autistas. Foi fundada em 29 de Janeiro de 2000, por pais e amigos dos autistas residentes em Teresina-PI, que superando a desinformação diante do quadro de Autismo, reuniram-se para transformar questionamentos em ação somando forças para obter serviços estruturados nas áreas de saúde, educação especial, trabalho e assistência social.\n\n[Visite nosso site!](http://amigosautistas.blogspot.com.br)");
-			ama.setPaymentService(PaymentServiceEnum.PAG_SEGURO);
-			ama.setPaymentServiceData("{\"email\":\"rafael.lins777@gmail.com\",\"token\":\"9FCFC504381E4033A3F01466ACC13203\"}");
+			ama.setPaymentService(PaymentServiceEnum.MOIP);
+			ama.setPaymentServiceData("{\"email\":\"rafael.lins777@gmail.com\"}");
 			ama.setSlug("ama");
+			ama.setLogo("https://ajuda.ai/res/img/logo-ama.jpg");
+			ama.setBanner("http://4.bp.blogspot.com/-vCjZ1ZNuRJw/VmxGLPHls5I/AAAAAAAABWc/yBSGgUqnsmQ/s1600-r/banner_AMA1.jpg");
+			
 			
 			entityManager.persist(ama);
 			log.info("AMA foi cadastrada: ID {} = /{}", ama.getId(), ama.getSlug());

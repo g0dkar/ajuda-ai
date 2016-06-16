@@ -28,7 +28,7 @@ public enum PaymentServiceEnum {
 		}
 		
 		public String getThanksTransactionIdParameter() {
-			return "";
+			return "tid";
 		}
 	},
 	

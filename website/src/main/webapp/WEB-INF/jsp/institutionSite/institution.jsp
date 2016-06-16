@@ -8,7 +8,7 @@
 				<div class="col-xs-12">
 					<div class="hero">
 						<div class="hero-img">
-							<img src="http://4.bp.blogspot.com/-vCjZ1ZNuRJw/VmxGLPHls5I/AAAAAAAABWc/yBSGgUqnsmQ/s1600-r/banner_AMA1.jpg">
+							<img src="<c:out value="${institution.banner}" default="${pageContext.request.contextPath}/res/img/institution-banner-default.jpg"></c:out>" title="Banner da Instituição/ONG">
 							
 							<div class="hero-img-text">
 								<div class="container">

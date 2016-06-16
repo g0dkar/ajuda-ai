@@ -69,6 +69,10 @@ public class Institution extends Slug {
 	@URL
 	@Column(length = 1024)
 	private String logo;
+	
+	@URL
+	@Column(length = 1024)
+	private String banner;
 
 	public CreationInfo getCreation() {
 		return creation;
@@ -144,5 +148,13 @@ public class Institution extends Slug {
 
 	public void setLogo(final String logo) {
 		this.logo = logo;
+	}
+
+	public String getBanner() {
+		return banner;
+	}
+
+	public void setBanner(final String banner) {
+		this.banner = banner;
 	}
 }

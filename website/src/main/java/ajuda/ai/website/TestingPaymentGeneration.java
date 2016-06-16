@@ -1,6 +1,9 @@
 package ajuda.ai.website;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -22,7 +25,15 @@ import br.com.uol.pagseguro.properties.PagSeguroConfig;
 import br.com.uol.pagseguro.service.TransactionSearchService;
 
 public class TestingPaymentGeneration {
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws IOException {
+		final String moipEndpoint = "https://www.moip.com.br/PagamentoMoIP.do";
+		final URL url = new URL(moipEndpoint);
+		final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setDoOutput(true);
+		conn.getOutputStream().write("id_carteira=rafael.lins777@gmail.com&valor=1000&nome=Doacao+AMA&id_transacao=7&pagador_nome=Rafael+Lins".getBytes());
+	}
+	
+	public static void mainPagSeguroCheckout(final String[] args) {
 		final Institution institution = new Institution();
 		institution.setId(7L);
 		institution.setName("AMA - Associação dos Amigos dos Autistas");
