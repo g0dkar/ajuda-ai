@@ -2,20 +2,114 @@ package ajuda.ai.website;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import ajuda.ai.model.institution.Institution;
 import br.com.uol.pagseguro.domain.Sender;
+import br.com.uol.pagseguro.domain.TransactionSearchResult;
+import br.com.uol.pagseguro.domain.TransactionSummary;
+import br.com.uol.pagseguro.domain.checkout.Checkout;
 import br.com.uol.pagseguro.domain.paymentrequest.PaymentRequest;
 import br.com.uol.pagseguro.domain.paymentrequest.PaymentRequestItem;
+import br.com.uol.pagseguro.enums.Currency;
 import br.com.uol.pagseguro.exception.PagSeguroServiceException;
 import br.com.uol.pagseguro.properties.PagSeguroConfig;
+import br.com.uol.pagseguro.service.TransactionSearchService;
 
 public class TestingPaymentGeneration {
+	public static void main(final String[] args) {
+		final Institution institution = new Institution();
+		institution.setId(7L);
+		institution.setName("AMA - Associação dos Amigos dos Autistas");
+		institution.setSlug("ama");
+		
+		final int value = 12300;
+		
+		final String paymentDescription = "Doação: " + institution.getName();
+		final BigDecimal valueBigDecimal = new BigDecimal(value).divide(new BigDecimal(100)).setScale(2);
+		
+		System.out.println(value);
+		System.out.println(valueBigDecimal);
+		
+		final Checkout checkout = new Checkout();
+		checkout.addItem(institution.getId().toString(), paymentDescription, 1, valueBigDecimal, null, null);
+		checkout.setCurrency(Currency.BRL);
+		checkout.setReference(institution.getId() + "-" + 123);
+		checkout.setRedirectURL("https://ajuda.ai/" + institution.getSlug() + "/obrigado");
+		checkout.setNotificationURL("https://ajuda.ai/" + institution.getSlug() + "/api/transaction-notification");
+		
+		try {
+			final boolean onlyCheckoutCode = false;
+			final String response = checkout.register(PagSeguroConfig.getAccountCredentials(), onlyCheckoutCode);
+			final Matcher codeMatcher = Pattern.compile("code=([A-F0-9]+)").matcher(response);
+			final String pagSeguroId = codeMatcher.find() ? codeMatcher.group(1) : null;
+			
+			System.out.println(response);
+			System.out.println(pagSeguroId);
+			
+//			final Payment payment = new Payment();
+//			payment.setInstitution(institution);
+//			payment.setInstitutionHelper(institutionHelper);
+//			payment.setPaymentServiceId(pagSeguroId);
+//			payment.setDescription("Pagamento criado via notificação de pagamento do PagSeguro");
+//			payment.setPaymentService(institution.getPaymentService());
+//			payment.setTimestamp(new Date());
+//			payment.setValue(value);
+//			payment.setPaid(false);
+//			payment.setCancelled(false);
+//			payment.setReadyForAccounting(false);
+//
+//			result.redirectTo(response);
+//			return payment;
+		} catch (final PagSeguroServiceException e) {
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	public static void mainPagSeguroListagemPagamentos(final String[] args) {
+		TransactionSearchResult transactionSearchResult = null;
+		
+		try {
+			final Calendar monthAgo = Calendar.getInstance();
+			monthAgo.add(Calendar.DATE, -30);
+			
+			final Calendar now = Calendar.getInstance();
+			
+			final int page = 1;
+			
+			final int maxPageResults = 1000;
+			
+			transactionSearchResult = TransactionSearchService.searchByDate(PagSeguroConfig.getAccountCredentials(),
+					monthAgo.getTime(), now.getTime(), page, maxPageResults);
+			
+		} catch (final PagSeguroServiceException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		if (transactionSearchResult != null) {
+			final List<TransactionSummary> listTransactionSummaries = transactionSearchResult.getTransactionSummaries();
+			final Iterator<TransactionSummary> transactionSummariesIterator = listTransactionSummaries.iterator();
+			
+			while (transactionSummariesIterator.hasNext()) {
+				final TransactionSummary currentTransactionSummary = transactionSummariesIterator.next();
+				System.out.println();
+				System.out.println("code: " + currentTransactionSummary.getCode());
+				System.out.println("date: " + currentTransactionSummary.getDate());
+				System.out.println("reference: " + currentTransactionSummary.getReference());
+				System.out.println("status: " + currentTransactionSummary.getStatus());
+				System.out.println("lastEventDate: " + currentTransactionSummary.getLastEvent());
+			}
+		}
+	}
 	/**
 	 * PagSeguro
 	 */
-	public static void main(final String[] args) {
+	public static void mainPagSeguroGerarPagamento(final String[] args) {
 		final PaymentRequest paymentRequest = new PaymentRequest();
 		
 		final Sender sender = new Sender( //
@@ -30,8 +124,8 @@ public class TestingPaymentGeneration {
 		
 		final PaymentRequestItem item = new PaymentRequestItem(
 			null,							// Id
-			"Doação para AMA",				// Description
-			new BigDecimal("50.00"),		// Price
+			"Teste de Payment Request",		// Description
+			new BigDecimal("500.00"),		// Price
 			1								// Amount
 		);
 		

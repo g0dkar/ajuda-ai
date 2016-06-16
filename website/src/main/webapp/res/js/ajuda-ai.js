@@ -1,36 +1,8 @@
 (function (angular) {
-	var app = angular.module("ajuda-ai", ["ngAnimate", "ngSanitize", "ui.bootstrap"]);
+	var app = angular.module("ajuda-ai", []);
 	var institutionSlug = (function () { var nextSlash = location.pathname.indexOf("/", 1); return nextSlash > 0 ? location.pathname.substring(0, nextSlash) : location.pathname; })();
 	
-	app.controller("MainController", ["$scope", function ($scope) {
-		$scope.slides = [{
-			id: 0,
-			image: "/res/img/index-img-01.jpg",
-			caption: "Juntamos quem <strong>quer ajudar</strong> a quem <strong>precisa de ajuda</strong>.",
-			href: "/ama",
-			button: "Ajude a AMA - Associação dos Amigos dos Autistas"
-		}, {
-			id: 1,
-			image: "/res/img/index-img-02.jpg",
-			caption: "Curtiu nosso projeto? <strong>Conheça</strong> o que é o Ajuda.Ai!",
-			href: "/sobre",
-			button: "Sobre o Ajuda.Ai"
-		}, {
-			id: 2,
-			image: "/res/img/index-img-03.jpg",
-			caption: "Saiba quem são <strong>os rostos</strong> (e dedos) por trás deste Projeto",
-			href: "/sobre#desenvolvedores",
-			button: "Conheça a gente :)"
-		}];
-		
-		$scope.active = 0;
-		$scope.currentSlideInterval = function () {
-			if ($scope.active === 0) { return 20000; }
-			else { return 5000; }
-		}
-	}]);
-	
-	app.controller("InstitutionController", ["$scope", "$http", "$interval", "$uibModal", function ($scope, $http, $interval, $uibModal) {
+	app.controller("InstitutionController", ["$scope", "$http", "$interval", function ($scope, $http, $interval) {
 		$scope.donations = null;
 		$scope.loadingInfo = true;
 		
@@ -43,18 +15,19 @@
 			}, function () { $scope.loadingInfo = false; });
 		};
 		
-		$scope.donate = function donate() {
-			$uibModal.open({
-				animation: true,
-				templateUrl: "donation-modal.html",
-				controller: "DonationModalController"
-			});
-		}
+//		$scope.donate = function donate() {
+//			$uibModal.open({
+//				animation: true,
+//				templateUrl: "donation-modal.html",
+//				controller: "DonationModalController"
+//			});
+//		}
 		
 		updateDonations();
 		$interval(updateDonations, 60000);	// 1 min
 	}]);
 	
+	/*
 	app.controller("DonationModalController", ["$scope", "$http", "$window", "$uibModal", "$uibModalInstance", function ($scope, $http, $window, $uibModal, $uibModalInstance) {
 		$scope.remindData = { name: "", email: "", phone: "" };
 		
@@ -96,4 +69,5 @@
 	app.controller("DonationThanksModalController", ["$scope", "$uibModalInstance", function ($scope, $uibModalInstance) {
 		$scope.close = $uibModalInstance.close;
 	}]);
+	*/
 })(angular);

@@ -23,17 +23,6 @@ nav, #footer {
 	color: #fff;
 	background: #155EA9;
 }
-.nav-div {
-	max-width: 50%;
-}
-.nav-left {
-	float: left;
-	text-align: left;
-}
-.nav-right {
-	float: right;
-	text-align: right;
-}
 #main-logo, .nav-link {
 	color: #fff;
 	text-decoration: none;
@@ -89,43 +78,39 @@ nav, #footer {
 	margin: 0 -15px;
 	background: #fff;
 	overflow: hidden;
-	position: relative;
 	box-shadow: 0 1px 4px rgba(0,0,0,.4);
 }
-.carousel-inner > .item > a > img, .carousel-inner > .item > img, .hero .hero-img {
-	min-width: 100%;
-}
 .hero .hero-img {
-	height: 300px;
+	position: relative;
 }
-
-.hero .hero-banner::after {
-	top: 0px;
-    width: 100%;
-    height: 300px;
-	position: absolute;
-	content: '';
+.hero .hero-img > img {
+	min-width: 100%;
+	position: relative;
+}
+.hero .hero-img-text {
 	left: 0;
-	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.01+0,0.7+100 */
-	background: -moz-linear-gradient(top,  rgba(0,0,0,0.01) 0%, rgba(0,0,0,0.7) 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.01) 0%,rgba(0,0,0,0.7) 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom,  rgba(0,0,0,0.01) 0%,rgba(0,0,0,0.7) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#03000000', endColorstr='#b3000000',GradientType=0 ); /* IE6-9 */
-
+	bottom: 0;
+    width: 100%;
+	color: #fff;
+    padding: 15px 0;
+	position: absolute;
+	background: -moz-linear-gradient(top,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.8) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.8) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#03000000', endColorstr='#b3000000',GradientType=0); /* IE6-9 */
 }
 .hero h1 {
 	font-weight: 300;
 	padding: 0;
 	margin: 0 0 15px 0;
+	text-shadow: 0 1px 2px #000;
 }
 .hero h1 > strong {
 	font-weight: 600;
 }
 .hero .hero-btn {
 	display: inline-block;
-	padding: 0 25px;
-	height: 40px;
-	line-height: 40px;
+	padding: 10px 25px;
 	font-size: 1.5rem;
 	background: #43a047;
 	border-radius: 5px;
@@ -142,33 +127,13 @@ nav, #footer {
 	background: #66bb6a;
 	text-decoration: none;
 }
-.hero .hero-btn-para {
-	padding: 0;
-	margin: 0 0 15px 0;
-	text-align: center;
-}
-.hero .hero-floating-title {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	text-align: center;
-	background: rgba(255,255,255,.9);
-	padding: 25px;
-	margin: 0;
-}
-.hero .hero-page-title-logo {
-	position: absolute;
-	width: 100%;
-	bottom: 30px;
-	color: #fff;
-	text-shadow: 0 1px 2px #000;
-}
-.hero .hero-page-title-logo .institution-logo > img {
+.hero .hero-extra-logo {
 	width: 100%;
 	max-width: 200px;
 	border-radius: 100%;
 	border: 2px solid #fff;
 	box-shadow: 0px 0px 5px #000;
+	margin-top: -50%;
 }
 .hero .institution-donors, .hero .institution-value {
 	margin-top: 5px;

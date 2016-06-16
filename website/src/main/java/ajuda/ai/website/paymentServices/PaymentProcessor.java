@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+
 import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.billing.PaymentEvent;
 import ajuda.ai.model.institution.Institution;
@@ -25,7 +27,8 @@ public interface PaymentProcessor {
 	/**
 	 * Cria uma ordem de pagamento de um determinado serviço de pagamentos. Espera-se que a classe
 	 * que implementa esta interface faça as requisições HTTP necessárias junto ao serviço de
-	 * pagamento sendo implementado.
+	 * pagamento sendo implementado e utilize o {@link Result} para responder corretamente a
+	 * requisição (vulgo "redirecionar para o ambiente de pagamento").
 	 * 
 	 * @param institution
 	 *            A Instituição que receberá o valor
@@ -34,16 +37,19 @@ public interface PaymentProcessor {
 	 * @param value
 	 *            Valor da Ordem de Pagamento ({@code 10000} = {@code $100.00}, para evitar erros de
 	 *            arredondamento)
+	 * @param result
+	 *            {@link Result} para se configurar a resposta.
+	 * @param log TODO
 	 * @param name
 	 *            Nome do Cliente (preenchido no website)
 	 * @param email
 	 *            E-mail do Cliente (preenchido no website)
 	 * @param phone
 	 *            Telefone do Cliente (preenchido no website - OPCIONAL)
-	 * @return Um objeto {@link Payment} referente à Ordem de Pagamento
+	 * @return Objeto {@link Payment} referente a esse pagamento.
 	 */
 	default Payment createPayment(final Institution institution, final InstitutionHelper institutionHelper,
-			final int value, final String name, final String email, final String phone) {
+			final int value, final PersistenceService ps, final Result result, final Logger log) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -64,6 +70,7 @@ public interface PaymentProcessor {
 	 *            Uma instância de {@link PersistenceService} para buscas e gravações no BD
 	 * @param result
 	 *            {@link Result} para se configurar a resposta.
+	 * @param log TODO
 	 * @return Um {@link PaymentEvent}. Caso essa função <strong>NÃO</strong> retorne {@code null}
 	 *         espera-se que ela tenha utilizado o {@code result} para enviar como resposta o que o
 	 *         serviço de pagamento espera como resposta da notificação (se for apenas um HTTP 200
@@ -76,7 +83,7 @@ public interface PaymentProcessor {
 	 * @see HttpResult#body(String)
 	 */
 	default PaymentEvent processEvent(final Institution institution, final HttpServletRequest request,
-			final PersistenceService ps, final Result result) throws Exception {
+			final PersistenceService ps, final Result result, final Logger log) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 }

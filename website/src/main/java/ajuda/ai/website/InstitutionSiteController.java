@@ -10,6 +10,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+
 import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionHelper;
@@ -40,6 +42,7 @@ import br.com.caelum.vraptor.view.Results;
 @Controller
 @Path("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}")
 public class InstitutionSiteController {
+	private final Logger log;
 	private final Result result;
 	private final Validator validator;
 	private final PersistenceService ps;
@@ -48,10 +51,11 @@ public class InstitutionSiteController {
 	private final ReminderMailSender reminderMailSender;
 	
 	/** @deprecated CDI */ @Deprecated
-	InstitutionSiteController() { this(null, null, null, null, null, null, null); }
+	InstitutionSiteController() { this(null, null, null, null, null, null, null, null); }
 	
 	@Inject
-	public InstitutionSiteController(final Result result, final Validator validator, final KeycloakUser user, final PersistenceService ps, final HttpServletRequest request, final PaymentService paymentService, final ReminderMailSender reminderMailSender) {
+	public InstitutionSiteController(final Logger log, final Result result, final Validator validator, final KeycloakUser user, final PersistenceService ps, final HttpServletRequest request, final PaymentService paymentService, final ReminderMailSender reminderMailSender) {
+		this.log = log;
 		this.result = result;
 		this.validator = validator;
 		this.ps = ps;
@@ -75,6 +79,19 @@ public class InstitutionSiteController {
 		if (institution != null) {
 			result.include("institution", institution);
 			result.include("institutionDescriptionMarkdown", StringUtils.markdown(institution.getDescription()));
+		}
+		else {
+			result.include("notFound", true);
+			result.redirectTo(SiteController.class).index();
+		}
+	}
+	
+	@Path("/doar")
+	public void donation(final String slug) {
+		final Institution institution = findInstitution(slug);
+		
+		if (institution != null) {
+			result.include("institution", institution);
 		}
 		else {
 			result.include("notFound", true);
@@ -112,13 +129,14 @@ public class InstitutionSiteController {
 		
 		if (institution != null) {
 			InstitutionHelper helper = (InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE institution = :institution AND LOWER(email) = LOWER(:email)").setParameter("institution", institution).setParameter("email", email).getSingleResult();
-			final int helpValue = StringUtils.parseInteger(value.replaceAll("\\D+", ""), 0);
+			final int helpValue = StringUtils.parseInteger(value.replaceAll("\\D+", ""), 0) * 100;
 			
 			if (helper == null) {
 				helper = new InstitutionHelper();
 				helper.setInstitution(institution);
 				helper.setName(StringUtils.stripHTML(name));
 				helper.setEmail(StringUtils.stripHTML(email));
+				helper.setPhone(phone == null ? null : phone.replaceAll("\\D+", ""));
 				helper.setTimestamp(new Date());
 				ps.persist(helper);
 			}
@@ -126,14 +144,10 @@ public class InstitutionSiteController {
 			final PaymentProcessor paymentProcessor = paymentService.get(institution.getPaymentService());
 			
 			if (paymentProcessor != null) {
-				final Payment payment = paymentProcessor.createPayment(institution, helper, helpValue, name, email, phone);
+				final Payment payment = paymentProcessor.createPayment(institution, helper, helpValue, ps, result, log);
 				
 				if (payment != null) {
-					if (!validator.validate(payment).hasErrors()) {
-						ps.persist(payment);
-						ps.createQuery("UPDATE InstitutionHelper SET lastPayment = :payment WHERE id = :id").setParameter("payment", payment).setParameter("id", helper.getId());
-						result.use(Results.json()).withoutRoot().from(payment).serialize();
-					}
+					ps.createQuery("UPDATE InstitutionHelper SET lastPayment = :payment WHERE id = :id").setParameter("payment", payment).setParameter("id", helper.getId()).executeUpdate();
 				}
 				else {
 					validator.add(new SimpleMessage("error", "Erro ao criar Ordem de Pagamento"));
@@ -148,7 +162,7 @@ public class InstitutionSiteController {
 		}
 		
 		if (validator.hasErrors()) {
-			validator.onErrorUse(Results.json()).withoutRoot().from(validator.getErrors()).serialize();
+			validator.onErrorRedirectTo(this).institution(slug);
 		}
 	}
 	
@@ -200,11 +214,12 @@ public class InstitutionSiteController {
 	public void thanks(final String slug) {
 		final Institution institution = findInstitution(slug);
 		
-		final String transactionId = request.getParameter(institution.getPaymentService().getThanksTransactionIdParameter());
-		final Payment payment = (Payment) ps.createQuery("SELECT p FROM Payment p JOIN FETCH p.institutionHelper WHERE p.paymentServiceId = :id").setParameter("id", transactionId).getSingleResult();
 		
-		if (institution != null && payment != null) {
+		if (institution != null) {
 			result.include("institution", institution);
+			
+			final String transactionId = request.getParameter(institution.getPaymentService().getThanksTransactionIdParameter());
+			final Payment payment = (Payment) ps.createQuery("SELECT p FROM Payment p JOIN FETCH p.institutionHelper WHERE p.paymentServiceId = :id").setParameter("id", transactionId).getSingleResult();
 			result.include("payment", payment);
 		}
 		else {

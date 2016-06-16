@@ -1,5 +1,7 @@
 package ajuda.ai.website;
 
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +11,6 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 
 import ajuda.ai.model.billing.PaymentEvent;
-import ajuda.ai.model.billing.PaymentServiceEnum;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.website.paymentServices.PaymentProcessor;
 import ajuda.ai.website.paymentServices.PaymentService;
@@ -44,7 +45,11 @@ public class TransactionNotificationsController {
 	@Transactional
 	@Path("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/api/transaction-notification")
 	public void notification(final String slug) {
-		log.info("Recebida uma notificação de transação! Slug = /{}, request = ", slug, request);
+		log.info("Recebida uma notificação de transação! Slug = /{}, method = {}, request = {}", slug, request.getMethod(), request);
+		for (final Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
+			log.info(" - {} = {}", entry.getKey(), entry.getValue() == null ? null : entry.getValue()[0]);
+		}
+		
 		if (log.isDebugEnabled()) { log.debug("Processando notificação de transação"); }
 		
 //		response.addHeader("Access-Control-Allow-Origin", "*");
@@ -59,15 +64,17 @@ public class TransactionNotificationsController {
 			
 			if (paymentProcessor != null) {
 				try {
-					final PaymentEvent newEvent = paymentProcessor.processEvent(institution, request, ps, result);
+					final PaymentEvent newEvent = paymentProcessor.processEvent(institution, request, ps, result, log);
+					
+					log.info("Payment Event: {}", newEvent);
 					
 					if (newEvent != null) {
 						ps.persist(newEvent);
 						
 						final Query updatePayment = ps.createQuery("UPDATE Payment SET paid = :paid, cancelled = :cancelled, readyForAccounting = :readyForAccounting WHERE id = :id").setParameter("id", newEvent.getPayment().getId());
-						updatePayment.setParameter("paid", PaymentServiceEnum.PAG_SEGURO.isPaid(newEvent.getStatus()));
-						updatePayment.setParameter("cancelled", PaymentServiceEnum.PAG_SEGURO.isCancelled(newEvent.getStatus()));
-						updatePayment.setParameter("readyForAccounting", PaymentServiceEnum.PAG_SEGURO.isReadyForAccounting(newEvent.getStatus()));
+						updatePayment.setParameter("paid", institution.getPaymentService().isPaid(newEvent.getStatus()));
+						updatePayment.setParameter("cancelled", institution.getPaymentService().isCancelled(newEvent.getStatus()));
+						updatePayment.setParameter("readyForAccounting", institution.getPaymentService().isReadyForAccounting(newEvent.getStatus()));
 						updatePayment.executeUpdate();
 					}
 					else {

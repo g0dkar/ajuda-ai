@@ -7,15 +7,19 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="hero">
-						<uib-carousel active="active" interval="currentSlideInterval()">
-							<uib-slide ng-repeat="slide in slides track by slide.id" index="slide.id">
-								<img ng-src="{{::slide.image}}" style="margin:auto;">
-								<div class="carousel-caption">
-									<h1 ng-bind-html="::slide.caption"></h1>
-									<p class="hero-btn-para"><a ng-href="{{::slide.href}}" class="hero-btn" ng-bind-html="::slide.button"></a></p>
+						<div class="hero-img">
+							<img src="${pageContext.request.contextPath}/res/img/index-img-01.jpg" alt="Juntamos quem quer ajudar a quem precisa de ajuda." />
+							<div class="hero-img-text">
+								<div class="container">
+									<div class="row">
+										<div class="col-xs-12">
+											<h1>Juntamos quem <strong>quer ajudar</strong> a quem <strong>precisa de ajuda</strong>.</h1>
+											<p><a href="${pageContext.request.contextPath}/ama" class="hero-btn">Ajude a AMA - Associação dos Amigos dos Autistas</a></p>
+										</div>
+									</div>
 								</div>
-							</uib-slide>
-						</uib-carousel>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

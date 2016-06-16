@@ -26,7 +26,7 @@
 <meta property="og:description" content="<c:out value="${description}" default="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!" />" />
 <meta property="og:type" content="article" />
 <meta property="og:image" content="https://ajuda.ai${pageContext.request.contextPath}/res/img/facebook-preview.jpg" />
-<meta property="og:url" content="https://ajuda.ai${pageContext.request.contextPath}/${slug}" />
+<meta property="og:url" content="https://ajuda.ai${pageContext.request.contextPath}/${institution.slug}" />
 
 <%-- for Twitter --%>
 <meta name="twitter:card" content="summary" />
@@ -35,18 +35,17 @@
 <meta name="twitter:image" content="${pageContext.request.contextPath}/res/img/twitter-preview.png" />
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="${pageContext.request.contextPath}/res/css/ui-bootstrap-custom-1.3.3-csp.css" rel="stylesheet" type="text/css">
 <link href="${pageContext.request.contextPath}/res/css/ajuda-ai.css" rel="stylesheet" type="text/css">
 
 <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-79132344-1','auto');ga('send', 'pageview');</script>
 <script type="text/javascript">WebFontConfig = {google:{families:["Josefin+Sans:300,400,600:latin"]}};</script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.min.js"></script>
+<%--script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-touch.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ui-bootstrap-custom-1.3.3.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ui-bootstrap-custom-tpls-1.3.3.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ui-bootstrap-custom-tpls-1.3.3.js"></script--%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ajuda-ai.js"></script>
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 </head>
@@ -65,18 +64,22 @@
 	<a href="#conteudo" id="jump-to-content" class="accessibility-link hidden">Ir para o Conteúdo</a>
 	
 	<nav>
-		<div class="nav-div nav-left">
+		<div class="nav-inner">
 			<a href="${pageContext.request.contextPath}/" title="Ajuda.Ai!" id="main-logo"><img src="/res/img/main-logo.png" height="45px" width="150px" alt="Ajuda.Ai" /></a>
-			<a href="${pageContext.request.contextPath}/" title="Ir para a Página Inicial" class="nav-link">Início</a>
-			<a href="${pageContext.request.contextPath}/sobre" title="Ir para a Página Inicial" class="nav-link">Sobre</a>
+			<a href="${pageContext.request.contextPath}/" title="Ir para a Página Inicial" class="nav-link hidden-xs">Início</a>
+			<a href="${pageContext.request.contextPath}/sobre" title="Ir para a Página Inicial" class="nav-link hidden-xs">Sobre</a>
+			
+			<a href="${pageContext.request.contextPath}/ama" title="Ajude a Associação dos Amigos dos Autistas" class="nav-link nav-link-btn hidden-xs"><span class="nav-link-btn-inner">Ajuda.Ai!</span></a>
 		</div>
 		
-		<div class="nav-div nav-right">
+		<%--
+		<div class="nav-div nav-right hidden-xs">
 			<c:if test="${user eq null}">
 				<a href="${pageContext.request.contextPath}/admin" title="Acesso ao Painel de Controle" class="nav-link">Painel de Controle</a>
 			</c:if>
 			<a href="${pageContext.request.contextPath}/ama" title="Ajude a Associação dos Amigos dos Autistas" class="nav-link nav-link-btn"><span class="nav-link-btn-inner">Ajuda.Ai!</span></a>
 		</div>
+		--%>
 	</nav>
 	
 	<div id="content">
@@ -97,7 +100,7 @@
 			<hr>
 			
 			<div class="row">
-				<div class="col-xs-12 col-sm-6 col-md-4">
+				<div class="col-xs-6 col-md-4">
 					<h4>Parceiros</h4>
 					<ul>
 						<li><a href="http://cidadeverde.com/genteespecial" target="_blank">Gente Especial</a></li>
@@ -105,7 +108,8 @@
 						<li><a href="http://vikstar.com.br/" target="_blank">Vikstar</a></li>
 					</ul>
 				</div>
-				<div class="col-xs-12 col-sm-6 col-md-4">
+				
+				<div class="col-xs-6 col-md-4">
 					<h4>O Projeto</h4>
 					<ul>
 						<li><a href="https://github.com/g0dkar/ajuda-ai" title="Conheça e contribua com o código do projeto no GitHub" target="_blank">GitHub</a></li>
