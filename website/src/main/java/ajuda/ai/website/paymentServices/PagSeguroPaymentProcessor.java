@@ -73,26 +73,32 @@ public class PagSeguroPaymentProcessor implements PaymentProcessor {
 		
 		return null;
 	}
-
+	
 	public PaymentEvent processEvent(final Institution institution, final HttpServletRequest request, final PersistenceService ps, final Result result, final Logger log) throws Exception {
+		if (log.isDebugEnabled()) { log.info("Iniciando Processamento de Pagamento do PagSeguro"); }
 		if (request.getMethod().equals("POST")) {
 			final String pagSeguroId = request.getParameter("notificationCode");
 			final Map<String, String> credentials = JsonUtils.fromJson(institution.getPaymentServiceData(), Map.class);
 			final AccountCredentials accountCred = new AccountCredentials(credentials.get("email"), credentials.get("token"), credentials.get("token"));
+			if (log.isDebugEnabled()) { log.info("Pedindo ao PagSeguro informações sobre a transação"); }
 			final Transaction transaction = NotificationService.checkTransaction(accountCred, pagSeguroId);
 			final int valor = transaction.getGrossAmount().multiply(HUNDRED).intValue();
 			
 			InstitutionHelper institutionHelper = (InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE institution = :institution AND LOWER(email) = LOWER(:email)").setParameter("institution", institution).setParameter("email", transaction.getSender().getEmail()).getSingleResult();
 			if (institutionHelper == null) {
+				if (log.isDebugEnabled()) { log.info("Pagamento veio de um InstitutionHelper inexistente, criando..."); }
 				institutionHelper = new InstitutionHelper();
 				institutionHelper.setAllowPublish(false);
 				institutionHelper.setEmail(transaction.getSender().getEmail());
+				institutionHelper.setPaymentEmail(transaction.getSender().getEmail());
 				institutionHelper.setName(transaction.getSender().getName());
 				institutionHelper.setInstitution(institution);
 				institutionHelper.setPhone(transaction.getSender().getPhone().toString());
 				ps.persist(institutionHelper);
 			}
 			else if (StringUtil.isBlank(institutionHelper.getPhone())) {
+				if (log.isDebugEnabled()) { log.info("Pagamento veio de um InstitutionHelper que já existe. Atualizando PaymentEmail e Phone..."); }
+				institutionHelper.setPaymentEmail(transaction.getSender().getEmail());
 				institutionHelper.setPhone(transaction.getSender().getPhone().toString());
 				ps.merge(institutionHelper);
 			}
@@ -100,18 +106,23 @@ public class PagSeguroPaymentProcessor implements PaymentProcessor {
 			Payment payment = (Payment) ps.createQuery("FROM Payment WHERE institution = :institution AND paymentServiceId = :id").setParameter("institution", institution).setParameter("id", pagSeguroId).getSingleResult();
 			
 			if (payment == null) {
+				if (log.isDebugEnabled()) { log.info("Pagamento referente a um Payment não registrado. Criando..."); }
 				payment = new Payment();
 				payment.setInstitution(institution);
 				payment.setInstitutionHelper(institutionHelper);
-				payment.setPaymentServiceId(pagSeguroId);
 				payment.setDescription("Pagamento criado via notificação de pagamento do PagSeguro");
 				payment.setPaymentService(institution.getPaymentService());
+				payment.setPaymentServiceId(transaction.getCode());
 				payment.setTimestamp(new Date());
 				payment.setValue(valor);
 				payment.setPaid(false);
 				payment.setCancelled(false);
 				payment.setReadyForAccounting(false);
 				ps.persist(payment);
+			}
+			else {
+				payment.setPaymentServiceId(transaction.getCode());
+				ps.merge(payment);
 			}
 			
 			ps.createQuery("UPDATE InstitutionHelper SET lastPayment = :payment WHERE id = :id").setParameter("payment", payment).setParameter("id", institutionHelper.getId()).executeUpdate();

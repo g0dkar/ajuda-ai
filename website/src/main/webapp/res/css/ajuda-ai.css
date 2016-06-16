@@ -133,7 +133,22 @@ nav, #footer {
 	border-radius: 100%;
 	border: 2px solid #fff;
 	box-shadow: 0px 0px 5px #000;
-	margin-top: -50%;
+	margin-top: -25px;
+}
+@media (min-width: 768px) {
+	.hero .hero-extra-logo {
+		margin-top: -50%;
+	}
+}
+@media (min-width: 992px) {
+	.hero .hero-extra-logo {
+		margin-top: -55%;
+	}
+}
+@media (min-width: 1200px) {
+	.hero .hero-extra-logo {
+		margin-top: -55%;
+	}
 }
 .hero .institution-donors, .hero .institution-value {
 	margin-top: 5px;
@@ -148,6 +163,7 @@ nav, #footer {
 	height: 30px;
 }
 .hero .donate-button {
+	display: block;
 	margin: 10px;
 	height: 70px;
 	line-height: 70px;
@@ -205,50 +221,6 @@ nav, #footer {
 }
 .modal-body > p:first-child {
 	font-size: 1.25em;
-}
-.donate-modal-body {
-	padding-bottom: 0;
-	margin-bottom: 0;
-}
-.donation-option {
-	margin: 15px 0;
-	border: 1px solid #90A4AE;
-	padding: 15px;
-	text-align: center;
-	background: #ECEFF1;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
-	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.1);
-	box-shadow: 0 1px 2px rgba(0,0,0,.1);
-	-webkit-transition: all .2s ease;
-	-moz-transition: all .2s ease;
-	transition: all .2s ease;
-}
-.donation-option h3 {
-	color: #000;
-	font-weight: 600;
-	margin-top: 0;
-}
-.donation-option-later {
-	cursor: pointer;
-}
-.donation-option:hover, .donation-option-selected {
-	background: #fff;
-	border-color: #78909C;
-	-webkit-box-shadow: 0 2px 4px rgba(0,0,0,.2);
-	-moz-box-shadow: 0 2px 4px rgba(0,0,0,.2);
-	box-shadow: 0 2px 4px rgba(0,0,0,.2);
-}
-.donation-option-selected, .donation-option-selected:hover {
-	background: #E8F5E9;
-	border-color: #4CAF50;
-}
-.donate-form {
-	margin-top: 20px;
-	padding-top: 20px;
-	border-top: 1px dashed #607D8B;
 }
 #footer {
 	padding: 15px 0;

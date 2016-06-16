@@ -9,7 +9,7 @@ public class PaymentService {
 	public PaymentProcessor get(final PaymentServiceEnum service) {
 		switch (service) {
 			case MOIP: return null;
-			case PAG_SEGURO: return new PagSeguroPayment();
+			case PAG_SEGURO: return new PagSeguroPaymentProcessor();
 			default: return null;
 		}
 	}

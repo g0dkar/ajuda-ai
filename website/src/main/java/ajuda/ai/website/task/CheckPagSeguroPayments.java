@@ -38,7 +38,7 @@ public class CheckPagSeguroPayments {
 	private EntityManager entityManager;
 	
 	@Transactional
-	@Schedule(hour="0,4,8,12,16,20")
+	@Schedule(hour="4,12,20")
 	public void run() {
 		log.info("Inicando sincronização de pagamentos com PagSeguro...");
 		final long start = System.currentTimeMillis();

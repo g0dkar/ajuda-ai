@@ -55,9 +55,14 @@ public class InstitutionHelper implements Serializable {
 	
 	@Email
 	@NotBlank
-	@Size(max = 255)
-	@Column(nullable = false, length = 255)
+	@Size(max = 128)
+	@Column(nullable = false, length = 128)
 	private String email;
+	
+	@Email
+	@Size(max = 255)
+	@Column(length = 255)
+	private String paymentEmail;
 	
 	@Column(length = 32)
 	private String phone;
@@ -153,5 +158,13 @@ public class InstitutionHelper implements Serializable {
 
 	public void setReminderTokenDate(final Date reminderTokenDate) {
 		this.reminderTokenDate = reminderTokenDate;
+	}
+
+	public String getPaymentEmail() {
+		return paymentEmail;
+	}
+
+	public void setPaymentEmail(final String paymentEmail) {
+		this.paymentEmail = paymentEmail;
 	}
 }

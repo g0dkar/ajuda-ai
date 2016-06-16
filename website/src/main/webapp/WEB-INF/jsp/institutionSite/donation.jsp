@@ -55,6 +55,17 @@
 						
 						<hr>
 						
+						<c:if test="${errors ne null && !empty(errors)}">
+							<div class="alert alert-danger">
+								<p><strong>Algo de errado não está certo...</strong> Houveram erros ao processar sua doação :(</p>
+								<ul>
+									<c:forEach items="${errors}" var="err">
+										<li data-category="<c:out value="${err.category}"/>"><c:out value="${err.message}" /></li>
+									</c:forEach>
+								</ul>
+							</div>
+						</c:if>
+						
 						<form action="${pageContext.request.contextPath}/${institution.slug}/api/doar" method="post" name="formDonate" class="donate-form form-horizontal">
 							<div class="form-group form-group-lg">
 								<label for="name" class="col-sm-2 control-label">Valor *</label>
@@ -91,6 +102,7 @@
 							<div class="form-group">
 								<div class="col-sm-offset-2 col-sm-10">
 									<button class="btn btn-success btn-lg" type="submit" tabindex="5">Ajuda Aí!</button>
+									<p><strong style="color:#c00">Estamos <u>testando</u> as doações. Nenhum valor será realmente cobrado.</strong></p>
 								</div>
 							</div>
 						</form>

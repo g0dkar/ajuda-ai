@@ -12,7 +12,7 @@
 							<div class="hero-img-text">
 								<div class="container">
 									<div class="row">
-										<div class="col-xs-12">
+										<div class="col-xs-12 text-center">
 											<h1>Juntamos quem <strong>quer ajudar</strong> a quem <strong>precisa de ajuda</strong>.</h1>
 											<p><a href="${pageContext.request.contextPath}/ama" class="hero-btn">Ajude a AMA - Associação dos Amigos dos Autistas</a></p>
 										</div>
