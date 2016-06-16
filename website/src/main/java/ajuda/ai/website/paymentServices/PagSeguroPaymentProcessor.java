@@ -34,7 +34,7 @@ import br.com.uol.pagseguro.service.NotificationService;
  * @author Rafael Lins
  *
  */
-public class PagSeguroPayment implements PaymentProcessor {
+public class PagSeguroPaymentProcessor implements PaymentProcessor {
 	public Payment createPayment(final Institution institution, final InstitutionHelper institutionHelper, final int value, final PersistenceService ps, final Result result, final Logger log) {
 		final String paymentDescription = "Doação: " + institution.getName();
 		final BigDecimal valueBigDecimal = new BigDecimal(value).divide(HUNDRED).setScale(2);
