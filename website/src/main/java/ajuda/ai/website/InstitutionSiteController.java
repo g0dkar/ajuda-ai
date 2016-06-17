@@ -238,7 +238,7 @@ public class InstitutionSiteController {
 			
 			final Map<String, Object> response = new HashMap<>(2);
 			response.put("count", helpers);
-			response.put("value", value != null ? new BigDecimal(value.longValue()).divide(BigDecimal.TEN).doubleValue() : 0.0);
+			response.put("value", value != null ? new BigDecimal(value.longValue()).divide(PaymentProcessor.HUNDRED).doubleValue() : 0.0);
 			
 			result.use(Results.json()).withoutRoot().from(response).serialize();
 		}

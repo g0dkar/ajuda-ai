@@ -34,6 +34,9 @@
 <meta name="twitter:description" content="<c:out value="${description}" default="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!" />" />
 <meta name="twitter:image" content="${pageContext.request.contextPath}/res/img/twitter-preview.png" />
 
+<%-- Schema.org Metadata --%>
+<script type="application/ld+json">{"@context": "http://schema.org","@type": "WebPage","name": "<c:out value="${title}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda" /> - Ajuda.Ai!","description": "<c:out value="${description}" default="Com o Ajuda.Ai você facilmente ajuda ONGs e Instituições. Ajude e faça a diferença!" />","reviewedBy": "Rafael M. Lins","primaryImageOfPage": "https://ajuda.ai${pageContext.request.contextPath}/res/img/facebook-preview.jpg","image": "https://ajuda.ai${pageContext.request.contextPath}/res/img/facebook-preview.jpg","significantLink": "https://ajuda.ai/ama/","alternativeHeadline": "Juntamos quem quer Ajudar a quem precisa de Ajuda","sameAs": "https://github.com/g0dkar/ajuda-ai","license": "http://www.apache.org/licenses/LICENSE-2.0"}</script>
+
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="${pageContext.request.contextPath}/res/css/ajuda-ai.css" rel="stylesheet" type="text/css">
 
