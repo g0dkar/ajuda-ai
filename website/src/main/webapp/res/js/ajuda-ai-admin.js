@@ -46,4 +46,24 @@
 		$scope.update = update;
 		update();
 	}]);
+	
+	app.controller("PostEditController", ["$scope", function ($scope) {
+		$scope.content = document.getElementById("content").value;
+	}]);
+	
+	app.directive("markdown", function () {
+		var timeout = null;
+		
+		return {
+			require: "ngModel",
+			element: "A",
+			link: function (scope, element, attrs) {
+				var el = document.getElementById(attrs.markdown);
+				
+				scope.$watch(attrs.ngModel, function (newValue) {
+					el.innerHTML = newValue ? markdown.toHTML(newValue) : "<p>[ Previsão do Conteúdo de seu Post ficará aqui ]</p>";
+				});
+			}
+		}
+	});
 })(angular);

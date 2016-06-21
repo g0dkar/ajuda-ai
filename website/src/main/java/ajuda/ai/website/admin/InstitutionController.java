@@ -65,8 +65,13 @@ public class InstitutionController extends AdminController {
 			result.include("institution", institution);
 			
 			final int pageSize = 50;
-			final int offset = Math.max(0, StringUtils.parseInteger(page, 0)) * pageSize;
+			final int currentPage = Math.max(0, StringUtils.parseInteger(page, 0));
+			final int offset = currentPage * pageSize;
+			final long postsCount = ((Number) ps.createQuery("SELECT count(*) FROM InstitutionPost WHERE institution = :institution").setParameter("institution", institution).getSingleResult()).longValue();
 			result.include("posts", ps.createQuery("FROM InstitutionPost WHERE institution = :institution ORDER BY creation.time DESC").setParameter("institution", institution).setFirstResult(offset).setMaxResults(pageSize).getResultList());
+			result.include("postsCount", postsCount);
+			result.include("page", currentPage);
+			result.include("totalPages", Math.ceil(postsCount / (double) pageSize));
 		}
 		else {
 			result.include("infoMessage", "Instituição inexistente ou você não é o criador da mesma: /" + slug);
@@ -75,7 +80,7 @@ public class InstitutionController extends AdminController {
 	}
 	
 	@Get("/posts/novo")
-	public void newPost(final String slug) {
+	public void postNew(final String slug) {
 		final Institution institution = findInstitution(slug);
 		if (institution != null) {
 			result.include("institution", institution);
@@ -89,8 +94,8 @@ public class InstitutionController extends AdminController {
 	@Transactional
 	@Post("/posts/novo")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
-	public void createPost(final String slug, final String title, final String content, final String published) {
-		validator.onErrorForwardTo(this).newPost(slug);
+	public void postCreate(final String slug, final String title, final String content, final String published) {
+		validator.onErrorForwardTo(this).postNew(slug);
 		final Institution institution = findInstitution(slug);
 		
 		if (institution != null) {
@@ -122,6 +127,49 @@ public class InstitutionController extends AdminController {
 	
 	@Path("/posts/{id:\\d+}")
 	public void postDetails(final String slug, final String id) {
+		final Institution institution = findInstitution(slug);
+		if (institution != null) {
+			final InstitutionPost post = (InstitutionPost) ps.createQuery("FROM InstitutionPost WHERE institution = :institution AND id = :id").setParameter("institution", institution).setParameter("id", StringUtils.parseLong(id, 0)).getSingleResult();
+			
+			if (post != null) {
+				result.include("institution", institution);
+				result.include("post", post);
+				result.include("postMarkdown", StringUtils.markdown(post.getContent()));
+			}
+			else {
+				result.include("infoMessage", "Post inexistente ou você não tem acesso a ele");
+				result.redirectTo(this).posts(slug, null);
+			}
+		}
+		else {
+			result.include("infoMessage", "Instituição inexistente ou você não é o criador da mesma: /" + slug);
+			result.redirectTo(DashboardController.class).dashboard();
+		}
+	}
+	
+	@Path("/posts/{id:\\d+}/editar")
+	public void postEdit(final String slug, final String id) {
+		final Institution institution = findInstitution(slug);
+		if (institution != null) {
+			final InstitutionPost post = (InstitutionPost) ps.createQuery("FROM InstitutionPost WHERE institution = :institution AND id = :id").setParameter("institution", institution).setParameter("id", StringUtils.parseLong(id, 0)).getSingleResult();
+			
+			if (post != null) {
+				result.include("institution", institution);
+				result.include("post", post);
+			}
+			else {
+				result.include("infoMessage", "Post inexistente ou você não tem acesso a ele");
+				result.redirectTo(this).posts(slug, null);
+			}
+		}
+		else {
+			result.include("infoMessage", "Instituição inexistente ou você não é o criador da mesma: /" + slug);
+			result.redirectTo(DashboardController.class).dashboard();
+		}
+	}
+	
+	@Post("/posts/{id:\\d+}/editar")
+	public void postUpdate(final String slug, final String id) {
 		final Institution institution = findInstitution(slug);
 		if (institution != null) {
 			final InstitutionPost post = (InstitutionPost) ps.createQuery("FROM InstitutionPost WHERE institution = :institution AND id = :id").setParameter("institution", institution).setParameter("id", StringUtils.parseLong(id, 0)).getSingleResult();

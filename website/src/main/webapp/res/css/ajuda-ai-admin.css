@@ -173,3 +173,32 @@ nav.navbar-ajuda-ai {
 	padding: 30px;
 	font-size: 1.5em;
 }
+.new-post-preview {
+	border-top: 1px solid #CFD8DC;
+	padding-top: 15px;
+}
+.new-post-preview > .col-xs-12 > h2 {
+	margin-top: 0;
+}
+#content-preview {
+	border: 1px solid #CFD8DC;
+	border-radius: 2px;
+	margin: -5px;
+	padding: 5px;
+	font-family: "Josefin Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+#content-preview :first-child {
+	margin-top: 0;
+}
+#content-preview :last-child {
+	margin-bottom: 0;
+}
+.post-details .label {
+	margin-left: 2em;
+	font-size: .34em;
+	vertical-align: middle;
+}
+.posts-table > tbody > tr > td > a {
+	font-size: 1.5em;
+	font-weight: 600;
+}

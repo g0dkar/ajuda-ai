@@ -42,48 +42,50 @@
 			
 			<div class="row">
 				<div class="col-xs-12">
-					<h2>Posts <small><a href="/admin/instituicao/${institution.slug}/posts/novo">+ Novo post</a></small></h2>
+					<h2>Novo Post</h2>
 					
-					<table class="posts-table table table-striped">
-						<thead>
-							<tr>
-								<th>Post</th>
-								<th>Criação</th>
-								<th>Visualizações</th>
-								<th>Ações</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:choose>
-								<c:when test="${posts ne null && !empty(posts)}">
-									<c:forEach items="${posts}" var="post">
-										<tr class="${post.published ? 'published' : 'unpublished'}">
-											<td>
-												<a href="/admin/instituicao/${institution.slug}/posts/${post.id}"><c:out value="${post.title}" /><c:if test="${post.published}"> <small>Post não publicado</small></c:if></a>
-												<br><a href="https://ajuda.ai/${institution.slug}/${post.slug}/${post.id}" class="post-link">https://ajuda.ai/${institution.slug}/${post.slug}/${post.id}</a>
-											</td>
-											<td><fmt:formatDate value="${post.creation.time}" pattern="dd/MM/yyyy 'às' HH'h'mm'm'" /></td>
-											<td><fmt:formatNumber value="${post.pageviews}" type="number" /> </td>
-											<td><a href="/admin/instituicao/${institution.slug}/posts/${post.id}/editar" title="Altere título e conteúdo de seu post">Editar</a></td>
-										</tr>
-									</c:forEach>
-								</c:when>
-								<c:otherwise>
-									<tr><td colspan="4"><div class="no-results text-center">Nenhum post... <a href="/admin/instituicao/${institution.slug}/posts/novo" title="Criar um novo post">por enquanto</a> ;)</div></td></tr>
-								</c:otherwise>
-							</c:choose>
-						</tbody>
-						<tfoot>
-							<tr>
-								<th>Post</th>
-								<th>Criação</th>
-								<th>Visualizações</th>
-								<th>Ações</th>
-							</tr>
-						</tfoot>
-					</table>
-					
-					<p><strong>${postCount}</strong> posts no total.</p>
+					<form action="/admin/instituicao/${institution.slug}/posts/novo" method="post" class="form-horizontal">
+						<div class="form-group">
+							<label for="title" class="col-sm-2 control-label">Título*</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="title" id="title" placeholder="Título do seu post" autofocus required>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<div class="col-sm-2">
+								<div class="checkbox text-right">
+									<label><input type="checkbox" name="published" value="1" checked> <strong>Publicar Post</strong></label>
+								</div>
+							</div>
+							<div class="col-sm-10" style="padding-top:7px">
+								Deixe marcado para tornar o Post visível em sua Página
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="content" class="col-sm-2 control-label">Conteúdo*</label>
+							<div class="col-sm-10">
+								<textarea class="form-control markdown" markdown="content-preview" ng-model="content" ng-model-options="{debounce:500}" name="content" id="content" placeholder="Conteúdo. Você pode usar Markdown." required></textarea>
+								<script type="text/javascript">autosize(document.getElementById("content"))</script>
+								<p class="help-block">Você pode usar <a href="/res/markdown.jsp" target="_blank">Markdown</a>, uma forma fácil de estilizar seu texto. Siga o link para instruções sobre como usá-lo, é bem simples :)</p>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-10">
+								<button type="submit" class="btn btn-lg btn-success">Criar Post</button>
+							</div>
+						</div>
+						
+					</form>
+				</div>
+			</div>
+			
+			<div class="row new-post-preview">
+				<div class="col-xs-12">
+					<h2>Previsão <small>Veja como seu Post ficará</small></h2>
+					<div id="content-preview">[ Preview ]</div>
 				</div>
 			</div>
 		</div>
