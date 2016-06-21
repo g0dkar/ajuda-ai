@@ -1,18 +1,20 @@
 package ajuda.ai.model.institution;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import ajuda.ai.model.Slug;
 import ajuda.ai.model.extra.CreationInfo;
 
 /**
@@ -22,20 +24,27 @@ import ajuda.ai.model.extra.CreationInfo;
  *
  */
 @Entity
-public class InstitutionPost extends Slug {
+public class InstitutionPost implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
+	
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	@NotBlank
+	@Column(nullable = false, length = 128)
+	private String slug;
 	
 	@NotNull
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Institution institution;
 	
 	@Embedded
-	private CreationInfo creationInfo;
+	private CreationInfo creation;
 	
 	@NotBlank
-	@Size(max = 0xFF)
-	@Column(nullable = false, length = 0xFF)
+	@Size(max = 128)
+	@Column(nullable = false, length = 128)
 	private String title;
 	
 	@NotBlank
@@ -45,18 +54,17 @@ public class InstitutionPost extends Slug {
 	@Column(nullable = false)
 	private boolean published;
 	
-	/**
-	 * Make sure this post slug has the {@link #institution} prefix
-	 */
-	@PrePersist
-	@PreUpdate
-	public void beforeSave() {
-		final String slugPrefix = institution.getSlug() + "/";
-		if (!getSlug().startsWith(slugPrefix)) {
-			setSlug(slugPrefix + getSlug());
-		}
+	@Column(nullable = false)
+	private long pageviews;
+
+	public Long getId() {
+		return id;
 	}
-	
+
+	public void setId(final Long id) {
+		this.id = id;
+	}
+
 	public Institution getInstitution() {
 		return institution;
 	}
@@ -65,12 +73,12 @@ public class InstitutionPost extends Slug {
 		this.institution = institution;
 	}
 
-	public CreationInfo getCreationInfo() {
-		return creationInfo;
+	public CreationInfo getCreation() {
+		return creation;
 	}
 
-	public void setCreationInfo(final CreationInfo creationInfo) {
-		this.creationInfo = creationInfo;
+	public void setCreation(final CreationInfo creation) {
+		this.creation = creation;
 	}
 
 	public String getTitle() {
@@ -95,5 +103,21 @@ public class InstitutionPost extends Slug {
 
 	public void setPublished(final boolean published) {
 		this.published = published;
+	}
+
+	public String getSlug() {
+		return slug;
+	}
+
+	public void setSlug(final String slug) {
+		this.slug = slug;
+	}
+
+	public long getPageviews() {
+		return pageviews;
+	}
+
+	public void setPageviews(final long pageviews) {
+		this.pageviews = pageviews;
 	}
 }

@@ -6,7 +6,7 @@
 <%@ taglib prefix="compressor" uri="http://htmlcompressor.googlecode.com/taglib/compressor" %>
 <compressor:html enabled="true" removeComments="true" preserveLineBreaks="false" removeHttpProtocol="true" removeHttpsProtocol="false" removeJavaScriptProtocol="true" removeMultiSpaces="true" removeIntertagSpaces="true" compressCss="true" compressJavaScript="false">
 <!DOCTYPE html>
-<html ng-app="ajuda-ai" lang="${locale.language}-${locale.country}">
+<html ng-app="ajuda-ai" lang="pt-br">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -64,11 +64,11 @@
 		</div>
 	</noscript>
 	
-	<a href="#conteudo" id="jump-to-content" class="accessibility-link hidden">Ir para o Conteúdo</a>
+	<a href="#content" id="jump-to-content" class="accessibility-link hidden">Ir para o Conteúdo</a>
 	
 	<nav>
 		<div class="nav-inner">
-			<a href="${pageContext.request.contextPath}/" title="Ajuda.Ai!" id="main-logo"><img src="/res/img/main-logo.png" height="45px" width="150px" alt="Ajuda.Ai" /></a>
+			<a href="${pageContext.request.contextPath}/" title="Ajuda.Ai!" id="main-logo"><img src="/res/img/main-logo.png" height="45" width="150" alt="Ajuda.Ai" /></a>
 			<a href="${pageContext.request.contextPath}/" title="Ir para a Página Inicial" class="nav-link hidden-xs">Início</a>
 			<a href="${pageContext.request.contextPath}/sobre" title="Ir para a Página Inicial" class="nav-link hidden-xs">Sobre</a>
 			

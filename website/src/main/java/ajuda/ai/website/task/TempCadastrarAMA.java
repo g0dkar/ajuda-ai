@@ -49,7 +49,7 @@ public class TempCadastrarAMA {
 			ama = new Institution();
 			ama.setName("AMA/PI - Associação de Amigos do Autista do Piauí");
 			ama.setCreation(new CreationInfo());
-			ama.getCreation().setCreator("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+			ama.getCreation().setCreator("00aa71f3-78b0-4355-88c8-0baee33cab86");
 			ama.getCreation().setTime(new Date());
 			ama.setDescription("## O QUE É A AMA/PI\n\nEntidade sem fins lucrativos, reconhecida de utilidade pública municipal - Lei nº 2.964/00, e utilidade pública estadual pela Lei nº 5.201/08/01, inscrita no Conselho Municipal dos Direitos da Criança e do Adolescente de Teresina (CMDCAT) nº 094/02.\n\n## COMO SURGIU A IDEIA\n\nSurgiu da necessidade dos pais em encontrar apoio e suporte técnico para educação e tratamento de seus filhos autistas. Foi fundada em 29 de Janeiro de 2000, por pais e amigos dos autistas residentes em Teresina-PI, que superando a desinformação diante do quadro de Autismo, reuniram-se para transformar questionamentos em ação somando forças para obter serviços estruturados nas áreas de saúde, educação especial, trabalho e assistência social.\n\n[Visite nosso site!](http://amigosautistas.blogspot.com.br)");
 			ama.setPaymentService(PaymentServiceEnum.MOIP);

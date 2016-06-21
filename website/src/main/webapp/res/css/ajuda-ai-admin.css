@@ -1,0 +1,175 @@
+/* If you don't want to use the WebFonts JS: @import url(https://fonts.googleapis.com/css?family=Lato:300,400,600); */
+
+body {
+	background: #eceff1;
+	padding-top: 50px;
+}
+.wf-lato-n4-active body {
+	font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+#bug-found {
+	position: fixed;
+	right: 0;
+	top: 50px;
+	display: block;
+	padding: 5px 8px;
+	font-size: 10px;
+	text-align: center;
+	background: #F44336;
+	color: #fff;
+	opacity: .65;
+	z-index: 10;
+	-webkit-border-radius: 0 0 0 3px;
+	-moz-border-radius: 0 0 0 3px;
+	border-radius: 0 0 0 3px;
+	-webkit-transition: opacity .2s ease;
+	-moz-transition: opacity .2s ease;
+	transition: opacity .2s ease;
+}
+#bug-found:hover {
+	opacity: 1;
+}
+nav.navbar-ajuda-ai {
+	color: #fff;
+	border: none;
+	background: #155EA9;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.4);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.4);
+	box-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+.navbar-ajuda-ai .navbar-collapse {
+	border: none;
+}
+.navbar-ajuda-ai .navbar-brand {
+	padding: 4px 15px;
+}
+.navbar-ajuda-ai .navbar-nav > li > a {
+	color: #BBDEFB;
+	-webkit-transition: all .2s ease;
+	-moz-transition: all .2s ease;
+	transition: all .2s ease;
+}
+.navbar-ajuda-ai .navbar-nav > li > a:hover {
+	color: #fff;
+	background: rgba(0,0,0,.1);
+}
+.navbar-ajuda-ai .navbar-nav > li.active > a, .navbar-ajuda-ai .navbar-nav > li.active > a:hover {
+	color: #fff;
+	background: rgba(0,0,0,.2);
+	font-weight: 600;
+}
+.content-container > .container {
+	background: #fff;
+	padding: 15px;
+	border-radius: 3px;
+	margin: 15px auto;
+	-webkit-box-shadow: 0px 1px 2px rgba(0,0,0,.1);
+	-moz-box-shadow: 0px 1px 2px rgba(0,0,0,.1);
+	box-shadow: 0px 1px 2px rgba(0,0,0,.1);
+}
+.content-container h1, .content-container h2, .content-container h3, .content-container h4, .content-container h5, .content-container h6 {
+	font-weight: 300;
+}
+.content-container .updating {
+	opacity: .5;
+	-webkit-transition: opacity .2s ease;
+	-moz-transition: opacity .2s ease;
+	transition: opacity .2s ease;
+}
+.page-title {
+	margin: -15px -15px 15px -15px;
+	padding: 15px;
+	font-size: 42px;
+	color: #000;
+	font-weight: 400 !important;
+	border-bottom: 1px solid #CFD8DC;
+}
+.dashboard-data-panels {
+	margin-top: -15px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	background: #E8F5E9;
+}
+.institution-submenu {
+	margin-top: -15px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	background: #E3F2FD;
+	border-bottom: 1px solid #CFD8DC;
+}
+.nav > li > a {
+	-webkit-transition: all .2s ease;
+	-moz-transition: all .2s ease;
+	transition: all .2s ease;
+}
+.nav > li > a:focus, .nav > li > a:hover {
+	background: #BBDEFB;
+}
+.institution-submenu + .dashboard-data-panels {
+	margin-top: 0;
+}
+.dashboard-data {
+	text-align: center;
+	border-right: 1px dotted #CFD8DC;
+}
+.dashboard-data:last-child {
+	border-right: none;
+}
+.dashboard-data h3 {
+	margin: 0;
+	padding: 0;
+	color: #546E7A;
+	font-size: 20px;
+}
+.dashboard-data .dashboard-number {
+	font-weight: 600;
+	font-size: 2em;
+}
+.dashboard-data .dashboard-number.small {
+	font-size: 1em;
+	color: #607D8B;
+}
+.dashboard-data .dashboard-currency {
+	color: #4CAF50;
+}
+.dashboard-data .dashboard-currency.red {
+	color: #F44336;
+}
+.dashboard-graph .col-xs-12 {
+	border-top: 1px solid #CFD8DC;
+	border-bottom: 1px solid #CFD8DC;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+.dashboard-graph h3 {
+	margin-top: 0;
+}
+.graph-placeholder {
+	border: 1px solid #CFD8DC;
+	padding: 50px 15px;
+	text-align: center;
+	border-radius: 2px;
+	background: #ECEFF1;
+	font-size: 1.5em;
+}
+.dashboard-institutions .institution-name {
+	font-weight: 600;
+	font-size: 1.5em;
+	display: block;
+}
+.dashboard-institutions .institution-slug {
+	color: #607D8B;
+	margin-right: 3em;
+	display: inline-block;
+}
+.dashboard-institutions .institution-created {
+	font-size: .8em;
+	color: #90A4AE;
+}
+.posts-table.table {
+	margin-bottom: 0;
+}
+.no-results {
+	padding: 30px;
+	font-size: 1.5em;
+}

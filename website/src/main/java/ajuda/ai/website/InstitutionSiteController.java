@@ -72,7 +72,7 @@ public class InstitutionSiteController {
 		return (Institution) ps.createQuery("FROM Institution WHERE slug = :slug").setParameter("slug", slug).getSingleResult();
 	}
 	
-	@Path("/")
+	@Path(value = "/", priority = Path.LOW)
 	public void institution(final String slug) {
 		final Institution institution = findInstitution(slug);
 		

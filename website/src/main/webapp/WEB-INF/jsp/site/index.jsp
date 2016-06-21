@@ -2,7 +2,7 @@
 <%@ taglib prefix="ajudaai" tagdir="/WEB-INF/tags/ajudaai" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <ajudaai:page>
-	<div id="page-index" ng-controller="MainController">
+	<div id="page-index">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-xs-12">
