@@ -60,6 +60,7 @@
 			<div class="collapse navbar-collapse" id="main-nav">
 				<ul class="nav navbar-nav">
 					<li<c:if test="${menu == 0}"> class="active"</c:if>><a href="/admin">Resumo <c:if test="${menu == 0}"><span class="sr-only">(você está aqui)</span></c:if></a></li>
+					<c:if test="${user.isRole('admin')}"><li<c:if test="${menu == 2}"> class="active"</c:if>><a href="/admin/area">Área Administrativa <c:if test="${menu == 2}"><span class="sr-only">(você está aqui)</span></c:if></a></li></c:if>
 					<c:if test="${institution ne null}"><li<c:if test="${menu == 1}"> class="active"</c:if>><a href="/admin/instituicao/${institution.slug}">${institution.name} <c:if test="${menu == 1}"><span class="sr-only">(você está aqui)</span></c:if></a></li></c:if>
 				</ul>
 				

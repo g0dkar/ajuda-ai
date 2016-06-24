@@ -48,10 +48,10 @@
 					
 					<form action="/admin/instituicao/${institution.slug}/detalhes" method="post" class="form-horizontal">
 						<div class="form-group">
-							<label for="name" class="col-sm-2 control-label">Nome de sua Inst./ONG *</label>
+							<label for="name" class="col-sm-2 control-label">Nome da Inst./ONG *</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="name" name="name" ng-model="institution.name" placeholder="Nome de sua Instituição/ONG" value="<c:out value="${institution.name}" />" aria-describedby="name-desc" required autofocus>
-								<p id="name-desc" class="help-block">Nome que utilizaremos para chamar sua Instituição/ONG no Website :)</p>
+								<p id="name-desc" class="help-block">Nome que utilizaremos para chamar sua Instituição/ONG no Website e em todo lugar :)</p>
 							</div>
 						</div>
 						
@@ -73,6 +73,25 @@
 								<textarea class="form-control markdown" markdown="content-preview" ng-model="description" ng-model-options="{debounce:500}" name="description" id="institution-description" placeholder="Texto que será mostrado na página inicial da sua Instituição" aria-describedby="desc-desc" required>${institution.description}</textarea>
 								<script type="text/javascript">autosize(document.getElementById("institution-description"))</script>
 								<p id="desc-desc" class="help-block">Você pode usar <a href="/res/markdown.jsp" target="_blank">Markdown</a>, uma forma fácil de estilizar seu texto. Siga o link para instruções sobre como usá-lo, é bem simples :)</p>
+							</div>
+						</div>
+						
+						<hr>
+						
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label">Logo *</label>
+							<div class="col-sm-10">
+								<img src="" width="200" height="200" alt="Logo de sua Instituição/ONG" title="Logo que será utilizado no grafismo do Website. Deve ter 200 de altura por 200 de largura.">
+								<input type="text" class="form-control" id="name" name="name" ng-model="institution.name" placeholder="Nome de sua Instituição/ONG" value="<c:out value="${institution.name}" />" aria-describedby="name-desc" required autofocus>
+								<p id="name-desc" class="help-block">Nome que utilizaremos para chamar sua Instituição/ONG no Website e em todo lugar :)</p>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label">Nome da Inst./ONG *</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="name" name="name" ng-model="institution.name" placeholder="Nome de sua Instituição/ONG" value="<c:out value="${institution.name}" />" aria-describedby="name-desc" required autofocus>
+								<p id="name-desc" class="help-block">Nome que utilizaremos para chamar sua Instituição/ONG no Website e em todo lugar :)</p>
 							</div>
 						</div>
 						

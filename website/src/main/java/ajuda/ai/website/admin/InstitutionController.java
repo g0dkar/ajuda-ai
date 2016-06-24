@@ -289,23 +289,30 @@ public class InstitutionController extends AdminController {
 		
 		Institution institution = findInstitution(slug);
 		if (institution != null) {
-			institution.setName(name);
-			institution.setSlug(s);
-			institution.setDescription(description);
+			final int slugCount = ((Number) ps.createQuery("SELECT count(*) FROM Slug WHERE slug = :slug").setParameter("slug", s).getSingleResult()).intValue();
 			
-			try {
-				final PaymentServiceEnum paymentService = PaymentServiceEnum.valueOf(payserv.toUpperCase());
-				institution.setPaymentService(paymentService);
-				institution.setPaymentServiceData(paymentService.extractPaymentServiceData(payservdata));
-			} catch (final Exception e) {
-				log.info("Serviço de Pagamento Inexistente: {} --- Ignorando.", payserv);
-				validator.add(new SimpleMessage("error", "Serviço de Pagamento não suportado."));
+			if (slugCount != 0) {
+				validator.add(new SimpleMessage("error", "Endereço para Instituição/ONG já está em uso."));
 			}
-			
-			if (!validator.validate(institution).hasErrors()) {
-				institution = ps.merge(institution);
-				result.include("infoMessage", "Atualizações salvas com sucesso");
-				result.redirectTo(this).details(institution.getSlug());
+			else {
+				institution.setName(name);
+				institution.setSlug(s);
+				institution.setDescription(description);
+				
+				try {
+					final PaymentServiceEnum paymentService = PaymentServiceEnum.valueOf(payserv.toUpperCase());
+					institution.setPaymentService(paymentService);
+					institution.setPaymentServiceData(paymentService.extractPaymentServiceData(payservdata));
+				} catch (final Exception e) {
+					log.info("Serviço de Pagamento Inexistente: {} --- Ignorando.", payserv);
+					validator.add(new SimpleMessage("error", "Serviço de Pagamento não suportado."));
+				}
+				
+				if (!validator.validate(institution).hasErrors()) {
+					institution = ps.merge(institution);
+					result.include("infoMessage", "Atualizações salvas com sucesso");
+					result.redirectTo(this).details(institution.getSlug());
+				}
 			}
 		}
 		else {
