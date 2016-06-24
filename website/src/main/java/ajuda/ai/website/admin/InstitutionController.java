@@ -287,10 +287,10 @@ public class InstitutionController extends AdminController {
 	public void update(final String slug, final String name, final String s, final String description, final String payserv, final String payservdata) {
 		validator.onErrorForwardTo(this).details(slug);
 		
-		final Institution institution = findInstitution(slug);
+		Institution institution = findInstitution(slug);
 		if (institution != null) {
 			institution.setName(name);
-			institution.setSlug(slug);
+			institution.setSlug(s);
 			institution.setDescription(description);
 			
 			try {
@@ -302,7 +302,11 @@ public class InstitutionController extends AdminController {
 				validator.add(new SimpleMessage("error", "Serviço de Pagamento não suportado."));
 			}
 			
-			result.include("institution", institution);
+			if (!validator.validate(institution).hasErrors()) {
+				institution = ps.merge(institution);
+				result.include("infoMessage", "Atualizações salvas com sucesso");
+				result.redirectTo(this).details(institution.getSlug());
+			}
 		}
 		else {
 			result.include("infoMessage", "Instituição inexistente ou você não é o criador da mesma: /" + slug);
