@@ -33,7 +33,7 @@
 			if (updateTimeout) { $timeout.cancel(updateTimeout); }
 			
 			$scope.updating = true;
-			$http.get("/admin" + $scope.slug + "/api/dashboard-data").then(function (response) {
+			$http.get("/admin/instituicao" + $scope.slug + "/api/dashboard-data").then(function (response) {
 				$scope.updating = false;
 				$scope.data = response.data;
 				updateTimeout = $timeout(update, 60000);
@@ -47,8 +47,41 @@
 		update();
 	}]);
 	
-	app.controller("PostEditController", ["$scope", function ($scope) {
-		$scope.content = document.getElementById("content").value;
+	app.controller("InstitutionDetailsController", ["$scope", "$http", function ($scope, $http) {
+		var originalSlug = $institution.slug;
+		
+		$scope.institution = $institution;
+		$scope.unavailableSlug = false;
+		$scope.checkingSlug = false;
+		
+		$scope.$watch("institution.slug", function (newValue) {
+			if (newValue) {
+				console.log("institution.slug watcher: ", newValue);
+				newValue = seoName(newValue);
+				$scope.institution.slug = newValue;
+				
+				if (newValue != originalSlug) {
+					$scope.checkingSlug = true;
+					$http.get("/admin/instituicao/" + originalSlug + "/api/check-slug?s=" + newValue).then(function () {
+						$scope.unavailableSlug = false;
+						$scope.checkingSlug = false;
+					}, function () {
+						$scope.unavailableSlug = true;
+						$scope.checkingSlug = false;
+					});
+				}
+				else {
+					$scope.unavailableSlug = false;
+					$scope.checkingSlug = false;
+				}
+			}
+		});
+		
+		function seoName(str) {
+			if (typeof str === "string") {
+				return str.replace(/\s+/g, "-").replace(/-{2,}/g, "-");
+			}
+		};
 	}]);
 	
 	app.directive("markdown", function () {

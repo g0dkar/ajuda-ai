@@ -7,10 +7,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 
+import ajuda.ai.model.billing.PaymentServiceEnum;
 import ajuda.ai.model.extra.CreationInfo;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionPost;
@@ -23,7 +25,9 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.validator.SimpleMessage;
 import br.com.caelum.vraptor.validator.Validator;
+import br.com.caelum.vraptor.view.Results;
 
 @Controller
 @Path("/admin/instituicao/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}")
@@ -274,6 +278,59 @@ public class InstitutionController extends AdminController {
 		else {
 			result.include("infoMessage", "Instituição inexistente ou você não é o criador da mesma: /" + slug);
 			result.redirectTo(DashboardController.class).dashboard();
+		}
+	}
+	
+	@Transactional
+	@Post("/detalhes")
+	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
+	public void update(final String slug, final String name, final String s, final String description, final String payserv, final String payservdata) {
+		validator.onErrorForwardTo(this).details(slug);
+		
+		final Institution institution = findInstitution(slug);
+		if (institution != null) {
+			institution.setName(name);
+			institution.setSlug(slug);
+			institution.setDescription(description);
+			
+			try {
+				final PaymentServiceEnum paymentService = PaymentServiceEnum.valueOf(payserv.toUpperCase());
+				institution.setPaymentService(paymentService);
+				institution.setPaymentServiceData(paymentService.extractPaymentServiceData(payservdata));
+			} catch (final Exception e) {
+				log.info("Serviço de Pagamento Inexistente: {} --- Ignorando.", payserv);
+				validator.add(new SimpleMessage("error", "Serviço de Pagamento não suportado."));
+			}
+			
+			result.include("institution", institution);
+		}
+		else {
+			result.include("infoMessage", "Instituição inexistente ou você não é o criador da mesma: /" + slug);
+			result.redirectTo(DashboardController.class).dashboard();
+		}
+	}
+	
+	@Get("/api/check-slug")
+	public void checkSlug(final String slug, final String s) {
+		final Institution institution = findInstitution(slug);
+		if (institution != null && !StringUtils.isEmpty(s)) {
+			final String slugToCheck = StringUtils.slug(s);
+			if (institution.getSlug().equals(slugToCheck)) {
+				result.nothing();
+			}
+			else {
+				final int slugCount = ((Number) ps.createQuery("SELECT count(*) FROM Slug WHERE slug = :slug").setParameter("slug", slugToCheck).getSingleResult()).intValue();
+				
+				if (slugCount == 0) {
+					result.nothing();
+				}
+				else {
+					result.use(Results.http()).sendError(HttpServletResponse.SC_CONFLICT, "URL já está em uso");
+				}
+			}
+		}
+		else {
+			result.notFound();
 		}
 	}
 	

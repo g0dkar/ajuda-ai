@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <ajudaai:adminPage menu="1" title="${institution.name}">
-	<div class="content-container" ng-controller="PostEditController">
+	<div class="content-container">
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-12">

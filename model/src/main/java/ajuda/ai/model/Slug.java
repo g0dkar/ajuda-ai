@@ -14,6 +14,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * <p>Entidade "mãe" de todas as coisas no website que compartilharão um "slug". Slugs são aquelas
  * partes da URL que servem como ID de algo: {@code https://ajuda.ai/<slug>}
@@ -33,6 +35,7 @@ public abstract class Slug implements Serializable {
 	private Long id;
 	
 	/** "Endereço" desta entidade. Se {@code exemplo} for o slug podemos ter algo como {@code https://ajuda.ai/exemplo} */
+	@Expose
 	@NotBlank
 	@Size(min = 2, max = 255)
 	@Column(nullable = false, length = 255)

@@ -31,9 +31,14 @@ public class JsonUtils {
 	 */
 	private static class ISODateJsonConverter extends TypeAdapter<Date> {
 		public void write(final JsonWriter out, final Date value) throws IOException {
-			final Calendar calendar = Calendar.getInstance();
-			calendar.setTime(value);
-			out.value(value != null ? DatatypeConverter.printDateTime(calendar) : null);
+			if (value != null) {
+				final Calendar calendar = Calendar.getInstance();
+				calendar.setTime(value);
+				out.value(DatatypeConverter.printDateTime(calendar));
+			}
+			else {
+				out.value((String) null);
+			}
 		}
 		
 		public Date read(final JsonReader in) throws IOException {
