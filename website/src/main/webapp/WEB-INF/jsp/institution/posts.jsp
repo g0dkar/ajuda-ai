@@ -23,7 +23,7 @@
 			</div>
 			
 			<c:if test="${errors ne null && !empty(errors)}">
-				<div class="row">
+				<div class="row alerts-row">
 					<div class="col-xs-12">
 						<c:forEach items="${errors}" var="err">
 							<div class="alert alert-danger" role="alert"><strong>Erro:</strong> ${err.message}</div>
@@ -33,7 +33,7 @@
 			</c:if>
 			
 			<c:if test="${infoMessage ne null}">
-				<div class="row">
+				<div class="row alerts-row">
 					<div class="col-xs-12">
 						<div class="alert alert-info" role="alert"><strong>Informação:</strong> ${infoMessage}</div>
 					</div>
@@ -64,7 +64,7 @@
 											</td>
 											<td><fmt:formatDate value="${post.creation.time}" pattern="dd/MM/yyyy 'às' HH'h'mm'm'" /></td>
 											<td><fmt:formatNumber value="${post.pageviews}" type="number" /> </td>
-											<td><a href="/admin/instituicao/${institution.slug}/posts/${post.id}/editar" title="Altere título e conteúdo de seu post">Editar</a></td>
+											<td><a href="/admin/instituicao/${institution.slug}/posts/${post.id}/editar" title="Altere título e conteúdo de seu post">[ Editar ]</a></td>
 										</tr>
 									</c:forEach>
 								</c:when>

@@ -15,8 +15,8 @@
 				<div class="col-xs-12">
 					<ul class="nav nav-pills">
 						<li role="presentation"><a href="/admin/instituicao/${institution.slug}" title="Página com informações gerais sobre esta Instituição/ONG">Resumo</a></li>
-						<li role="presentation" class="active"><a href="/admin/instituicao/${institution.slug}/posts" title="Gerencie os Posts desta Instituição/ONG">Posts</a></li>
-						<li role="presentation"><a href="/admin/instituicao/${institution.slug}/transparencia" title="Informe os gastos desta Instituição/ONG">Transparência</a></li>
+						<li role="presentation"><a href="/admin/instituicao/${institution.slug}/posts" title="Gerencie os Posts desta Instituição/ONG">Posts</a></li>
+						<li role="presentation" class="active"><a href="/admin/instituicao/${institution.slug}/transparencia" title="Informe os gastos desta Instituição/ONG">Transparência</a></li>
 						<li role="presentation"><a href="/admin/instituicao/${institution.slug}/detalhes" title="Configure alguns detalhes como logo, banner, nome da instituição, etc.">Detalhes</a></li>
 					</ul>
 				</div>
@@ -42,14 +42,9 @@
 			
 			<div class="row">
 				<div class="col-xs-12">
-					<h2 class="post-details">Post #${post.id} <c:choose><c:when test="${post.published}"><span class="label label-success">Publicado</span></c:when><c:otherwise><span class="label label-warning">Não Publicado</span></c:otherwise></c:choose></h2>
-					<p><strong>${post.pageviews}</strong> visualizações - Link: <a href="https://ajuda.ai/${institution.slug}/${post.slug}/${post.id}" target="_blank" title="Link permanente deste Post">https://ajuda.ai/${institution.slug}/${post.slug}/${post.id}</a> - <a href="/admin/instituicao/${institution.slug}/posts/${post.id}/editar" title="Link para alteração do post">[ Editar ]</a></p>
-				</div>
-			</div>
-			
-			<div class="row new-post-preview">
-				<div class="col-xs-12">
-					<div id="content-preview">${postMarkdown}</div>
+					<h2>Transparência</h2>
+					
+					<div class="graph-placeholder">Ainda estamos fazendo esta parte ;)</div>
 				</div>
 			</div>
 		</div>

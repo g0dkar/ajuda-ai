@@ -198,7 +198,19 @@ nav.navbar-ajuda-ai {
 	font-size: .34em;
 	vertical-align: middle;
 }
-.posts-table > tbody > tr > td > a {
+.posts-table > tbody > tr > td:first-child > a:first-child {
 	font-size: 1.5em;
 	font-weight: 600;
+}
+.alerts-row {
+	margin-top: 15px
+}
+.alerts-row + .alerts-row {
+	margin-top: 0;
+}
+.alerts-row .alert {
+	margin-bottom: 15px;
+}
+.alerts-row .alert:last-child {
+	margin-bottom: 0;
 }

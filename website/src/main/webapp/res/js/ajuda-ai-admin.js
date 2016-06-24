@@ -63,6 +63,10 @@
 				scope.$watch(attrs.ngModel, function (newValue) {
 					el.innerHTML = newValue ? markdown.toHTML(newValue) : "<p>[ Previsão do Conteúdo de seu Post ficará aqui ]</p>";
 				});
+				
+				if (!scope[attrs.ngModel]) {
+					scope[attrs.ngModel] = element.val();
+				}
 			}
 		}
 	});

@@ -23,7 +23,7 @@
 			</div>
 			
 			<c:if test="${errors ne null && !empty(errors)}">
-				<div class="row">
+				<div class="row alerts-row">
 					<div class="col-xs-12">
 						<c:forEach items="${errors}" var="err">
 							<div class="alert alert-danger" role="alert"><strong>Erro:</strong> ${err.message}</div>
@@ -33,7 +33,7 @@
 			</c:if>
 			
 			<c:if test="${infoMessage ne null}">
-				<div class="row">
+				<div class="row alerts-row">
 					<div class="col-xs-12">
 						<div class="alert alert-info" role="alert"><strong>Informação:</strong> ${infoMessage}</div>
 					</div>
@@ -58,16 +58,16 @@
 									<label><input type="checkbox" name="published" value="1"${post.published ? ' checked' : ''}> <strong>Publicar Post</strong></label>
 								</div>
 							</div>
-							<div class="col-sm-10" style="padding-top:7px">
-								Deixe marcado para tornar o Post visível em sua Página
+							<div class="col-sm-10">
+								<p class="form-control-static">Deixe marcado para tornar o Post visível em sua Página</p>
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label for="content" class="col-sm-2 control-label">Conteúdo*</label>
 							<div class="col-sm-10">
-								<textarea class="form-control markdown" markdown="content-preview" ng-model="content" ng-model-options="{debounce:500}" name="content" id="content" placeholder="Conteúdo. Você pode usar Markdown." required>${post.content}</textarea>
-								<script type="text/javascript">autosize(document.getElementById("content"))</script>
+								<textarea class="form-control markdown" markdown="content-preview" ng-model="content" ng-model-options="{debounce:500}" name="content" id="post-content-input" placeholder="Conteúdo. Você pode usar Markdown." required>${post.content}</textarea>
+								<script type="text/javascript">autosize(document.getElementById("post-content-input"))</script>
 								<p class="help-block">Você pode usar <a href="/res/markdown.jsp" target="_blank">Markdown</a>, uma forma fácil de estilizar seu texto. Siga o link para instruções sobre como usá-lo, é bem simples :)</p>
 							</div>
 						</div>
@@ -77,7 +77,6 @@
 								<button type="submit" class="btn btn-lg btn-success">Alterar Post</button>
 							</div>
 						</div>
-						
 					</form>
 				</div>
 			</div>

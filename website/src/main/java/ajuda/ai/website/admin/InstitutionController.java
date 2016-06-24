@@ -147,7 +147,7 @@ public class InstitutionController extends AdminController {
 		}
 	}
 	
-	@Path("/posts/{id:\\d+}/editar")
+	@Get("/posts/{id:\\d+}/editar")
 	public void postEdit(final String slug, final String id) {
 		final Institution institution = findInstitution(slug);
 		if (institution != null) {
@@ -168,15 +168,29 @@ public class InstitutionController extends AdminController {
 		}
 	}
 	
+	@Transactional
 	@Post("/posts/{id:\\d+}/editar")
-	public void postUpdate(final String slug, final String id) {
+	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
+	public void postUpdate(final String slug, final String id, final String title, final String content, final String published) {
+		validator.onErrorForwardTo(this).postEdit(slug, id);
+		
 		final Institution institution = findInstitution(slug);
 		if (institution != null) {
-			final InstitutionPost post = (InstitutionPost) ps.createQuery("FROM InstitutionPost WHERE institution = :institution AND id = :id").setParameter("institution", institution).setParameter("id", StringUtils.parseLong(id, 0)).getSingleResult();
+			InstitutionPost post = (InstitutionPost) ps.createQuery("FROM InstitutionPost WHERE institution = :institution AND id = :id").setParameter("institution", institution).setParameter("id", StringUtils.parseLong(id, 0)).getSingleResult();
 			
 			if (post != null) {
-				result.include("institution", institution);
-				result.include("post", post);
+				post.setTitle(title);
+				post.setSlug(StringUtils.slug(title));
+				post.setContent(content);
+				post.setPublished(StringUtils.parseBoolean(published, false));
+				post.getCreation().setLastUpdate(new Date());
+				post.getCreation().setLastUpdateBy(user.getId());
+				
+				if (!validator.validate(post).hasErrors()) {
+					post = ps.merge(post);
+					result.include("infoMessage", "Post alterado com sucesso");
+					result.redirectTo(this).postDetails(slug, id);
+				}
 			}
 			else {
 				result.include("infoMessage", "Post inexistente ou você não tem acesso a ele");
@@ -236,6 +250,30 @@ public class InstitutionController extends AdminController {
 		}
 		else {
 			result.notFound();
+		}
+	}
+	
+	@Path("/transparencia")
+	public void transparency(final String slug) {
+		final Institution institution = findInstitution(slug);
+		if (institution != null) {
+			result.include("institution", institution);
+		}
+		else {
+			result.include("infoMessage", "Instituição inexistente ou você não é o criador da mesma: /" + slug);
+			result.redirectTo(DashboardController.class).dashboard();
+		}
+	}
+	
+	@Get("/detalhes")
+	public void details(final String slug) {
+		final Institution institution = findInstitution(slug);
+		if (institution != null) {
+			result.include("institution", institution);
+		}
+		else {
+			result.include("infoMessage", "Instituição inexistente ou você não é o criador da mesma: /" + slug);
+			result.redirectTo(DashboardController.class).dashboard();
 		}
 	}
 	
