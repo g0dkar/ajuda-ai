@@ -2,45 +2,73 @@ package ajuda.ai.util;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.bind.DatatypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.Expose;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 /**
  * Utility methods for working with JSON. Currently implemented with {@link Gson Google Gson}
  * 
- * @author Rafael g0dkar
+ * @author Rafael Lins
  *
  */
 public class JsonUtils {
-	private static final DateFormat ISO_DATE = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss,zzz'Z'");
-	
+	/**
+	 * GSON converter to and from ISO Dates (for {@link Date} type)
+	 * @author Rafael Lins
+	 * @see TypeAdapter
+	 */
 	private static class ISODateJsonConverter extends TypeAdapter<Date> {
 		public void write(final JsonWriter out, final Date value) throws IOException {
-			out.value(value != null ? ISO_DATE.format(value) : null);
+			final Calendar calendar = Calendar.getInstance();
+			calendar.setTime(value);
+			out.value(value != null ? DatatypeConverter.printDateTime(calendar) : null);
 		}
 		
 		public Date read(final JsonReader in) throws IOException {
 			try {
-				return ISO_DATE.parse(in.nextString());
-			} catch (final ParseException e) {
+				return DatatypeConverter.parseDateTime(in.nextString()).getTime();
+			} catch (final IllegalArgumentException e) {
+				return null;
+			}
+		}
+	}
+	
+	/**
+	 * GSON converter to and from ISO Dates (for {@link Calendar} type)
+	 * @author Rafael Lins
+	 * @see TypeAdapter
+	 */
+	private static class ISOCalendarJsonConverter extends TypeAdapter<Calendar> {
+		public void write(final JsonWriter out, final Calendar value) throws IOException {
+			out.value(value != null ? DatatypeConverter.printDateTime(value) : null);
+		}
+		
+		public Calendar read(final JsonReader in) throws IOException {
+			try {
+				return DatatypeConverter.parseDateTime(in.nextString());
+			} catch (final IllegalArgumentException e) {
 				return null;
 			}
 		}
 	}
 	
 	/** {@link Gson} instance pre-built and used by this class. */
-	public static final Gson GSON = new GsonBuilder().excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC).registerTypeAdapter(Date.class, new ISODateJsonConverter()).create();
+	public static final Gson GSON = new GsonBuilder().excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC).registerTypeAdapter(Date.class, new ISODateJsonConverter()).registerTypeAdapter(Calendar.class, new ISOCalendarJsonConverter()).create();
+	
+	/** {@link Gson} instance pre-built which excludes non-@Exposed annotated fields and used by this class. */
+	public static final Gson GSON_EXPOSED = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC).registerTypeAdapter(Date.class, new ISODateJsonConverter()).registerTypeAdapter(Calendar.class, new ISOCalendarJsonConverter()).create();
 	
 	/**
 	 * Turns an Object into {@link Gson#toJson(Object) json} ignoring {@code static} and fields marked as {@code transient} (by explicitly
@@ -52,6 +80,19 @@ public class JsonUtils {
 	 */
 	public static String toJson(final Object object) {
 		return GSON.toJson(object);
+	}
+	
+	/**
+	 * Turns an Object into {@link Gson#toJson(Object) json} ignoring {@code static}, fields marked as {@code transient} (by explicitly
+	 * including the keyword {@code transient} in their declaration) and any field NOT annotated with {@link Expose}
+	 * 
+	 * @param object The object
+	 * @return The Json of it
+	 * @see Gson#toJson(Object)
+	 * @see Expose
+	 */
+	public static String toJsonExposed(final Object object) {
+		return GSON_EXPOSED.toJson(object);
 	}
 	
 	/**
@@ -96,25 +137,6 @@ public class JsonUtils {
 		
 		if (withStacktrace && throwable.getCause() != null) {
 			json.put("cause", asJsonMap(throwable.getCause(), true));
-		}
-		
-		return json;
-	}
-	
-	/**
-	 * Builds a Json Map with the parameters passed. One for the key, the next as the value. For example, {@code paramsAsJsonMap("example", 123, "hello", "world")} would
-	 * give this: {@code \{example:123,"hello":"world"\}}. Made so "quick maps" can be made.
-	 * 
-	 * @param params The parameter list
-	 * @return A Json Map
-	 */
-	public static Map<String, Object> paramsAsJsonMap(final Object... params) {
-		final Map<String, Object> json = new HashMap<String, Object>(params != null ? params.length / 2 : 0);
-		
-		for (int i = 0, max = params.length; i < max; i += 2) {
-			if (i < max) {
-				json.put(params[i].toString(), i < max - 1 ? params[i + 1] : null);
-			}
 		}
 		
 		return json;
