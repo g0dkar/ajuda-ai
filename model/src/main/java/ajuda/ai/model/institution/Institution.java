@@ -18,6 +18,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 
+import com.google.gson.annotations.Expose;
+
 import ajuda.ai.model.Slug;
 import ajuda.ai.model.billing.PaymentServiceEnum;
 import ajuda.ai.model.extra.CreationInfo;
@@ -34,29 +36,37 @@ public class Institution extends Slug {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
 	
+	@Expose
 	@Embedded
 	private CreationInfo creation;
 	
+	@Expose
 	@NotBlank
 	@Size(max = 64)
 	@Column(nullable = false, length = 64)
 	private String name;
 	
+	@Expose
 	@NotBlank
 	@Size(max = 65535)
 	@Column(nullable = false, columnDefinition = "MEDIUMTEXT")
 	private String description;
 	
+	@Expose
 	@ManyToOne(fetch = FetchType.EAGER)
 	private InstitutionPost pinnedPost;
 	
 	@OneToMany(mappedBy = "institution", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<InstitutionHelper> helpers;
 	
-	@ElementCollection
+	/**
+	 * Para o futuro: Lista de usuários que poderão gerenciar essa instituição
+	 */
+	@ElementCollection(fetch = FetchType.LAZY)
 	@Column(length = 36)
 	private Set<String> leaders;
 	
+	@Expose
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -67,10 +77,12 @@ public class Institution extends Slug {
 	private String paymentServiceData;
 	
 	@URL
+	@Expose
 	@Column(length = 1024)
 	private String logo;
 	
 	@URL
+	@Expose
 	@Column(length = 1024)
 	private String banner;
 
@@ -156,5 +168,9 @@ public class Institution extends Slug {
 
 	public void setBanner(final String banner) {
 		this.banner = banner;
+	}
+	
+	public String toJson() {
+		return JsonUtils.toJsonExposed(this);
 	}
 }

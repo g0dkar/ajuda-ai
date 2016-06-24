@@ -13,6 +13,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Pattern.Flag;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Info about the creation and update of an Entity
  * 
@@ -24,18 +26,22 @@ public class CreationInfo implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
 
+	@Expose
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date time;
 	
+	@Expose
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate;
 	
+	@Expose
 	@NotNull
 	@Column(nullable = false, length = 36)
 	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
 	private String creator;
 	
+	@Expose
 	@Column(length = 36)
 	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
 	private String lastUpdateBy;

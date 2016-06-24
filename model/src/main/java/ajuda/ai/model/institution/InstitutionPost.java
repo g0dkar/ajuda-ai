@@ -15,6 +15,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.google.gson.annotations.Expose;
+
 import ajuda.ai.model.extra.CreationInfo;
 
 /**
@@ -28,9 +30,11 @@ public class InstitutionPost implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
 	
+	@Expose
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Expose
 	@NotBlank
 	@Column(nullable = false, length = 128)
 	private String slug;
@@ -39,9 +43,11 @@ public class InstitutionPost implements Serializable {
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Institution institution;
 	
+	@Expose
 	@Embedded
 	private CreationInfo creation;
 	
+	@Expose
 	@NotBlank
 	@Size(max = 128)
 	@Column(nullable = false, length = 128)
@@ -51,6 +57,7 @@ public class InstitutionPost implements Serializable {
 	@Column(nullable = false, columnDefinition = "MEDIUMTEXT")
 	private String content;
 	
+	@Expose
 	@Column(nullable = false)
 	private boolean published;
 	
