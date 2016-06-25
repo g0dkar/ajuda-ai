@@ -25,28 +25,24 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/res/js/markdown.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/res/js/autosize.min.js"></script>
-<%--script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-touch.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ui-bootstrap-custom-1.3.3.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ui-bootstrap-custom-tpls-1.3.3.js"></script--%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ajuda-ai-admin.js"></script>
+<c:if test="${user.isRole('admin')}"><script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ajuda-ai-admin-area.js"></script></c:if>
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 </head>
 <body>
+	<a href="#content" class="sr-only">Ir para o Conteúdo</a>
+	
 	<noscript>
 		<div id="noscript" class="container">
 			<div class="row">
 				<div class="col-xs-12">
 					<h1>Você está usando o NoScript? Talvez só não curte JavaScript?</h1>
-					<p>Sem problemas! Eu <em>(também?)</em> uso o NoScript! É excelente para proteção quando navegamos pela Internet. Garanto que somos seguros, mas se não quiser arriscar, libere apenas nosso domínio <code>https://ajuda.ai/</code> e tudo vai funcionar de boa ;)</p>
+					<p>Sem problemas! Eu <em>(também?)</em> uso o NoScript! É excelente para proteção quando navegamos pela Internet. Garanto que somos seguros, mas se não quiser arriscar, esses são os domínios e o que usamos: <code>ajuda.ai</code> (nosso JS), <code>ajax.googleapis.com</code> (AngularJS e Google Web Fonts), <code>maxcdn.bootstrapcdn.com</code> (CSS do Bootstrap)</p>
 				</div>
 			</div>
 		</div>
 	</noscript>
 	
-	<a href="#content" id="jump-to-content" class="accessibility-link hidden">Ir para o Conteúdo</a>
-
 	<nav class="navbar navbar-default navbar-ajuda-ai navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">

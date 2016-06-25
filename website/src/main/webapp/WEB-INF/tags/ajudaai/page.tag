@@ -53,26 +53,26 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 </head>
 <body>
+	<a href="#content" id="jump-to-content" class="accessibility-link hidden">Ir para o Conteúdo</a>
+	
 	<noscript>
 		<div id="noscript" class="container">
 			<div class="row">
 				<div class="col-xs-12">
 					<h1>Você está usando o NoScript? Talvez só não curte JavaScript?</h1>
-					<p>Sem problemas! Eu <em>(também?)</em> uso o NoScript! É excelente para proteção quando navegamos pela Internet. Garanto que somos seguros, mas se não quiser arriscar, libere apenas nosso domínio <code>https://ajuda.ai/</code> e tudo vai funcionar de boa ;)</p>
+					<p>Sem problemas! Eu <em>(também?)</em> uso o NoScript! É excelente para proteção quando navegamos pela Internet. Garanto que somos seguros, mas se não quiser arriscar, esses são os domínios e o que usamos: <code>ajuda.ai</code> (nosso JS), <code>ajax.googleapis.com</code> (AngularJS e Google Web Fonts), <code>maxcdn.bootstrapcdn.com</code> (CSS do Bootstrap)</p>
 				</div>
 			</div>
 		</div>
 	</noscript>
-	
-	<a href="#content" id="jump-to-content" class="accessibility-link hidden">Ir para o Conteúdo</a>
 	
 	<nav>
 		<div class="nav-inner">
 			<a href="${pageContext.request.contextPath}/" title="Ajuda.Ai!" id="main-logo"><img src="/res/img/main-logo.png" height="45" width="150" alt="Ajuda.Ai" /></a>
 			<a href="${pageContext.request.contextPath}/" title="Ir para a Página Inicial" class="nav-link hidden-xs">Início</a>
 			<a href="${pageContext.request.contextPath}/sobre" title="Ir para a Página Inicial" class="nav-link hidden-xs">Sobre</a>
-			
-			<a href="${pageContext.request.contextPath}/ama" title="Ajude a Associação dos Amigos dos Autistas" class="nav-link nav-link-btn hidden-xs"><span class="nav-link-btn-inner">Ajuda.Ai!</span></a>
+			<a href="${pageContext.request.contextPath}/admin" title="Acesso a área administrativa" class="nav-link hidden-xs" rel="nofollow">Login</a>
+			<a href="${pageContext.request.contextPath}/ama" title="Ajude a Associação dos Amigos dos Autistas" class="nav-link nav-link-btn"><span class="nav-link-btn-inner">Ajuda.Ai!</span></a>
 		</div>
 		
 		<%--

@@ -11,7 +11,7 @@
 			</div>
 			
 			<c:if test="${errors ne null && !empty(errors)}">
-				<div class="row">
+				<div class="row alerts-row">
 					<div class="col-xs-12">
 						<c:forEach items="${errors}" var="err">
 							<div class="alert alert-danger" role="alert"><strong>Erro:</strong> ${err.message}</div>
@@ -21,7 +21,7 @@
 			</c:if>
 			
 			<c:if test="${infoMessage ne null}">
-				<div class="row">
+				<div class="row alerts-row">
 					<div class="col-xs-12">
 						<div class="alert alert-info" role="alert"><strong>Informação:</strong> ${infoMessage}</div>
 					</div>

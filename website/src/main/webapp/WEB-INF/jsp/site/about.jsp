@@ -7,8 +7,18 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="hero">
-						<img src="/res/img/about-header.jpg" class="hero-img">
-						<h1 class="hero-floating-title"><strong>Ajudar</strong> é o que queremos</h1>
+						<div class="hero-img">
+							<img src="/res/img/about-header.jpg" class="hero-img">
+							<div class="hero-img-text">
+								<div class="container">
+									<div class="row">
+										<div class="col-xs-12 text-center">
+											<h1><strong>Ajudar</strong> é o que queremos.</h1>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
