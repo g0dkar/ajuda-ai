@@ -59,11 +59,11 @@ nav.navbar-ajuda-ai {
 	font-size: .9em;
 }
 .slider {
-	height: 550px;
+	height: 350px;
 }
 .slider-item, .home-institution-list .panel-image {
 	position: relative;
-	height: 550px;
+	height: 350px;
 	overflow: hidden;
 	display: -webkit-box;
 	display: -webkit-flex;
@@ -136,8 +136,13 @@ nav.navbar-ajuda-ai {
 }
 .slider-img > img {
 	min-width: 100%;
-	height: 550px;
+	height: 350px;
 	margin: auto;
+}
+@media (min-width: 768px) {
+	.slider, .slider-item, .slider-img > img {
+		height: 550px;
+	}
 }
 .slider-title {
 	position: absolute;
@@ -162,7 +167,7 @@ nav.navbar-ajuda-ai {
 	display: inline-block;
 	padding: 10px 25px;
 	background: #43a047;
-	border-radius: 2px;
+	border-radius: 3px;
 	text-shadow: none;
 	color: #E8F5E9;
 	border: none;
@@ -352,6 +357,67 @@ nav.navbar-ajuda-ai {
 .form-control {
 	border-radius: 2px;
 	border-color: #CFD8DC;
+}
+.institution-header {
+	position: relative;
+}
+.institution-data {
+	background: #fff;
+	color: #000;
+}
+.institution-avatar-img {
+	margin-top: 20px;
+	border-radius: 999px;
+	background: #fff;
+	border: 3px solid #fff;
+	box-shadow: 0 0 5px 2px rgba(0,0,0,.3);
+}
+.institution-name {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 350px;
+	color: #fff;
+	text-shadow: 0 1px 2px #000;
+	background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.7) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.7) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#03000000', endColorstr='#ab000000',GradientType=0); /* IE6-9 */
+}
+@media (min-width: 768px) {
+	.institution-avatar-img {
+		margin-top: -75px;
+	}
+	.institution-name {
+		height: 550px;
+	}
+}
+.institution-name-inner {
+	position: absolute;
+	width: 100%;
+	left: 0;
+	bottom: 0;
+}
+.institution-data-row {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+.institution-helpers strong, .institution-donations strong {
+	font-size: 2em;
+	display: block;
+	margin: 0;
+}
+.institution-helpers, .institution-donations {
+	font-size: .9em;
+}
+.institution-data .ajuda-ai-btn {
+	display: block;
+	text-align: center;
+	font-size: 1.2em;
+	padding: 14px 15px 13px 15px;
+	max-width: 200px;
+	margin: auto;
 }
 
 
