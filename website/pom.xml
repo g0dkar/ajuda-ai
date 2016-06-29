@@ -171,13 +171,13 @@
 			<scope>provided</scope>
 		</dependency>
 		
-		<dependency>
+		<!--dependency>
 			<groupId>com.pagseguro</groupId>
 			<artifactId>pagseguro-api</artifactId>
 			<version>2.5.2</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/pagseguro-api-2.5.2.jar</systemPath>
-		</dependency>
+		</dependency-->
 		
 		<dependency>
 			<groupId>javax.mail</groupId>
