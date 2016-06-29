@@ -428,6 +428,39 @@ nav.navbar-ajuda-ai {
 	max-width: 200px;
 	margin: auto;
 }
+.institution-page .nav-pills {
+	margin: 15px 0;
+}
+.institution-page .nav-pills > li.active > a, .institution-page .nav-pills > li.active > a:focus, .institution-page .nav-pills > li.active > a:hover {
+	background: none;
+	color: #4CAF50;
+	font-weight: 700;
+	border-bottom-color: #4CAF50;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+}
+.institution-page .nav-pills > li > a {
+	border-bottom: 3px solid #fff;
+	margin-top: 3px;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	transition: all .15s ease;
+}
+.institution-page .nav > li > a:focus, .institution-page .nav > li > a:hover {
+	color: #4CAF50;
+	background-color: #E8F5E9;
+}
+.institution-page .nav-pills .badge {
+	text-align: center;
+	background: #2196F3;
+	padding-right: 9px;
+}
+.website-button:before {
+	content: '🔗';
+	display: inline-block;
+	margin-right: 6px;
+}
 
 
 
