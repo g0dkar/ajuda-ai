@@ -15,8 +15,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Pattern.Flag;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -48,9 +46,8 @@ public class InstitutionHelper implements Serializable {
 	@Column(nullable = false)
 	private Date timestamp;
 	
-	@NotBlank
 	@Size(max = 128)
-	@Column(nullable = false, length = 128)
+	@Column(length = 128)
 	private String name;
 	
 	@Email
@@ -60,30 +57,20 @@ public class InstitutionHelper implements Serializable {
 	private String email;
 	
 	@Email
-	@Size(max = 255)
-	@Column(length = 255)
+	@Size(max = 128)
+	@Column(length = 128)
 	private String paymentEmail;
 	
-	@Column(length = 32)
-	private String phone;
-	
 	@Column(nullable = false)
-	private boolean allowPublish;
+	private boolean anonymous;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Payment lastPayment;
-	
-	@Column(length = 36, unique = true)
-	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
-	private String reminderToken;
-	
-	@Temporal(TemporalType.DATE)
-	private Date reminderTokenDate;
-	
+
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(final Long id) {
 		this.id = id;
 	}
@@ -120,12 +107,20 @@ public class InstitutionHelper implements Serializable {
 		this.email = email;
 	}
 
-	public boolean isAllowPublish() {
-		return allowPublish;
+	public String getPaymentEmail() {
+		return paymentEmail;
 	}
 
-	public void setAllowPublish(final boolean allowPublish) {
-		this.allowPublish = allowPublish;
+	public void setPaymentEmail(final String paymentEmail) {
+		this.paymentEmail = paymentEmail;
+	}
+
+	public boolean isAnonymous() {
+		return anonymous;
+	}
+
+	public void setAnonymous(final boolean anonymous) {
+		this.anonymous = anonymous;
 	}
 
 	public Payment getLastPayment() {
@@ -134,37 +129,5 @@ public class InstitutionHelper implements Serializable {
 
 	public void setLastPayment(final Payment lastPayment) {
 		this.lastPayment = lastPayment;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(final String phone) {
-		this.phone = phone;
-	}
-
-	public String getReminderToken() {
-		return reminderToken;
-	}
-
-	public void setReminderToken(final String reminderToken) {
-		this.reminderToken = reminderToken;
-	}
-
-	public Date getReminderTokenDate() {
-		return reminderTokenDate;
-	}
-
-	public void setReminderTokenDate(final Date reminderTokenDate) {
-		this.reminderTokenDate = reminderTokenDate;
-	}
-
-	public String getPaymentEmail() {
-		return paymentEmail;
-	}
-
-	public void setPaymentEmail(final String paymentEmail) {
-		this.paymentEmail = paymentEmail;
 	}
 }

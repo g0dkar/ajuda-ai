@@ -10,7 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -85,6 +88,13 @@ public class Institution extends Slug {
 	@Expose
 	@Column(length = 1024)
 	private String banner;
+	
+	@Expose
+	@ElementCollection
+	@JoinTable(name = "institution_attributes", joinColumns = @JoinColumn(name="id"))
+	@MapKeyColumn(name = "attribute")
+	@Column(name = "value")
+	private Map<String, String> attributes;
 
 	public CreationInfo getCreation() {
 		return creation;
@@ -172,5 +182,13 @@ public class Institution extends Slug {
 	
 	public String toJson() {
 		return JsonUtils.toJsonExposed(this);
+	}
+
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(final Map<String, String> attributes) {
+		this.attributes = attributes;
 	}
 }

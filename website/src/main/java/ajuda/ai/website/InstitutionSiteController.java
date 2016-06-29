@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -16,13 +15,11 @@ import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionHelper;
 import ajuda.ai.model.institution.InstitutionPost;
-import ajuda.ai.model.institution.ReminderRemovalRequest;
 import ajuda.ai.util.StringUtils;
 import ajuda.ai.util.keycloak.KeycloakUser;
 import ajuda.ai.website.paymentServices.PaymentProcessor;
 import ajuda.ai.website.paymentServices.PaymentService;
 import ajuda.ai.website.util.PersistenceService;
-import ajuda.ai.website.util.ReminderMailSender;
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -48,20 +45,18 @@ public class InstitutionSiteController {
 	private final PersistenceService ps;
 	private final HttpServletRequest request;
 	private final PaymentService paymentService;
-	private final ReminderMailSender reminderMailSender;
 	
 	/** @deprecated CDI */ @Deprecated
-	InstitutionSiteController() { this(null, null, null, null, null, null, null, null); }
+	InstitutionSiteController() { this(null, null, null, null, null, null, null); }
 	
 	@Inject
-	public InstitutionSiteController(final Logger log, final Result result, final Validator validator, final KeycloakUser user, final PersistenceService ps, final HttpServletRequest request, final PaymentService paymentService, final ReminderMailSender reminderMailSender) {
+	public InstitutionSiteController(final Logger log, final Result result, final Validator validator, final KeycloakUser user, final PersistenceService ps, final HttpServletRequest request, final PaymentService paymentService) {
 		this.log = log;
 		this.result = result;
 		this.validator = validator;
 		this.ps = ps;
 		this.request = request;
 		this.paymentService = paymentService;
-		this.reminderMailSender = reminderMailSender;
 		
 		if (result != null) {
 			result.include("user", user);
@@ -124,7 +119,7 @@ public class InstitutionSiteController {
 	@Transactional
 	@Post("/api/doar")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
-	public void donate(final String slug, final String value, final String name, final String email, final String phone) {
+	public void donate(final String slug, final String value, final String name, final String email, final String anonymous) {
 		final Institution institution = findInstitution(slug);
 		
 		if (institution != null) {
@@ -136,8 +131,8 @@ public class InstitutionSiteController {
 				helper.setInstitution(institution);
 				helper.setName(StringUtils.stripHTML(name));
 				helper.setEmail(StringUtils.stripHTML(email));
-				helper.setPhone(phone == null ? null : phone.replaceAll("\\D+", ""));
 				helper.setTimestamp(new Date());
+				helper.setAnonymous(StringUtils.parseBoolean(anonymous, StringUtils.isBlank(name)));
 				ps.persist(helper);
 			}
 			
@@ -163,50 +158,6 @@ public class InstitutionSiteController {
 		
 		if (validator.hasErrors()) {
 			validator.onErrorRedirectTo(this).institution(slug);
-		}
-	}
-	
-	@Transactional
-	@Post("/api/lembrar")
-	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
-	public void reminder(final String slug, final String name, final String email, final String phone) {
-		final Institution institution = findInstitution(slug);
-		
-		if (institution != null) {
-			final String token = UUID.randomUUID().toString();
-			InstitutionHelper helper = (InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE institution = :institution AND LOWER(email) = LOWER(:email)").setParameter("institution", institution).setParameter("email", email).getSingleResult();
-			
-			if (helper == null) {
-				helper = new InstitutionHelper();
-				helper.setInstitution(institution);
-				helper.setName(StringUtils.stripHTML(name));
-				helper.setEmail(StringUtils.stripHTML(email));
-				helper.setTimestamp(new Date());
-				helper.setReminderToken(token);
-				helper.setReminderTokenDate(new Date());
-				ps.persist(helper);
-			}
-			else if (helper.getReminderToken() == null) {
-				helper.setName(StringUtils.stripHTML(name));
-				helper.setReminderToken(token);
-				helper.setReminderTokenDate(new Date());
-				ps.merge(helper);
-			}
-			else {
-				helper.setReminderTokenDate(new Date());
-				ps.merge(helper);
-			}
-			
-			reminderMailSender.sendReminder(helper, true);
-			
-			result.use(Results.json()).withoutRoot().from(helper);
-		}
-		else {
-			result.notFound();
-		}
-		
-		if (validator.hasErrors()) {
-			validator.onErrorUse(Results.json()).withoutRoot().from(validator.getErrors()).serialize();
 		}
 	}
 	
@@ -241,59 +192,6 @@ public class InstitutionSiteController {
 			response.put("value", value != null ? new BigDecimal(value.longValue()).divide(PaymentProcessor.HUNDRED).doubleValue() : 0.0);
 			
 			result.use(Results.json()).withoutRoot().from(response).serialize();
-		}
-		else {
-			result.notFound();
-		}
-	}
-	
-	@Transactional
-	@Path("/api/unsubscribe/{token:[a-f0-9\\-]+}")
-	public void removeReminder(final String slug, final String token) {
-		final Institution institution = findInstitution(slug);
-		
-		if (institution != null) {
-			final InstitutionHelper helper = (InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE reminderToken = :token").setParameter("token", token).getSingleResult();
-			
-			if (helper != null) {
-				helper.setReminderToken(null);
-				helper.setReminderTokenDate(null);
-				ps.merge(helper);
-				
-				final ReminderRemovalRequest removalRequest = new ReminderRemovalRequest();
-				removalRequest.setHelper(helper.getId());
-				removalRequest.setTimestamp(new Date());
-				removalRequest.setToken(token);
-				ps.persist(removalRequest);
-				
-				result.include("institution", institution);
-				result.include("removalRequest", removalRequest);
-			}
-			else {
-				result.redirectTo(this).institution(slug);
-			}
-		}
-		else {
-			result.notFound();
-		}
-	}
-	
-	@Transactional
-	@Post("/api/remove-reminder-reason")
-	public void removeReminderReason(final String slug, final String req, final String reason) {
-		final Institution institution = findInstitution(slug);
-		
-		if (institution != null) {
-			if (!StringUtils.isBlank(reason)) {
-				final ReminderRemovalRequest removalRequest = ps.find(ReminderRemovalRequest.class, StringUtils.parseLong(req, 0));
-				
-				if (removalRequest != null) {
-					removalRequest.setReason(StringUtils.stripHTML(reason));
-					ps.merge(removalRequest);
-				}
-			}
-			
-			result.redirectTo(this).institution(slug);
 		}
 		else {
 			result.notFound();

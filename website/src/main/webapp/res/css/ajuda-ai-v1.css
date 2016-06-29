@@ -8,7 +8,12 @@ hr {
 	border-color: #f5f3f2;
 }
 h1, h2, h3, h4, h5, h6 {
-	font-family: "Josefin Sans", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: Rainier, "Josefin Sans", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: normal;
+}
+h1 strong, h2 strong, h3 strong, h4 strong, h5 strong, h6 strong {
+	font-weight: bold;
+	font-size: 1.25em;
 }
 nav.navbar-ajuda-ai {
 	color: #fff;
@@ -347,8 +352,9 @@ nav.navbar-ajuda-ai {
 	color: #E21E3C;
 }
 .content-page .page-subtitle {
-	color: #90A4AE;
-	font-size: .9em;
+	color: #757575;
+	font-weight: 400;
+	margin: 0;
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .content-page .panel-body :last-child {
@@ -398,6 +404,9 @@ nav.navbar-ajuda-ai {
 	width: 100%;
 	left: 0;
 	bottom: 0;
+}
+.institution-name-inner h1 {
+	font-size: 46px;
 }
 .institution-data-row {
 	padding-top: 20px;

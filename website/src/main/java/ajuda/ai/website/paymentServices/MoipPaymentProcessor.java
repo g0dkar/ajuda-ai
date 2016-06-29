@@ -49,9 +49,6 @@ public class MoipPaymentProcessor implements PaymentProcessor {
 		params.put("id_transacao", payment.getId());
 		params.put("pagador_nome", maxSize(institutionHelper.getName(), 90));
 		params.put("pagador_email", maxSize(institutionHelper.getEmail(), 45));
-		if (institutionHelper.getPhone() != null && institutionHelper.getPhone().matches("\\d+")) {
-			params.put("pagador_telefone", maxSize(institutionHelper.getPhone(), 11));
-		}
 		
 		result.redirectTo(PostRedirectController.class).postRedirect("https://www.moip.com.br/PagamentoMoIP.do", params, "ISO-8859-1");
 		return payment;
