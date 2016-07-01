@@ -119,7 +119,7 @@ public class InstitutionSiteController {
 	@Transactional
 	@Post("/api/doar")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
-	public void donate(final String slug, final String value, final String name, final String email, final String anonymous) {
+	public void donate(final String slug, final String value, final String name, final String email, final String anonymous, final String addcosts) {
 		final Institution institution = findInstitution(slug);
 		
 		if (institution != null) {

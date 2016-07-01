@@ -2,39 +2,29 @@
 <%@ taglib prefix="ajudaai" tagdir="/WEB-INF/tags/ajudaai" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <ajudaai:page>
-	<div id="page-about">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="hero">
-						<div class="hero-img">
-							<img src="/res/img/about-header.jpg" class="hero-img">
-							<div class="hero-img-text">
-								<div class="container">
-									<div class="row">
-										<div class="col-xs-12 text-center">
-											<h1><strong>Ajudar</strong> é o que queremos.</h1>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+	<div class="slider">
+		<div><div class="slider-item">
+			<div class="slider-img">
+				<img src="${pageContext.request.contextPath}/res/img/index-img-03.jpg" alt="Imagem de Pessoas ajudando umas as outras">
 			</div>
-		</div>
-		
-		<div class="container">
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="page-content">
+			<div class="slider-title">
+				<h1>Queremos <strong>ouvir</strong> (na verdade, ler) tudo que você tem a nos dizer</h1>
+			</div>
+		</div></div>
+	</div>
+	
+	<div class="container content-page">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
 						<h1 class="page-title">Projeto Ajuda.Ai</h1>
 						<h4 class="page-subtitle">Nosso objetivo é ser o <a href="https://patreon.com/" target="_blank">Patreon</a> das Doações a Instituições/ONGs no Brasil</h4>
 						
 						<hr>
 						
 						<p>Olá! Este é o Projeto Ajuda.Ai. O objetivo dele é ser o Patreon das Doações a Instituições/ONGs no Brasil (e futuramente no mundo!) e é totalmente <strong>sem fins lucrativos</strong>.</p>
-						<p>Estamos começando e vamos implementá-lo devagar e sempre :)</p>
+						<p>Estamos começando e vamos implementá-lo (não tão) devagar e sempre :)</p>
 						
 						<h2>De onde veio a ideia? <small>por Rafael Lins</small></h2>
 						<p>Gostamos muito de coisas práticas. E convenhamos, ajudar (financeiramente) não é nada tão pratico assim. A forma mais prática que conheço é uma transferência online, usando o aplicativo do Banco no celular. Ainda assim tenho que lembrar agência e conta (tenho uma memória terrivelmente fraca, especialmente para números), e ter atenção no nome, digitar umas senhas. E, claro, ter o dinheiro na conta na hora da transferência :P</p>
@@ -42,7 +32,7 @@
 						<p>E foi disso que surgiu o Projeto Ajuda.Ai :)</p>
 						
 						<h2>Sem fins lucrativos?</h2>
-						<p>Sim. Sem fins lucrativos. Somos uma ligação direta entre as pessoas que querem ajudar e as instituições que precisam de ajuda, sem taxas nem nada. Atualmente temos um site onde hospedamos esse sistema e todos os custos mensais do mesmo são bancados por mim, Rafael Lins (@g0dkar). É minha forma de contribuir :)</p>
+						<p>Sim. Sem fins lucrativos. Somos uma ligação <strong>direta</strong> entre as pessoas que querem ajudar e as instituições que precisam de ajuda. Acredito que podemos ajudar com aquilo com que somos bons. E sei fazer sistemas web, então fiz o Ajuda.Ai. É minha forma de contribuir :)</p>
 						
 						<hr id="desenvolvedores">
 						

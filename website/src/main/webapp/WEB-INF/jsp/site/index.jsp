@@ -2,44 +2,84 @@
 <%@ taglib prefix="ajudaai" tagdir="/WEB-INF/tags/ajudaai" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <ajudaai:page>
-	<div id="page-index">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="hero">
-						<div class="hero-img">
-							<img src="${pageContext.request.contextPath}/res/img/index-img-01.jpg" alt="Juntamos quem quer ajudar a quem precisa de ajuda." />
-							<div class="hero-img-text">
-								<div class="container">
-									<div class="row">
-										<div class="col-xs-12 text-center">
-											<h1>Juntamos quem <strong>quer ajudar</strong> a quem <strong>precisa de ajuda</strong>.</h1>
-											<p><a href="${pageContext.request.contextPath}/ama" class="hero-btn">Ajude a AMA - Associação dos Amigos dos Autistas</a></p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+	<div class="slider" data-slick='{"dots":true,"autoplay":true,"autoplaySpeed":25000}'>
+		<div><div class="slider-item">
+			<div class="slider-img">
+				<img src="${pageContext.request.contextPath}/res/img/index-img-01.jpg" alt="Imagem de Pessoas ajudando umas as outras, colhendo e compartilhando alimentos vegetais">
 			</div>
+			<div class="slider-title">
+				<h1>Juntamos quem <strong>quer ajudar</strong> a quem <strong>precisa de ajuda</strong>.</h1>
+				<h3>Às vezes precisamos de mais que uma mão amiga</h3>
+				<div><a href="${pageContext.request.contextPath}/aleatorio" class="ajuda-ai-btn">Conheça uma das Instituições que você pode Ajudar!</a></div>
+			</div>
+		</div></div>
+		
+		<div><div class="slider-item">
+			<div class="slider-img">
+				<img src="${pageContext.request.contextPath}/res/img/index-img-02.jpg" alt="Imagem de uma área de convivência com várias pequenas salas">
+			</div>
+			<div class="slider-title">
+				<h1>Fazer a diferença está <strong>mais fácil que nunca</strong></h1>
+				<h3>Mais simples que uma compra online</h3>
+				<div><a href="/aleatorio" class="ajuda-ai-btn">Ajuda.Ai quem precisa ;)</a></div>
+			</div>
+		</div></div>
+		
+		<div><div class="slider-item">
+			<div class="slider-img">
+				<img src="/res/img/index-img-03.jpg" alt="Imagem de duas crianças aparentemente de mesma idade. Uma menina vestida com um macacão infantil rosa e branco, e um menino vestido com blusa branca e jeans azul. O menino ajuda a menina a subir numa elevação.">
+			</div>
+			<div class="slider-title">
+				<h1>Você tem uma <strong>Instituição</strong> que <strong>precisa de ajuda</strong>?</h1>
+				<h3>Entre em contato conosco, podemos ajudar :)</h3>
+				<div><a href="/contato" class="ajuda-ai-btn">Fale com a gente!</a></div>
+			</div>
+		</div></div>
+	</div>
+	
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12">
+				<h2 class="home-title text-center">Conheça quem está precisando da <strong>sua ajuda</strong></h2>
+			</div>
+		</div>
+		<div class="row home-institution-list">
+			<c:forEach items="${institutions}" var="institution">
+				<div class="col-xs-12 col-sm-6 col-lg-4">
+					<a href="${pageContext.request.contextPath}/${institution.slug}" class="panel panel-default institution-panel">
+						<span class="panel-body">
+							<span class="panel-image">
+								<img src="<c:out value="${institution.banner}" default="${pageContext.request.contextPath}/res/img/default-banner.jpg" />" alt="Banner da Insituição" class="panel-image-img">
+							</span>
+							<span class="panel-avatar">
+								<img src="<c:out value="${institution.logo}" default="${pageContext.request.contextPath}/res/img/institution-default.jpg" />" alt="Logo da Instituição" class="panel-avatar-img">
+							</span>
+							<span class="panel-title-bg">
+								<span class="panel-title"><c:out value="${institution.name}" /></span>
+							</span>
+							<span class="panel-subtitle"><strong class="helper-count">-</strong><strong class="donations-count">$-</strong></span>
+						</span>
+					</a>
+				</div>
+			</c:forEach>
 		</div>
 		
-		<div class="container">
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="page-content">
-						<h1 class="page-title">O Projeto Ajuda.Ai</h1>
-						<h4 class="page-subtitle">Que bom que você chegou até aqui! Conheça um pouco sobre nós :)</h4>
-						<hr>
-						<p>Começamos a partir de uma ideia simples. Um dia alguém me falou sobre fazer um aplicativo para celular para ajudar um pet shop. Por uma feliz coincidência vi um adesivo de uma Associação de Proteção a Animais daqui onde moro e tive a ideia:</p>
-						<p>E se tivesse um <a href="https://patreon.com" target="_blank" title="Site que inspirou essa ideia">Patreon</a> onde pudéssemos ajudar não artistas e outras pessoas e projetos mas sim Instituições/ONGs que fazem um trabalho bacana e sempre precisam de ajuda? A partir daí comecei a pensar e trabalhar em cima dessa ideia. Até que um dia, chegou a mim uma fantástica oportunidade.</p>
-						<p>Um amigo ligado à Organização de um evento beneficente, o <a href="http://cidadeverde.com/genteespecial" target="_blank" title="Saiba mais sobre o Gente Especial">Gente Especial</a>, organizado pela TV <a href="https://cidadeverde.com/">Cidade Verde</a> (afiliada ao SBT) me perguntou se eu tinha disponibilidade para fazer um sistema para ajudar na arrecadação de recursos para as ONGs beneficiadas e... Bem, uniu a fome à vontade de comer!</p>
-						<p>Ele praticamente descreveu minha ideia a mim, e compartilhei com ele minha ideia toda. E aqui estamos. O pontapé inicial do projeto Ajuda.Ai foi dado, graças a todas essas pessoas e a você, que está aqui nos visitando.</p>
-						<p><strong>Obrigado!</strong></p>
-					</div>
-				</div>
+		<%--div class="row">
+			<div class="col-xs-12">
+				<h2 class="home-title home-title-second text-center">Conheça também os maiores <strong>Ajudantes</strong><span class="heart"></span></h2>
 			</div>
 		</div>
+		<div class="row helpers-list">
+			<c:forEach items="${donors}" var="donor">
+				<div class="col-xs-6 col-sm-4 col-lg-2">
+					<a href="#" class="panel panel-default">
+						<span class="panel-body">
+							<span class="panel-title"><c:out value="${donors.email}" />Rafael M. Lins de Araújo</span>
+							<span class="panel-subtitle"><strong>123</strong> ajudas</span>
+						</span>
+					</a>
+				</div>
+			</c:forEach>
+		</div--%>
 	</div>
 </ajudaai:page>

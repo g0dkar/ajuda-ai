@@ -75,6 +75,15 @@ body {
 		</div>
 	</noscript>
 	
+	<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v2.6&appId=1579957135597873";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+	
 	<div id="page-content">
 		<nav class="navbar navbar-fixed-top navbar-default navbar-ajuda-ai">
 			<div class="container">
@@ -93,7 +102,7 @@ body {
 					<ul class="nav navbar-nav">
 						<li><a href="${pageContext.request.contextPath}/inicio">Início <span class="sr-only">(você está aqui)</span></a></li>
 						<li><a href="${pageContext.request.contextPath}/sobre">Sobre</a></li>
-						<li class="active"><a href="${pageContext.request.contextPath}/contato">Contato</a></li>
+						<li><a href="${pageContext.request.contextPath}/contato">Contato</a></li>
 						<li><a href="${pageContext.request.contextPath}/ajude">Ajude-nos!</a></li>
 					</ul><form class="navbar-form navbar-left" action="${pageContext.request.contextPath}/encontre" role="search">
 						<div class="form-group"><input type="text" name="q" class="form-control" placeholder="Buscar Instituições/ONGs"></div><button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
@@ -106,63 +115,89 @@ body {
 		</nav>
 	
 		<div id="content">
-			<div class="slider">
-				<div><div class="slider-item">
-					<div class="slider-img">
-						<img src="/res/img/index-img-03.jpg" alt="Imagem de Pessoas ajudando umas as outras">
+			<div class="institution-header">
+				<div class="slider">
+					<div><div class="slider-item slider">
+						<div class="slider-img">
+							<img src="/res/img/index-img-01.jpg" alt="Imagem de Pessoas ajudando umas as outras">
+						</div>
+					</div></div>
+				</div>
+				
+				<div class="institution-data">
+					<div class="institution-name">
+						<div class="institution-name-inner">
+							<div class="container">
+								<div class="row">
+									<div class="col-sm-offset-3 col-sm-9 col-md-offset-2 col-md-10">
+										<h1><strong>AMA/PI - Associação dos Amigos dos Autistas do Piauí</strong> precisa da sua ajuda</h1>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="slider-title">
-						<h1>Queremos <strong>ouvir</strong> (na verdade, ler) tudo que você tem a nos dizer</h1>
+					
+					<div class="container">
+						<div class="row">
+							<div class="col-xs-6 col-sm-3 col-md-2 text-center">
+								<div class="institution-avatar"><img src="https://ajuda.ai/res/img/logo-ama.jpg" width="150" height="150" class="institution-avatar-img"></div>
+							</div>
+							<div class="col-xs-6 col-sm-9 col-md-10">
+								<div class="row institution-data-row">
+									<div class="col-sm-4">
+										<div class="institution-helpers"><strong class="helper-count">1.234</strong> ajudantes</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="institution-donations"><strong class="donations-count">$1.000</strong> arrecadados</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="institution-call-to-action"><a class="ajuda-ai-btn" href="#">Quero Ajudar</a></div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div></div>
+				</div>
 			</div>
 			
-			<div class="container content-page">
+			<div class="container content-page institution-page">
 				<div class="row">
-					<div class="col-xs-12">
+					<div class="col-xs-12 col-sm-8">
 						<div class="panel panel-default">
 							<div class="panel-body">
-								<h1 class="page-title">Contato</h1>
-								<h4 class="page-subtitle">Queremos saber o que você tem a nos dizer</h4>
+								<h1 class="page-title">AMA/PI - Associação dos Amigos dos Autistas do Piauí</h1>
+								<h5 class="page-subtitle">Uma breve descrição do que a AMA é, ou uma frase de efeito como uma frase de logo</h5>
 								
 								<hr>
 								
-								<p>Basta preencher esse formulário e vamos receber sua mensagem! Responderemos assim que possível :)</p>
+								<h1 class="heart"><strong>Obrigado!</strong> Você acaba de fazer a diferença!</h1>
 								
-								<form action="/contato" method="post" class="form-horizontal">
-									<div class="form-group">
-										<label for="name" class="col-sm-2 control-label">Seu Nome</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" name="name" id="name" placeholder="Como devemos lhe chamar?">
-											<p class="help-block">Se preferir o anonimato, basta não preencher. Respeitamos bastante isso!</p>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="email" class="col-sm-2 control-label">Seu E-mail</label>
-										<div class="col-sm-10">
-											<input type="email" class="form-control" name="email" id="email" placeholder="Seu E-mail">
-											<p class="help-block"><span class="label label-warning">Atenção</span> Só vamos conseguir lhe responder se soubermos seu e-mail. Se não quiser resposta (e quiser anonimato), não preencha.</p>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="text-content" class="col-sm-2 control-label required-label">O que se passa em sua cabeça, hmm?</label>
-										<div class="col-sm-10">
-											<textarea class="form-control" name="content" id="text-content" placeholder="Conte tudo para nós" required autofocus></textarea>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label required-label">Você é Humano?</label>
-										<div class="col-sm-10">
-											<div class="g-recaptcha" data-sitekey="6LcJsSMTAAAAALmEuGm_V1yzF05DGn540TLXd6HH"></div>
-											<p class="help-block">Se não for: <a href="https://www.youtube.com/watch?v=KqSIA2ISTvA" target="_blank" title="Klaatu barada nikto!">Gort, Klaatu barada nikto!</a></p>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-offset-2 col-sm-10">
-											<button type="submit" class="ajuda-ai-btn">Enviar ➜</button>
-										</div>
-									</div>
-								</form>
+								<p>Preciso de um texto bonito de agradecimento</p>
+							</div>
+						</div>
+					</div>
+					<div class="hidden-xs col-sm-4">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<h3 class="page-title">O que minha ajuda irá fazer?</h3>
+								<p>Com sua ajuda poderemos dar uma vida mais digna e prazerosa aos autistas do Piauí, adultos e crianças. Compramos comida, brinquedos, medicamentos e professores para nossos amigos especiais.</p>
+								
+								<hr>
+								
+								<h3 class="page-title">Informações para Contato</h3>
+								<p>Telefone: <a href="tel:8631234567">(86) 3123-4567</a></p>
+								<p>Celular: <a href="tel:86998765432">(86) 99876-5432</a></p>
+								<p>E-mail: <a href="mailto:abc@def.com">abc@def.com</a></p>
+								
+								<hr>
+								
+								<h3 class="page-title">Conecte-se!</h3>
+								<p><a href="#" class="website-button">Nosso Website</a></p>
+								
+								<div class="fb-page" data-href="https://www.facebook.com/apipa.piaui" data-tabs="timeline" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/apipa.piaui" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/apipa.piaui">Facebook: @apipa.piaui</a></blockquote></div>
+								
+								<!--p><a href="#" class="twitter-button">twitter</a></p>
+								<p><a href="#" class="gplus-button">google+</a></p-->
 							</div>
 						</div>
 					</div>
@@ -197,7 +232,7 @@ body {
 						<h4>O Projeto</h4>
 						<ul>
 							<li><a href="https://github.com/g0dkar/ajuda-ai" title="Conheça e contribua com o código do projeto no GitHub" target="_blank">GitHub</a></li>
-							<li><a href="mailto:rafael.lins777@gmail.com?subject=Projeto+Ajuda.Ai" title="Fale comigo :)">Contato</a></li>
+							<li><a href="/contato" title="Fale comigo :)">Contato</a></li>
 						</ul>
 					</div>
 				</div>

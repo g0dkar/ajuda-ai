@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.infinispan.Cache;
@@ -47,15 +46,14 @@ public class Configuration {
 		final Cache<String, String> cache = cs.getCache("configuration");
 		
 		if (!cache.containsKey(name)) {
+			if (log.isDebugEnabled()) { log.debug("Cache Miss: {}, Loading...", name); }
 			final Query query = ps.createQuery("SELECT value FROM Configuration WHERE name = :name").setParameter("name", name);
 			query.setHint("org.hibernate.cacheable", false);
 			
-			try {
-				final String value = (String) query.getSingleResult();
-				cache.put(name, value);
-			} catch (final NoResultException nre) {
-				return null;
-			}
+			final String value = (String) query.getSingleResult();
+			cache.put(name, value);
+			
+			if (log.isDebugEnabled()) { log.debug("Loaded into Cache: {} = {}", name, value); }
 		}
 		
 		return cache.get(name);

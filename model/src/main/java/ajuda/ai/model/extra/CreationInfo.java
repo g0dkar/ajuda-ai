@@ -27,7 +27,7 @@ public class CreationInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Expose
-	@Column(nullable = false)
+	@Column(nullable = false, name = "creation_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date time;
 	

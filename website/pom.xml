@@ -105,17 +105,6 @@
 			<version>1.5.2</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.yahoo.platform.yui</groupId>
-			<artifactId>yuicompressor</artifactId>
-			<version>2.4.8</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>js</artifactId>
-					<groupId>rhino</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		
 		<dependency>
 			<groupId>commons-fileupload</groupId>

@@ -10,6 +10,7 @@ import javax.persistence.PreUpdate;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
 
 import ajuda.ai.model.Slug;
 import ajuda.ai.util.StringUtils;
@@ -27,10 +28,28 @@ public class Page extends Slug implements Serializable {
 	@Embedded
 	private CreationInfo creation;
 	
+	@URL
+	@Size(max = 1024)
+	@Column(length = 1024)
+	private String headerImage;
+	
 	@NotBlank
-	@Size(max = 0xFF)
-	@Column(nullable = false, length = 0xFF)
+	@Size(max = 255)
+	@Column(nullable = false, length = 255)
+	private String headerLine1;
+	
+	@Size(max = 255)
+	@Column(length = 255)
+	private String headerLine2;
+	
+	@NotBlank
+	@Size(max = 255)
+	@Column(nullable = false, length = 255)
 	private String title;
+	
+	@Size(max = 255)
+	@Column(length = 255)
+	private String subtitle;
 	
 	@NotBlank
 	@Column(nullable = false, columnDefinition = "MEDIUMTEXT")
@@ -43,7 +62,7 @@ public class Page extends Slug implements Serializable {
 	@PrePersist
 	public void beforeSave() {
 		if (title != null) {
-			title = title.trim().replaceAll("\\s+", " ");
+			title = title.replaceAll("\\s+", " ").trim();
 		}
 		
 		if (content != null) {
@@ -75,6 +94,10 @@ public class Page extends Slug implements Serializable {
 	
 	public String getContent() {
 		return content;
+	}
+	
+	public String getContentMarkdown() {
+		return StringUtils.markdown(content);
 	}
 	
 	public void setContent(final String content) {
