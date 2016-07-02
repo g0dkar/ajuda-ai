@@ -1,133 +1,122 @@
 <%@ page language="java" pageEncoding="UTF-8" isELIgnored="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="ajudaai" tagdir="/WEB-INF/tags/ajudaai" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<ajudaai:page>
-	<div id="page-institution" ng-controller="InstitutionController">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="hero">
-						<div class="hero-img">
-							<img src="http://4.bp.blogspot.com/-vCjZ1ZNuRJw/VmxGLPHls5I/AAAAAAAABWc/yBSGgUqnsmQ/s1600-r/banner_AMA1.jpg">
-							
-							<div class="hero-img-text">
-								<div class="container">
-									<div class="row">
-										<div class="col-xs-12 col-sm-offset-3 col-md-offset-2 col-sm-10">
-											<h1><strong><c:out value="${institution.name}" /></strong> precisa da sua ajuda!</h1>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						
-						<div class="hero-extra">
-							<div class="container">
-								<div class="row">
-									<div class="col-xs-12 col-sm-3 col-md-2 text-center">
-										<img src="<c:out value="${institution.logo}" default="${pageContext.request.contextPath}/res/img/institution-default.jpg"></c:out>" class="hero-extra-logo" alt="Logo da Instituição/ONG que você pode ajudar">
-									</div>
-									<div class="col-xs-5 col-sm-2" ng-class="{loadingInfo:'loading'}">
-										<div class="institution-donors" ng-bind="donations.count | number" title="Quantidade de pessoas que fizeram doações a esta Instituição/ONG"></div>
-										<div class="institution-donors-caption"><ng-pluralize count="donations.count" when="{'0': 'ajudante :(', 'one': 'ajudante', 'other': 'ajudantes'}"></ng-pluralize></div>
-									</div>
-									<div class="col-xs-7 col-sm-2" ng-class="{loadingInfo:'loading'}">
-										<div class="institution-value" ng-bind="donations.value | currency" title="Valor arrecadado para esta Instituição/ONG"></div>
-										<div class="institution-value-caption">arrecadados</div>
-									</div>
-									<div class="col-xs-12 col-sm-offset-2 col-sm-3 col-md-4">
-										<div class="donate-button" ng-click="donate()">Faça uma Doação</div>
-									</div>
-								</div>
-							</div>
-						</div>
+<ajudaai:institutionPage institution="${institution}" menu="1">
+	<h2><strong>Sua ajuda</strong> vai garantir a continuidade desse trabalho!</h2>
+			
+	<form action="${pageContext.request.contextPath}/${institution.slug}/api/doar" method="post" name="formDonate" class="donation-form clearfix">
+		<div class="row donation-tier selected" aria-role="button" data-value="10">
+			<div class="col-xs-3 col-md-2">
+				<div class="ajuda-ai-btn donation-btn">
+					<svg class="donation-heart" viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg>
+					<span class="donation-value">$10+</span>
+				</div>
+			</div>
+			<div class="col-xs-9 col-md-10">
+				<h3>Ajudante <small class="hidden-xs hidden-sm">(um café com pão de queijo)</small></h3>
+				<p class="heart">Você é uma pessoa linda por ajudar! (◉ ε ◉)</p>
+			</div>
+		</div>
+		
+		<div class="row donation-tier" data-value="25" aria-role="button">
+			<div class="col-xs-3 col-md-2">
+				<div class="ajuda-ai-btn donation-btn">
+					<svg class="donation-heart" viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg>
+					<span class="donation-value">$25+</span>
+				</div>
+			</div>
+			<div class="col-xs-9 col-md-10">
+				<h2>Super Ajudante <small class="hidden-xs hidden-sm">(um livro legal pra passar o tempo)</small></h2>
+				<p class="heart">Além da ajuda, você causa um sorrisão em nós (◕ᗜ◕)</p>
+			</div>
+		</div>
+		
+		<div class="row donation-tier" data-value="50" aria-role="button">
+			<div class="col-xs-3 col-md-2">
+				<div class="ajuda-ai-btn donation-btn">
+					<svg class="donation-heart" viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg>
+					<span class="donation-value">$50+</span>
+				</div>
+			</div>
+			<div class="col-xs-9 col-md-10">
+				<h2><strong>Ultra</strong> Ajudante!! <small class="hidden-xs hidden-sm">(um sanduíche de presunto! não, pera...)</small></h2>
+				<p class="heart">Um beijo, um sorrisão e uma gigantesca gratidão! (✧ω✧)</p>
+			</div>
+		</div>
+		
+		<div class="row donation-tier donation-tier-custom">
+			<div class="col-xs-3 col-md-2">
+				<div class="ajuda-ai-btn donation-btn">
+					<svg class="donation-heart" viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg>
+					<span class="donation-value">?</span>
+				</div>
+			</div>
+			<div class="col-xs-9 col-md-10">
+				<h2>Valor Personalizado <small class="hidden-xs hidden-sm">(se nenhum dos anteriores lhe interessou)</small></h2>
+				<div class="form-group form-group-lg">
+					<div class="input-group">
+						<div class="input-group-addon">$</div>
+						<input type="number" class="form-control" id="value" name="value" placeholder="Valor da Contribuição" min="5" max="10000" value="10" tabindex="1" required aria-describedby="value-help-block">
+						<div class="input-group-addon">.00 (mínimo: $5)</div>
+					</div>
+					<p class="sr-only" id="value-help-block">Utilize este campo para preencher o valor que você constaria de contribuir</p>
+				</div>
+			</div>
+		</div>
+		
+		<hr>
+		
+		<h2>Opções</h2>
+		
+		<div class="row">
+			<div class="col-xs-12 col-sm-6">
+				<div class="donation-opt">
+					<h3 class="checkbox"><label><input type="checkbox" name="anonymous" id="anonymous" value="1" aria-describedby="anonymous-help-block"> Não publicar meu nome</label></h3>
+					<p id="anonymous-help-block" class="help-block">Marcando essa opção, o Ajuda.Ai não irá exibir seu nome e seu e-mail em lugar algum. Ainda assim precisamos de seu nome e e-mail para emitir e enviar seus recibos das doações. <a href="/termos">Saiba Mais...</a></p>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-6">
+				<div class="donation-opt">
+					<h3 class="checkbox"><label><input type="checkbox" name="addcosts" id="addcosts" value="1" aria-describedby="addcosts-help-block"> Quero cobrir os custos operacionais</label></h3>
+					<div class="form-group">
+						<select class="form-control" name="addcoststype" id="addcoststype"><option id="addcosts-cc" value="0">$ - (cartão de crédito)</option><option id="addcosts-others" value="1">$ - (outras formas de pagamento)</option></select>
+						<p id="addcosts-help-block" class="help-block">Adicionando esse valor, as taxas cobradas à Instituição/ONG pela Plataforma de Pagamento serão pagas por você. <strong>Nenhum dinheiro</strong> vai para o Ajuda.Ai. <a href="/termos">Saiba Mais...</a></p>
 					</div>
 				</div>
 			</div>
 		</div>
 		
-		<div class="container">
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="page-content">
-						<h1 class="page-title">Faça uma Doação</h1>
-						<h4 class="page-subtitle">Você é uma pessoa linda por querer ajudar [◉ ε ◉]</h4>
-						
-						<hr>
-						
-						<c:if test="${errors ne null && !empty(errors)}">
-							<div class="alert alert-danger">
-								<p><strong>Algo de errado não está certo...</strong> Houveram erros ao processar sua doação :(</p>
-								<ul>
-									<c:forEach items="${errors}" var="err">
-										<li data-category="<c:out value="${err.category}"/>"><c:out value="${err.message}" /></li>
-									</c:forEach>
-								</ul>
-							</div>
-						</c:if>
-						
-						<form action="${pageContext.request.contextPath}/${institution.slug}/api/_doar" method="post" name="formDonate" class="donate-form form-horizontal">
-							<div class="form-group form-group-lg">
-								<label for="name" class="col-sm-2 control-label">Valor *</label>
-								<div class="col-sm-3">
-									<div class="input-group">
-										<div class="input-group-addon">$</div>
-										<input type="number" class="form-control" id="value" name="value" placeholder="Valor da Doação" min="1" max="10000" value="10" tabindex="1" autofocus required>
-										<div class="input-group-addon">.00</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="form-group">
-								<label for="name" class="col-sm-2 control-label">Nome *</label>
-								<div class="col-sm-10">
-									<input type="text" class="form-control" id="name" name="name" placeholder="Nome dessa pessoa bonita que fará a doação, não precisa ser formal" tabindex="2" required>
-								</div>
-							</div>
-							
-							<div class="form-group">
-								<label for="email" class="col-sm-2 control-label">E-mail *</label>
-								<div class="col-sm-5">
-									<input type="email" class="form-control" id="email" name="email" placeholder="Seu e-mail é tipo seu CPF da Internet" tabindex="3" required>
-								</div>
-							</div>
-							
-							<div class="form-group">
-								<label for="phone" class="col-sm-2 control-label">Telefone (opcional)</label>
-								<div class="col-sm-3">
-									<input type="text" class="form-control" id="phone" name="phone" placeholder="ou Celular ;P" tabindex="4">
-								</div>
-							</div>
-							
-							<div class="form-group">
-								<div class="col-sm-offset-2 col-sm-10">
-									<button class="btn btn-success btn-lg" type="button" tabindex="5" disabled="disabled">Ajuda Aí!</button>
-									<p><strong style="color:#c00">Estamos <u>testando</u> as doações. Nenhum valor será realmente cobrado.</strong></p>
-								</div>
-							</div>
-						</form>
-						
-						<hr>
-						
-						<h2>Como é o processo de doação?</h2>
-						<p>Quando você registra que deseja fazer uma doação nós nos comunicamos junto ao sistema de pagamentos e fazemos uma cobrança a você na conta da Instituição/ONG no valor da sua doação.</p>
-						<p>Após preencher o formulário acima você será redirecionado ao ambiente seguro de pagamento e poderá continuar sua doação da forma como preferir, ou mesmo desistir se quiser (por favor, não! haha).</p>
-						
-						<h2>Por que preciso preencher Endereço de Entrega?</h2>
-						<p>A maioria dos serviços de pagamento nacionais são especializados em vendas online, não doações. Há opções para doações, mas normalmente elas não permitem que sistemas como o Ajuda.Ai tenham acesso a acompanhar o andamento das doações. Por isso nossa forma de funcionar é fazendo uma venda online, igual uma loja, com o valor que você deseja.</p>
-						<p>Está em nossos planos dar ferramentas às Instituições/ONGs para que elas possam recompensar as pessoas que fazem doações com brindes e coisas semelhantes :)</p>
-						
-						<h2>Meus dados pessoas ficam com quem?</h2>
-						<p>O serviço de pagamento poderá lhe pedir vários dados como seu endereço de entrega (a maioria dos serviços de pagamento nacionais são especializados em vendas online, não doações), nome completo, e-mail, telefone, CPF, etc. <strong>Estes dados serão armazenados no serviço de pagamento</strong> e poderão ser vistos pela Instituição/ONG. Apesar de nosso sistema conseguir acessar esses dados, as únicas informações que registramos são as informadas nesta página. Depois disso tudo que usamos para saber que instituição recebeu que doação é seu e-mail, nada mais. Todos os outros dados vinculados aos pagamentos são ignorados por nosso sistema.</p>
-						
-						<h2>Posso doar mais de uma vez?</h2>
-						<p>Claro! Inclusive, se você fizer isso todos nós vamos ser imensamente gratos a você \(✧ω✧)/</p>
-						
-						<h2>Tenho outra dúvida...</h2>
-						<p>Hey, que bom! Estou a disposição para responder suas dúvidas, basta <a href="mailto:rafael@ajuda.ai?subject=Dúvida+sobre+o+Ajuda.Ai">mandar um e-mail</a> e respondo assim que possível ;) <small>(sou uma pessoa, assim como você e todos que você quer ajudar e vou a faculdade e outras coisas então talvez eu demore um pouquinho para responder, ok?)</small></p>
-					</div>
+		<hr>
+		
+		<h2>Seus Dados <small>Para emitir e enviar seus recibos</small></h2>
+		
+		<div class="row">
+			<div class="col-xs-12 col-sm-6">
+				<div class="form-group">
+					<label for="email" class="control-label">E-mail</label>
+					<input type="email" name="email" id="email" class="form-control" placeholder="super.heroi@generosidade.com.br" aria-describedby="email-help-block" required>
+					<p class="help-block" id="email-help-block">Quando o recibo desta doação estiver disponível enviaremos para este e-mail.</p>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-6">
+				<div class="form-group">
+					<label for="name" class="control-label">Nome</label>
+					<input type="text" name="name" id="name" class="form-control" placeholder="Como se chama essa maravilhosa pessoa?" aria-describedby="name-help-block" required>
+					<p id="name-help-block" class="help-block">Precisamos de seu nome para emitir recibos das suas doações. Você receberá um lembrete em seu e-mail assim que o recibo estiver disponível :)</p>
 				</div>
 			</div>
 		</div>
-	</div>
-</ajudaai:page>
+		
+		<hr>
+		
+		<h2>Você é uma Pessoa?</h2>
+		<div class="g-recaptcha" data-sitekey="6LcJsSMTAAAAALmEuGm_V1yzF05DGn540TLXd6HH"></div>
+		<p class="help-block">Se não for: <a href="https://www.youtube.com/watch?v=KqSIA2ISTvA" target="_blank" title="Klaatu barada nikto!">Gort, Klaatu barada nikto!</a></p>
+		
+		<hr>
+		
+		<h2>O último passo será na Plataforma de Pagamento</h2>
+		<button type="submit" class="ajuda-ai-btn ajuda-ai-btn-lg"><span class="heart-right">Ok, continuar para lá...</span></button>
+		<input type="hidden" name="token" id="token" value="${token}">
+	</form>
+</ajudaai:institutionPage>

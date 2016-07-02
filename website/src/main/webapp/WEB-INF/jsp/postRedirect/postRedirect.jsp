@@ -1,5 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8" isELIgnored="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="compressor" uri="http://htmlcompressor.googlecode.com/taglib/compressor" %>
+<compressor:html enabled="true" removeComments="true" preserveLineBreaks="false" removeHttpProtocol="true" removeHttpsProtocol="false" removeJavaScriptProtocol="true" removeMultiSpaces="true" removeIntertagSpaces="true" compressCss="false" compressJavaScript="false">
 <html>
 <head>
 <title>Redirecionando...</title>
@@ -14,3 +16,4 @@
 	<script type="text/javascript">document.getElementById("redirectPost").submit()</script>
 </body>
 </html>
+</compressor:html>

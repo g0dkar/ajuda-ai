@@ -5,8 +5,6 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
-import ajuda.ai.util.JsonUtils;
-
 /**
  * Serviços de Pagamento suportados. Uma {@link Enum} é usada pois é a forma mais legal de se fazer
  * Singletons. Créditos da Técnica: Daniel Mário
@@ -53,10 +51,10 @@ public enum PaymentServiceEnum {
 			return "_tid";
 		}
 		
-		public String extractPaymentServiceData(final String data) {
+		public Map<String, String> extractPaymentServiceData(final String data) {
 			final Map<String, String> paymentServiceData = new HashMap<>(1);
-			paymentServiceData.put("email", data);
-			return JsonUtils.toJson(paymentServiceData);
+			paymentServiceData.put("moip_email", data);
+			return paymentServiceData;
 		}
 		
 		/**
@@ -136,6 +134,6 @@ public enum PaymentServiceEnum {
 	public abstract boolean isReadyForAccounting(final int status);
 	public abstract boolean isCancelled(final int status);
 	public abstract String getThanksTransactionIdParameter();
-	public abstract String extractPaymentServiceData(final String data);
+	public abstract Map<String, String> extractPaymentServiceData(final String data);
 	public abstract int valuePlusTariffs(final int value, final int paymentType);
 }

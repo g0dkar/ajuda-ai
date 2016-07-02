@@ -247,7 +247,7 @@ public class InstitutionController extends AdminController {
 			comparisonEnd.add(Calendar.MONTH, -1);
 			
 			final Map<String, Object> result = new HashMap<>(3);
-			result.put("helpers", ps.createQuery("SELECT count(*) FROM InstitutionHelper WHERE institution = :institution").setParameter("institution", institution).getSingleResult());
+			result.put("helpers", ps.createQuery("SELECT count(*) FROM Helper WHERE institution = :institution").setParameter("institution", institution).getSingleResult());
 			result.put("currentData", donationDataMap(intervalStart, intervalEnd, institution));
 			result.put("previousData", donationDataMap(intervalStart, intervalEnd, institution));
 			jsonResponse(result).serialize();
@@ -302,7 +302,7 @@ public class InstitutionController extends AdminController {
 				try {
 					final PaymentServiceEnum paymentService = PaymentServiceEnum.valueOf(payserv.toUpperCase());
 					institution.setPaymentService(paymentService);
-					institution.setPaymentServiceData(paymentService.extractPaymentServiceData(payservdata));
+					institution.getAttributes().putAll(paymentService.extractPaymentServiceData(payservdata));
 				} catch (final Exception e) {
 					log.info("Serviço de Pagamento Inexistente: {} --- Ignorando.", payserv);
 					validator.add(new SimpleMessage("error", "Serviço de Pagamento não suportado."));
@@ -354,7 +354,7 @@ public class InstitutionController extends AdminController {
 		data.put("availableDonations", ps.createQuery("SELECT sum(p.value) / 100 FROM Payment p JOIN p.institution i WHERE i.creation.creator = :creator AND p.readyForAccounting = true AND DATE(timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
 		data.put("meanDonation", ps.createQuery("SELECT avg(p.value) / 100 FROM Payment p JOIN p.institution i WHERE i.creation.creator = :creator AND p.paid = true AND DATE(timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
 		data.put("cancelledDonations", ps.createQuery("SELECT sum(p.value) / 100 FROM Payment p JOIN p.institution i WHERE i.creation.creator = :creator AND p.cancelled = true AND DATE(timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
-		data.put("newHelpers", ps.createQuery("SELECT count(*) FROM InstitutionHelper h JOIN h.institution i WHERE i.creation.creator = :creator AND DATE(h.timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
+		data.put("newHelpers", ps.createQuery("SELECT count(*) FROM Helper h JOIN h.institution i WHERE i.creation.creator = :creator AND DATE(h.timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
 		
 		return data;
 	}

@@ -38,7 +38,7 @@ public abstract class Slug implements Serializable {
 	@Expose
 	@NotBlank
 	@Size(min = 2, max = 255)
-	@Column(nullable = false, length = 255)
+	@Column(nullable = false, unique = true, length = 255)
 	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9](/[a-z][a-z0-9\\-]*[a-z0-9])?")
 	private String slug;
 	

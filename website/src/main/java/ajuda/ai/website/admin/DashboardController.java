@@ -98,7 +98,7 @@ public class DashboardController extends AdminController {
 		
 		final Map<String, Object> result = new HashMap<>(4);
 		result.put("institutions", ps.createQuery("SELECT new Map(name as name, slug as slug, paymentService as paymentService, logo as logo, creation as creation) FROM Institution WHERE creator = :creator").setParameter("creator", uid).getResultList());
-		result.put("helpers", ps.createQuery("SELECT count(*) FROM InstitutionHelper h JOIN h.institution i WHERE i.creation.creator = :creator").setParameter("creator", uid).getSingleResult());
+		result.put("helpers", ps.createQuery("SELECT count(*) FROM Helper h JOIN h.institution i WHERE i.creation.creator = :creator").setParameter("creator", uid).getSingleResult());
 		result.put("currentData", donationDataMap(intervalStart, intervalEnd));
 		result.put("previousData", donationDataMap(comparisonStart, comparisonEnd));
 		jsonResponse(result).serialize();
@@ -113,7 +113,7 @@ public class DashboardController extends AdminController {
 		data.put("availableDonations", ps.createQuery("SELECT sum(p.value) / 100 FROM Payment p JOIN p.institution i WHERE i.creation.creator = :creator AND p.readyForAccounting = true AND DATE(timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
 		data.put("meanDonation", ps.createQuery("SELECT avg(p.value) / 100 FROM Payment p JOIN p.institution i WHERE i.creation.creator = :creator AND p.paid = true AND DATE(timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
 		data.put("cancelledDonations", ps.createQuery("SELECT sum(p.value) / 100 FROM Payment p JOIN p.institution i WHERE i.creation.creator = :creator AND p.cancelled = true AND DATE(timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
-		data.put("newHelpers", ps.createQuery("SELECT count(*) FROM InstitutionHelper h JOIN h.institution i WHERE i.creation.creator = :creator AND DATE(h.timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
+		data.put("newHelpers", ps.createQuery("SELECT count(*) FROM Helper h JOIN h.institution i WHERE i.creation.creator = :creator AND DATE(h.timestamp) BETWEEN DATE(:start) AND DATE(:end)").setParameter("creator", uid).setParameter("start", start.getTime()).setParameter("end", end.getTime()).getSingleResult());
 		
 		return data;
 	}

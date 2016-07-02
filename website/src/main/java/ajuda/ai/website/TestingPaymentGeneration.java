@@ -14,34 +14,34 @@ public class TestingPaymentGeneration {
 //		institution.setId(7L);
 //		institution.setName("AMA - Associação dos Amigos dos Autistas");
 //		institution.setSlug("ama");
-//		
+//
 //		final int value = 12300;
-//		
+//
 //		final String paymentDescription = "Doação: " + institution.getName();
 //		final BigDecimal valueBigDecimal = new BigDecimal(value).divide(new BigDecimal(100)).setScale(2);
-//		
+//
 //		System.out.println(value);
 //		System.out.println(valueBigDecimal);
-//		
+//
 //		final Checkout checkout = new Checkout();
 //		checkout.addItem(institution.getId().toString(), paymentDescription, 1, valueBigDecimal, null, null);
 //		checkout.setCurrency(Currency.BRL);
 //		checkout.setReference(institution.getId() + "-" + 123);
 //		checkout.setRedirectURL("https://ajuda.ai/" + institution.getSlug() + "/obrigado");
 //		checkout.setNotificationURL("https://ajuda.ai/" + institution.getSlug() + "/api/transaction-notification");
-//		
+//
 //		try {
 //			final boolean onlyCheckoutCode = false;
 //			final String response = checkout.register(PagSeguroConfig.getAccountCredentials(), onlyCheckoutCode);
 //			final Matcher codeMatcher = Pattern.compile("code=([A-F0-9]+)").matcher(response);
 //			final String pagSeguroId = codeMatcher.find() ? codeMatcher.group(1) : null;
-//			
+//
 //			System.out.println(response);
 //			System.out.println(pagSeguroId);
-//			
+//
 ////			final Payment payment = new Payment();
 ////			payment.setInstitution(institution);
-////			payment.setInstitutionHelper(institutionHelper);
+////			payment.setHelper(institutionHelper);
 ////			payment.setPaymentServiceId(pagSeguroId);
 ////			payment.setDescription("Pagamento criado via notificação de pagamento do PagSeguro");
 ////			payment.setPaymentService(institution.getPaymentService());
@@ -57,31 +57,31 @@ public class TestingPaymentGeneration {
 //			System.err.println(e.getMessage());
 //		}
 //	}
-//	
+//
 //	public static void mainPagSeguroListagemPagamentos(final String[] args) {
 //		TransactionSearchResult transactionSearchResult = null;
-//		
+//
 //		try {
 //			final Calendar monthAgo = Calendar.getInstance();
 //			monthAgo.add(Calendar.DATE, -30);
-//			
+//
 //			final Calendar now = Calendar.getInstance();
-//			
+//
 //			final int page = 1;
-//			
+//
 //			final int maxPageResults = 1000;
-//			
+//
 //			transactionSearchResult = TransactionSearchService.searchByDate(PagSeguroConfig.getAccountCredentials(),
 //					monthAgo.getTime(), now.getTime(), page, maxPageResults);
-//			
+//
 //		} catch (final PagSeguroServiceException e) {
 //			System.err.println(e.getMessage());
 //		}
-//		
+//
 //		if (transactionSearchResult != null) {
 //			final List<TransactionSummary> listTransactionSummaries = transactionSearchResult.getTransactionSummaries();
 //			final Iterator<TransactionSummary> transactionSummariesIterator = listTransactionSummaries.iterator();
-//			
+//
 //			while (transactionSummariesIterator.hasNext()) {
 //				final TransactionSummary currentTransactionSummary = transactionSummariesIterator.next();
 //				System.out.println();
@@ -98,41 +98,41 @@ public class TestingPaymentGeneration {
 //	 */
 //	public static void mainPagSeguroGerarPagamento(final String[] args) {
 //		final PaymentRequest paymentRequest = new PaymentRequest();
-//		
+//
 //		final Sender sender = new Sender( //
 //			"Rafael M. Lins", // name
 //			"c92273194446662834885@sandbox.pagseguro.com.br" // email
 ////			"rafael.lins777@gmail.com" // email
 //		);
-//		
+//
 //		paymentRequest.setSender(sender);
 //		paymentRequest.setName("Teste de Payment Request do PagSeguro");
 //		paymentRequest.setDescription("Testando essa bagaça");
-//		
+//
 //		final PaymentRequestItem item = new PaymentRequestItem(
 //			null,							// Id
 //			"Teste de Payment Request",		// Description
 //			new BigDecimal("500.00"),		// Price
 //			1								// Amount
 //		);
-//		
+//
 //		final List<PaymentRequestItem> listItems = new ArrayList<PaymentRequestItem>(1);
 //		listItems.add(item);
-//		
+//
 //		paymentRequest.setItems(listItems);
-//		
+//
 ////		final PaymentRequestShipping shipping = new PaymentRequestShipping( //
 ////			new BigDecimal("5.67") // cost
 ////		);
 ////
 ////		paymentRequest.setShipping(shipping);
-//		
+//
 //		paymentRequest.setExpiration(new Integer(30));
-//		
+//
 //		// Sets a reference code for this payment request, it's useful to identify this payment in
 //		// future notifications
 //		paymentRequest.setReference(UUID.randomUUID().toString());
-//		
+//
 //		try {
 //			final String paymentRequestCode = paymentRequest.register(PagSeguroConfig.getAccountCredentials());
 //			System.out.println(paymentRequestCode);

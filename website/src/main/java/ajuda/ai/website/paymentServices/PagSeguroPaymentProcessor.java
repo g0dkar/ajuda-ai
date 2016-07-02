@@ -16,7 +16,7 @@
 //import ajuda.ai.model.billing.PaymentEvent;
 //import ajuda.ai.model.billing.PaymentServiceEnum;
 //import ajuda.ai.model.institution.Institution;
-//import ajuda.ai.model.institution.InstitutionHelper;
+//import ajuda.ai.model.institution.Helper;
 //import ajuda.ai.util.JsonUtils;
 //import ajuda.ai.website.util.PersistenceService;
 //import br.com.caelum.vraptor.Result;
@@ -35,7 +35,7 @@
 // *
 // */
 //public class PagSeguroPaymentProcessor implements PaymentProcessor {
-//	public Payment createPayment(final Institution institution, final InstitutionHelper institutionHelper, final int value, final PersistenceService ps, final Result result, final Logger log) {
+//	public Payment createPayment(final Institution institution, final Helper institutionHelper, final int value, final PersistenceService ps, final Result result, final Logger log) {
 //		final String paymentDescription = "Doação: " + institution.getName();
 //		final BigDecimal valueBigDecimal = new BigDecimal(value).divide(HUNDRED).setScale(2);
 //
@@ -54,7 +54,7 @@
 //
 //			final Payment payment = new Payment();
 //			payment.setInstitution(institution);
-//			payment.setInstitutionHelper(institutionHelper);
+//			payment.setHelper(institutionHelper);
 //			payment.setPaymentServiceId(pagSeguroId);
 //			payment.setDescription("Pagamento PagSeguro");
 //			payment.setPaymentService(institution.getPaymentService());
@@ -84,10 +84,10 @@
 //			final Transaction transaction = NotificationService.checkTransaction(accountCred, pagSeguroId);
 //			final int valor = transaction.getGrossAmount().multiply(HUNDRED).intValue();
 //
-//			InstitutionHelper institutionHelper = (InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE institution = :institution AND LOWER(email) = LOWER(:email)").setParameter("institution", institution).setParameter("email", transaction.getSender().getEmail()).getSingleResult();
+//			Helper institutionHelper = (Helper) ps.createQuery("FROM Helper WHERE institution = :institution AND LOWER(email) = LOWER(:email)").setParameter("institution", institution).setParameter("email", transaction.getSender().getEmail()).getSingleResult();
 //			if (institutionHelper == null) {
-//				if (log.isDebugEnabled()) { log.info("Pagamento veio de um InstitutionHelper inexistente, criando..."); }
-//				institutionHelper = new InstitutionHelper();
+//				if (log.isDebugEnabled()) { log.info("Pagamento veio de um Helper inexistente, criando..."); }
+//				institutionHelper = new Helper();
 //				institutionHelper.setAllowPublish(false);
 //				institutionHelper.setEmail(transaction.getSender().getEmail());
 //				institutionHelper.setPaymentEmail(transaction.getSender().getEmail());
@@ -97,7 +97,7 @@
 //				ps.persist(institutionHelper);
 //			}
 //			else if (StringUtil.isBlank(institutionHelper.getPhone())) {
-//				if (log.isDebugEnabled()) { log.info("Pagamento veio de um InstitutionHelper que já existe. Atualizando PaymentEmail e Phone..."); }
+//				if (log.isDebugEnabled()) { log.info("Pagamento veio de um Helper que já existe. Atualizando PaymentEmail e Phone..."); }
 //				institutionHelper.setPaymentEmail(transaction.getSender().getEmail());
 //				institutionHelper.setPhone(transaction.getSender().getPhone().toString());
 //				ps.merge(institutionHelper);
@@ -109,7 +109,7 @@
 //				if (log.isDebugEnabled()) { log.info("Pagamento referente a um Payment não registrado. Criando..."); }
 //				payment = new Payment();
 //				payment.setInstitution(institution);
-//				payment.setInstitutionHelper(institutionHelper);
+//				payment.setHelper(institutionHelper);
 //				payment.setDescription("Pagamento criado via notificação de pagamento do PagSeguro");
 //				payment.setPaymentService(institution.getPaymentService());
 //				payment.setPaymentServiceId(transaction.getCode());
@@ -125,7 +125,7 @@
 //				ps.merge(payment);
 //			}
 //
-//			ps.createQuery("UPDATE InstitutionHelper SET lastPayment = :payment WHERE id = :id").setParameter("payment", payment).setParameter("id", institutionHelper.getId()).executeUpdate();
+//			ps.createQuery("UPDATE Helper SET lastPayment = :payment WHERE id = :id").setParameter("payment", payment).setParameter("id", institutionHelper.getId()).executeUpdate();
 //
 //			final PaymentEvent newEvent = new PaymentEvent();
 //			newEvent.setCurrency("BRL");	// Apenas BRL é suportado no momento (pelo PagSeguro)

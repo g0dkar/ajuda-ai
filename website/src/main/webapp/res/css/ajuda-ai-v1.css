@@ -144,7 +144,7 @@ nav.navbar-ajuda-ai {
 }
 @media (min-width: 768px) {
 	.slider, .slider-item, .slider-img > img {
-		height: 550px;
+		height: 450px;
 	}
 }
 .slider-title {
@@ -179,6 +179,9 @@ nav.navbar-ajuda-ai {
 	-webkit-transition: background-color .2s ease;
 	-moz-transition: background-color .2s ease;
 	transition: background-color .2s ease;
+}
+.ajuda-ai-btn-lg {
+	font-size: 1.3em;
 }
 .ajuda-ai-btn:hover {
 	color: #fff;
@@ -400,7 +403,7 @@ nav.navbar-ajuda-ai {
 		margin-top: -75px;
 	}
 	.institution-name {
-		height: 550px;
+		height: 450px;
 	}
 }
 .institution-name-inner {

@@ -14,7 +14,7 @@
 //import org.slf4j.Logger;
 //
 //import ajuda.ai.model.billing.PaymentServiceEnum;
-//import ajuda.ai.model.institution.InstitutionHelper;
+//import ajuda.ai.model.institution.Helper;
 //import ajuda.ai.website.util.ReminderMailSender;
 //
 ///**
@@ -39,17 +39,17 @@
 //		log.info("Enviando lembretes de doação...");
 //
 //		final long start = System.currentTimeMillis();
-//		final long count = ((Number) entityManager.createQuery("SELECT count(*) FROM InstitutionHelper WHERE rememberToken IS NOT NULL").getSingleResult()).longValue();
+//		final long count = ((Number) entityManager.createQuery("SELECT count(*) FROM Helper WHERE rememberToken IS NOT NULL").getSingleResult()).longValue();
 //		log.info("Lembretes para enviar: {} (tempo: {}s)", count, tempo(start));
 //
-//		final Query query = entityManager.createQuery("FROM InstitutionHelper WHERE rememberToken IS NOT NULL").setParameter("paymentService", PaymentServiceEnum.PAG_SEGURO);
+//		final Query query = entityManager.createQuery("FROM Helper WHERE rememberToken IS NOT NULL").setParameter("paymentService", PaymentServiceEnum.PAG_SEGURO);
 //		query.setHint(QueryHints.FETCH_SIZE, 100);	// Pega de 100 em 100 resultados de forma transparente
 //		query.setHint(QueryHints.READ_ONLY, true);	// Updates serão feitos de forma manual (e assim é mais rápido)
-//		final List<InstitutionHelper> helpers = query.getResultList();
+//		final List<Helper> helpers = query.getResultList();
 //		int enviados = 0, erros = 0;
 //		final List<Long> remove = new LinkedList<>();
 //
-//		for (final InstitutionHelper helper : helpers) {
+//		for (final Helper helper : helpers) {
 //			try {
 //				final boolean enviado = mailSender.sendReminder(helper, false);
 //
@@ -65,7 +65,7 @@
 //			}
 //		}
 //
-//		entityManager.createQuery("UPDATE InstitutionHelper SET reminderToken = NULL, reminderTokenDate = NULL WHERE id IN (:ids)").setParameter("ids", remove).executeUpdate();
+//		entityManager.createQuery("UPDATE Helper SET reminderToken = NULL, reminderTokenDate = NULL WHERE id IN (:ids)").setParameter("ids", remove).executeUpdate();
 //		log.info("Lembretes enviados: {}, Removidos: {}, Erros: {} (tempo: {}s)", enviados, remove.size(), erros, tempo(start));
 //	}
 //

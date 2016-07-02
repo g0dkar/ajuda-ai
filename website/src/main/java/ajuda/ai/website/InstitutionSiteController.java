@@ -1,25 +1,32 @@
 package ajuda.ai.website;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 
 import ajuda.ai.model.billing.Payment;
+import ajuda.ai.model.institution.Helper;
 import ajuda.ai.model.institution.Institution;
-import ajuda.ai.model.institution.InstitutionHelper;
 import ajuda.ai.model.institution.InstitutionPost;
 import ajuda.ai.util.StringUtils;
 import ajuda.ai.util.keycloak.KeycloakUser;
 import ajuda.ai.website.paymentServices.PaymentProcessor;
 import ajuda.ai.website.paymentServices.PaymentService;
+import ajuda.ai.website.util.CacheService;
+import ajuda.ai.website.util.Configuration;
 import ajuda.ai.website.util.PersistenceService;
+import ajuda.ai.website.util.ReCaptchaService;
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -37,26 +44,32 @@ import br.com.caelum.vraptor.view.Results;
  *
  */
 @Controller
-@Path("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}")
+@Path(value = "/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}", priority = Path.LOWEST)
 public class InstitutionSiteController {
 	private final Logger log;
 	private final Result result;
+	private final Configuration conf;
 	private final Validator validator;
 	private final PersistenceService ps;
 	private final HttpServletRequest request;
 	private final PaymentService paymentService;
+	private final CacheService cache;
+	private final ReCaptchaService recaptcha;
 	
 	/** @deprecated CDI */ @Deprecated
-	InstitutionSiteController() { this(null, null, null, null, null, null, null); }
+	InstitutionSiteController() { this(null, null, null, null, null, null, null, null, null, null); }
 	
 	@Inject
-	public InstitutionSiteController(final Logger log, final Result result, final Validator validator, final KeycloakUser user, final PersistenceService ps, final HttpServletRequest request, final PaymentService paymentService) {
+	public InstitutionSiteController(final Logger log, final Result result, final Configuration conf, final Validator validator, final KeycloakUser user, final PersistenceService ps, final HttpServletRequest request, final PaymentService paymentService, final CacheService cache, final ReCaptchaService recaptcha) {
 		this.log = log;
 		this.result = result;
+		this.conf = conf;
 		this.validator = validator;
 		this.ps = ps;
 		this.request = request;
 		this.paymentService = paymentService;
+		this.cache = cache;
+		this.recaptcha = recaptcha;
 		
 		if (result != null) {
 			result.include("user", user);
@@ -73,7 +86,6 @@ public class InstitutionSiteController {
 		
 		if (institution != null) {
 			result.include("institution", institution);
-			result.include("institutionDescriptionMarkdown", StringUtils.markdown(institution.getDescription()));
 		}
 		else {
 			result.include("notFound", true);
@@ -86,7 +98,11 @@ public class InstitutionSiteController {
 		final Institution institution = findInstitution(slug);
 		
 		if (institution != null) {
+			final String token = UUID.randomUUID().toString();
+			cache.getCache().put("institution_" + slug + "_" + token, 0);
+			
 			result.include("institution", institution);
+			result.include("token", token);
 		}
 		else {
 			result.include("notFound", true);
@@ -94,20 +110,20 @@ public class InstitutionSiteController {
 		}
 	}
 	
-	@Path(value = "/{post:[a-z][a-z0-9\\-]*[a-z0-9]}", priority = Path.LOW)
-	public void post(final String slug, final String post) {
+	@Path(value = "/{[a-z][a-z0-9\\-]*[a-z0-9]}/{id:\\d+}", priority = Path.LOW)
+	public void post(final String slug, final String id) {
 		final Institution institution = findInstitution(slug);
 		
 		if (institution != null) {
-			final InstitutionPost institutionPost = (InstitutionPost) ps.createQuery("FROM InstitutionPost WHERE slug = :slug").setParameter("slug", slug + "/" + post).getSingleResult();
-			if (institutionPost != null) {
+			final InstitutionPost post = (InstitutionPost) ps.createQuery("FROM InstitutionPost WHERE institution = :institution AND id = :id").setParameter("institution", institution).setParameter("id", StringUtils.parseLong(id, 0)).getSingleResult();
+			
+			if (post != null) {
 				result.include("institution", institution);
-				result.include("institutionPost", institutionPost);
-				result.include("institutionPostMarkdown", StringUtils.markdown(institutionPost.getContent()));
+				result.include("post", post);
 			}
 			else {
 				result.include("notFound", true);
-				result.redirectTo(SiteController.class).index();
+				result.redirectTo(this).institution(slug);
 			}
 		}
 		else {
@@ -119,37 +135,62 @@ public class InstitutionSiteController {
 	@Transactional
 	@Post("/api/doar")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
-	public void donate(final String slug, final String value, final String name, final String email, final String anonymous, final String addcosts) {
+	public void donate(final String slug, final String value, final String name, final String email, final String anonymous, final String addcosts, final String addcoststype, final String password) {
 		final Institution institution = findInstitution(slug);
 		
 		if (institution != null) {
-			InstitutionHelper helper = (InstitutionHelper) ps.createQuery("FROM InstitutionHelper WHERE institution = :institution AND LOWER(email) = LOWER(:email)").setParameter("institution", institution).setParameter("email", email).getSingleResult();
-			final int helpValue = StringUtils.parseInteger(value.replaceAll("\\D+", ""), 0) * 100;
-			
-			if (helper == null) {
-				helper = new InstitutionHelper();
-				helper.setInstitution(institution);
-				helper.setName(StringUtils.stripHTML(name));
-				helper.setEmail(StringUtils.stripHTML(email));
-				helper.setTimestamp(new Date());
-				helper.setAnonymous(StringUtils.parseBoolean(anonymous, StringUtils.isBlank(name)));
-				ps.persist(helper);
-			}
-			
-			final PaymentProcessor paymentProcessor = paymentService.get(institution.getPaymentService());
-			
-			if (paymentProcessor != null) {
-				final Payment payment = paymentProcessor.createPayment(institution, helper, helpValue, ps, result, log);
-				
-				if (payment != null) {
-					ps.createQuery("UPDATE InstitutionHelper SET lastPayment = :payment WHERE id = :id").setParameter("payment", payment).setParameter("id", helper.getId()).executeUpdate();
+			if (recaptcha.isRecaptchaSuccess()) {
+				if (!StringUtils.isBlank(name) && !StringUtils.isBlank(email)) {
+					Helper helper = (Helper) ps.createQuery("FROM Helper WHERE LOWER(email) = LOWER(:email)").setParameter("email", email).getSingleResult();
+					final int helpValue = StringUtils.parseInteger(value.replaceAll("\\D+", ""), 0) * 100;
+					
+					if (helper == null) {
+						helper = new Helper();
+						helper.setInstitutions(new HashSet<>(1));
+						helper.getInstitutions().add(institution);
+						helper.setName(StringUtils.stripHTML(name));
+						helper.setEmail(StringUtils.stripHTML(email));
+						helper.setTimestamp(new Date());
+						helper.setAnonymous(StringUtils.parseBoolean(anonymous, StringUtils.isBlank(name)));
+						helper.setPassword(BCrypt.hashpw(StringUtils.isEmpty(password) ? randomPassword() : password, BCrypt.gensalt(conf.get("bcrypt.rounds", 10))));
+						ps.persist(helper);
+					}
+					else {
+						helper.setName(name);
+						helper = ps.merge(helper);
+					}
+					
+					final PaymentProcessor paymentProcessor = paymentService.get(institution.getPaymentService());
+					
+					if (paymentProcessor != null) {
+						final Payment payment = paymentProcessor.createPayment(institution, helper, helpValue, StringUtils.parseBoolean(addcosts, false), StringUtils.parseInteger(addcoststype, -1), ps, result, log);
+						
+						if (payment != null) {
+							try {
+								ps.createQuery("UPDATE Helper SET score = score + 1 WHERE id = :id").setParameter("id", helper.getId()).executeUpdate();
+							} catch (final Exception e) {
+								log.error("Erro ao contabilizar score ao Ajudante", e);
+							}
+						}
+						else {
+							validator.add(new SimpleMessage("error", "Erro ao criar Ordem de Pagamento"));
+						}
+					}
+					else {
+						validator.add(new SimpleMessage("error", "Serviço de Pagamento não é suportado"));
+					}
 				}
 				else {
-					validator.add(new SimpleMessage("error", "Erro ao criar Ordem de Pagamento"));
+					if (StringUtils.isBlank(name)){
+						validator.add(new SimpleMessage("name", "Por favor, preencha seu nome"));
+					}
+					if (StringUtils.isBlank(email)){
+						validator.add(new SimpleMessage("email", "Por favor, preencha seu e-mail"));
+					}
 				}
 			}
 			else {
-				validator.add(new SimpleMessage("error", "Serviço de Pagamento não é suportado"));
+				validator.add(new SimpleMessage("captcha", "Por favor, execute a verificação do ReCaptcha! Se você for mesmo um robô: Gort, Klaatu barada nikto!"));
 			}
 		}
 		else {
@@ -157,7 +198,8 @@ public class InstitutionSiteController {
 		}
 		
 		if (validator.hasErrors()) {
-			validator.onErrorRedirectTo(this).institution(slug);
+//			validator.onErrorUse(Results.json()).withoutRoot().from(validator.getErrors()).serialize();
+			validator.onErrorRedirectTo(this).donation(slug);
 		}
 	}
 	
@@ -184,7 +226,7 @@ public class InstitutionSiteController {
 		final Institution institution = findInstitution(slug);
 		
 		if (institution != null) {
-			final int helpers = ((Number) ps.createQuery("SELECT count(*) FROM InstitutionHelper WHERE institution = :institution").setParameter("institution", institution).getSingleResult()).intValue();
+			final int helpers = ((Number) ps.createQuery("SELECT count(*) FROM Helper h JOIN h.institutions i WHERE i = :institution").setParameter("institution", institution).getSingleResult()).intValue();
 			final Number value = (Number) ps.createQuery("SELECT sum(value) FROM Payment WHERE institution = :institution AND paid = true AND cancelled = false").setParameter("institution", institution).getSingleResult();
 			
 			final Map<String, Object> response = new HashMap<>(2);
@@ -196,5 +238,51 @@ public class InstitutionSiteController {
 		else {
 			result.notFound();
 		}
+	}
+	
+	@Get("/api/helper")
+	public void helperInfo(final String slug, final String e, final String t) {
+		final Institution institution = findInstitution(slug);
+		
+		if (institution != null) {
+			final String cacheKey = "institution_" + slug + "_" + t;
+			final Integer value = (Integer) cache.getCache().get(cacheKey);
+			if (value != null && value < conf.get("maxHelperChecksPerToken", 25)) {
+				final Map<String, String> res = (Map) ps.createQuery("SELECT new Map(name as name, email as email) FROM Helper WHERE LOWER(email) = LOWER(:email)").setParameter("email", e).getSingleResult();
+				if (res != null) {
+					result.use(Results.json()).withoutRoot().from(res).serialize();
+				}
+				else {
+					result.notFound();
+				}
+			}
+			else {
+				result.notFound();
+			}
+		}
+		else {
+			result.notFound();
+		}
+	}
+	
+	// Order of the keys on my keyboard... If I'll access them randomly, why have them ordered?
+	// Numbers are here to make sure they have a chance to show up
+	private static final String LETTERS = "0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+	private static final String SPECIAL = "0123456789:.^%=-+[]{}~`_ ,<>å¡!²³&ä®";
+	/** @return A random 100 characters long string */
+	private String randomPassword() {
+		final SecureRandom r = new SecureRandom();
+		final StringBuilder pwd = new StringBuilder();
+		
+		for (int i = 0; i < 100; i++) {
+			if (r.nextBoolean()) {
+				pwd.append(LETTERS.charAt(r.nextInt(LETTERS.length())));
+			}
+			else {
+				pwd.append(SPECIAL.charAt(r.nextInt(SPECIAL.length())));
+			}
+		}
+		
+		return pwd.toString();
 	}
 }

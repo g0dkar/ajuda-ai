@@ -13,7 +13,7 @@
 //
 //import org.slf4j.Logger;
 //
-//import ajuda.ai.model.institution.InstitutionHelper;
+//import ajuda.ai.model.institution.Helper;
 //import ajuda.ai.util.mail.SendMail;
 //
 ///**
@@ -57,7 +57,7 @@
 //	 *
 //	 * @return {@code true} caso o lembrete tenha sido enviado. {@code false} caso essa pessoa não deva receber lembretes (sem token ou token velho demais)
 //	 */
-//	public boolean sendReminder(final InstitutionHelper helper, final boolean async) {
+//	public boolean sendReminder(final Helper helper, final boolean async) {
 //		if (log.isDebugEnabled()) { log.debug("Enviando e-mail de lembrança de doação: {} (async? {})", helper, async); }
 //
 //		if (helper.getReminderToken() != null) {
@@ -100,7 +100,7 @@
 //				return true;
 //			}
 //		}
-//		else if (log.isDebugEnabled()) { log.debug("InstitutionHelper não tem token de lembrete. Ignorado.", helper, async); }
+//		else if (log.isDebugEnabled()) { log.debug("Helper não tem token de lembrete. Ignorado.", helper, async); }
 //
 //		return false;
 //	}

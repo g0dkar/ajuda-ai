@@ -75,10 +75,11 @@
 	
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<li<c:if test="${menu == 1}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/inicio">Início<c:if test="${menu == 1}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
-						<li><a href="${pageContext.request.contextPath}/sobre">Sobre<c:if test="${menu == 2}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
-						<li><a href="${pageContext.request.contextPath}/contato">Contato<c:if test="${menu == 3}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
-						<li><a href="${pageContext.request.contextPath}/ajude">Ajude-nos!<c:if test="${menu == 4}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
+						<li<c:if test="${menu == 1}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/inicio" title="Página Inicial">Início<c:if test="${menu == 1}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
+						<li<c:if test="${menu == 2}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/sobre" title="Conheça um pouco mais sobre a gente">Sobre<c:if test="${menu == 2}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
+						<li<c:if test="${menu == 3}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/contato" title="Gostamos de ouvir, fale com a gente">Contato<c:if test="${menu == 3}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
+						<li<c:if test="${menu == 4}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/ajude" title="Quer ajudar o Ajuda.Ai? Veja do que estamos precisando">Ajude-nos!<c:if test="${menu == 4}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
+						<li<c:if test="${menu == 5}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/recibos" title="Verifique e reenvie os recibos de suas doações">Minhas Doações<c:if test="${menu == 5}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
 					</ul>
 					<%--form class="navbar-form navbar-left" action="${pageContext.request.contextPath}/encontre" role="search">
 						<div class="form-group">

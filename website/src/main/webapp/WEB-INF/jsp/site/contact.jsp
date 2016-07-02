@@ -1,7 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8" isELIgnored="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="ajudaai" tagdir="/WEB-INF/tags/ajudaai" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<ajudaai:page>
+<ajudaai:page menu="3" title="Contato">
 	<div class="slider">
 		<div><div class="slider-item">
 			<div class="slider-img">
@@ -23,7 +23,7 @@
 						
 						<hr>
 						
-						<c:if test="${messageContactForm}">
+						<c:if test="${messageContactForm ne null}">
 							<div class="alert alert-info"><strong>Informação:</strong> <c:out value="${messageContactForm}" /></div>
 						</c:if>
 						
@@ -33,21 +33,21 @@
 							<div class="form-group">
 								<label for="name" class="col-sm-2 control-label">Seu Nome</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" name="name" id="name" placeholder="Como devemos lhe chamar?" aria-describedby="name-help-block">
+									<input type="text" class="form-control" name="name" id="name" placeholder="Como devemos lhe chamar?" aria-describedby="name-help-block" value="<c:out value="${name}" />">
 									<p id="name-help-block" class="help-block"><span class="sr-only">Preencha seu nome neste campo. Não precisa ser nome completo, pode até mesmo ser um apelido.</span> Se preferir o anonimato, basta não preencher. Respeitamos bastante isso!</p>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="email" class="col-sm-2 control-label">Seu E-mail</label>
 								<div class="col-sm-10">
-									<input type="email" class="form-control" name="email" id="email" placeholder="Seu E-mail" aria-describedby="email-help-block">
+									<input type="email" class="form-control" name="email" id="email" placeholder="Seu E-mail" aria-describedby="email-help-block" value="<c:out value="${email}" />">
 									<p id="email-help-block" class="help-block"><span class="sr-only">Preencha seu e-mail neste campo.</span> <span class="label label-warning">Atenção</span> Só vamos conseguir lhe responder se soubermos seu e-mail. Se não quiser resposta (ou quiser anonimato), não preencha.</p>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="text-content" class="col-sm-2 control-label required-label">O que se passa em sua cabeça, hmm?</label>
 								<div class="col-sm-10">
-									<textarea class="form-control" name="content" id="text-content" placeholder="Não se acanhe! Pode falar bem e também pode falar mal! Pode falar muito bem também :P" required autofocus aria-describedby="content-help-block"></textarea>
+									<textarea class="form-control" name="content" id="text-content" placeholder="Não se acanhe! Pode falar bem e também pode falar mal! Pode falar muito bem também :P" required autofocus aria-describedby="content-help-block"><c:out value="${content}" /></textarea>
 									<p id="content-help-block" class="help-block"><span class="sr-only">Neste campo, digite o que você quer nos dizer.</span> Toda sugestão é bem vinda, toda crítica será considerada e se só quiser conversar mesmo nós estamos de ouvidos em pé para todos :)</p>
 								</div>
 							</div>

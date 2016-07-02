@@ -1,14 +1,14 @@
 <%@ page language="java" pageEncoding="UTF-8" isELIgnored="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="ajudaai" tagdir="/WEB-INF/tags/ajudaai" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<ajudaai:page>
+<ajudaai:page menu="2" title="Sobre">
 	<div class="slider">
 		<div><div class="slider-item">
 			<div class="slider-img">
-				<img src="${pageContext.request.contextPath}/res/img/index-img-03.jpg" alt="Imagem de Pessoas ajudando umas as outras">
+				<img src="${pageContext.request.contextPath}/res/img/index-img-02.jpg" alt="Imagem de Pessoas ajudando umas as outras">
 			</div>
 			<div class="slider-title">
-				<h1>Queremos <strong>ouvir</strong> (na verdade, ler) tudo que você tem a nos dizer</h1>
+				<h1>De onde viemos e para onde <strong>vamos</strong></h1>
 			</div>
 		</div></div>
 	</div>
@@ -23,7 +23,7 @@
 						
 						<hr>
 						
-						<p>Olá! Este é o Projeto Ajuda.Ai. O objetivo dele é ser o Patreon das Doações a Instituições/ONGs no Brasil (e futuramente no mundo!) e é totalmente <strong>sem fins lucrativos</strong>.</p>
+						<p>Olá! Este é o Projeto Ajuda.Ai. O objetivo dele é ser o Patreon das Doações a Instituições/ONGs no Brasil (e futuramente no mundo!) e não estamos buscando lucro.</p>
 						<p>Estamos começando e vamos implementá-lo (não tão) devagar e sempre :)</p>
 						
 						<h2>De onde veio a ideia? <small>por Rafael Lins</small></h2>
@@ -31,8 +31,9 @@
 						<p>E se ajudar essas instituições pudesse ser tão simples, fácil, rápido e prático quanto fazer compras na Internet? Apenas clicar no link da instituição, se eu gostar e puder clico em "Ajudar", digo com quanto gostaria de ajudar e pronto. Forma de Pagamento? Ah... estou sem grana <em>agora</em> então põe no cartão de crédito. GG.</p>
 						<p>E foi disso que surgiu o Projeto Ajuda.Ai :)</p>
 						
-						<h2>Sem fins lucrativos?</h2>
-						<p>Sim. Sem fins lucrativos. Somos uma ligação <strong>direta</strong> entre as pessoas que querem ajudar e as instituições que precisam de ajuda. Acredito que podemos ajudar com aquilo com que somos bons. E sei fazer sistemas web, então fiz o Ajuda.Ai. É minha forma de contribuir :)</p>
+						<h2>E quem banca vocês?</h2>
+						<p>Ninguém. Somos uma ligação <strong>direta</strong> entre as pessoas que querem ajudar e as instituições que precisam de ajuda e não ganhamos nada (financeiramente) com isso. Acredito que podemos ajudar com aquilo com que somos bons. E sei fazer sistemas web, então fiz o Ajuda.Ai. É minha forma de contribuir :)</p>
+						<p>Trabalho, ganho meu dinheiro e sobra o bastante para manter esse projeto funcionando. E estou feliz com isso assim.</p>
 						
 						<hr id="desenvolvedores">
 						

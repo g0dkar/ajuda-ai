@@ -111,4 +111,36 @@ public class Page extends Slug implements Serializable {
 	public void setPublished(final boolean published) {
 		this.published = published;
 	}
+
+	public String getHeaderImage() {
+		return headerImage;
+	}
+
+	public void setHeaderImage(final String headerImage) {
+		this.headerImage = headerImage;
+	}
+
+	public String getHeaderLine1() {
+		return headerLine1;
+	}
+
+	public void setHeaderLine1(final String headerLine1) {
+		this.headerLine1 = headerLine1;
+	}
+
+	public String getHeaderLine2() {
+		return headerLine2;
+	}
+
+	public void setHeaderLine2(final String headerLine2) {
+		this.headerLine2 = headerLine2;
+	}
+
+	public String getSubtitle() {
+		return subtitle;
+	}
+
+	public void setSubtitle(final String subtitle) {
+		this.subtitle = subtitle;
+	}
 }

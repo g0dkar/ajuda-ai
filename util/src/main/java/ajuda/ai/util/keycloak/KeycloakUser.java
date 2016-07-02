@@ -63,82 +63,82 @@ public class KeycloakUser implements Serializable {
 	}
 	
 	public String getName() {
-		return accessToken.getName();
+		return accessToken == null ? null : accessToken.getName();
 	}
 
 	public String getGivenName() {
-		return accessToken.getGivenName();
+		return accessToken == null ? null : accessToken.getGivenName();
 	}
 
 	public String getFamilyName() {
-		return accessToken.getFamilyName();
+		return accessToken == null ? null : accessToken.getFamilyName();
 	}
 
 	public String getMiddleName() {
-		return accessToken.getMiddleName();
+		return accessToken == null ? null : accessToken.getMiddleName();
 	}
 
 	public String getNickName() {
-		return accessToken.getNickName();
+		return accessToken == null ? null : accessToken.getNickName();
 	}
 
 	public String getPreferredUsername() {
-		return accessToken.getPreferredUsername();
+		return accessToken == null ? null : accessToken.getPreferredUsername();
 	}
 
 	public String getProfile() {
-		return accessToken.getProfile();
+		return accessToken == null ? null : accessToken.getProfile();
 	}
 
 	public String getPicture() {
-		return accessToken.getPicture();
+		return accessToken == null ? null : accessToken.getPicture();
 	}
 
 	public String getWebsite() {
-		return accessToken.getWebsite();
+		return accessToken == null ? null : accessToken.getWebsite();
 	}
 
 	public String getEmail() {
-		return accessToken.getEmail();
+		return accessToken == null ? null : accessToken.getEmail();
 	}
 
 	public Boolean getEmailVerified() {
-		return accessToken.getEmailVerified();
+		return accessToken == null ? null : accessToken.getEmailVerified();
 	}
 
 	public String getGender() {
-		return accessToken.getGender();
+		return accessToken == null ? null : accessToken.getGender();
 	}
 
 	public String getBirthdate() {
-		return accessToken.getBirthdate();
+		return accessToken == null ? null : accessToken.getBirthdate();
 	}
 
 	public String getZoneinfo() {
-		return accessToken.getZoneinfo();
+		return accessToken == null ? null : accessToken.getZoneinfo();
 	}
 
 	public String getLocale() {
-		return accessToken.getLocale();
+		return accessToken == null ? null : accessToken.getLocale();
 	}
 
 	public String getPhoneNumber() {
-		return accessToken.getPhoneNumber();
+		return accessToken == null ? null : accessToken.getPhoneNumber();
 	}
 
 	public Boolean getPhoneNumberVerified() {
-		return accessToken.getPhoneNumberVerified();
+		return accessToken == null ? null : accessToken.getPhoneNumberVerified();
 	}
 	
 	public Access getAccess() {
-		return accessToken.getRealmAccess();
+		return accessToken == null ? null : accessToken.getRealmAccess();
 	}
 	
 	public Set<String> getRoles() {
-		return getAccess().getRoles();
+		return accessToken == null ? null : getAccess().getRoles();
 	}
 	
 	public boolean isRole(final String role) {
-		return getRoles().contains(role);
+		return accessToken == null ? false : getRoles().contains(role);
 	}
 }

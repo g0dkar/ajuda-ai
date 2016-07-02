@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 
 import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.billing.PaymentEvent;
+import ajuda.ai.model.institution.Helper;
 import ajuda.ai.model.institution.Institution;
-import ajuda.ai.model.institution.InstitutionHelper;
 import ajuda.ai.website.util.PersistenceService;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
@@ -32,14 +32,20 @@ public interface PaymentProcessor {
 	 * 
 	 * @param institution
 	 *            A Instituição que receberá o valor
-	 * @param institutionHelper
+	 * @param helper
 	 *            A pessoa que fez a doação
 	 * @param value
 	 *            Valor da Ordem de Pagamento ({@code 10000} = {@code $100.00}, para evitar erros de
 	 *            arredondamento)
+	 * @param addCosts
+	 *            Adicionar os custos da transação ao valor?
+	 * @param paymentType
+	 *            Caso {@code addCosts} seja true, que tipo de operação levar em consideração?
+	 *            (normalmente pagamentos em cartão tem taxas maiores, por exemplo)
 	 * @param result
 	 *            {@link Result} para se configurar a resposta.
-	 * @param log TODO
+	 * @param log
+	 *            {@link Logger} para se usar
 	 * @param name
 	 *            Nome do Cliente (preenchido no website)
 	 * @param email
@@ -48,8 +54,7 @@ public interface PaymentProcessor {
 	 *            Telefone do Cliente (preenchido no website - OPCIONAL)
 	 * @return Objeto {@link Payment} referente a esse pagamento.
 	 */
-	default Payment createPayment(final Institution institution, final InstitutionHelper institutionHelper,
-			final int value, final PersistenceService ps, final Result result, final Logger log) {
+	default Payment createPayment(final Institution institution, final Helper helper, final int value, final boolean addCosts, final int paymentType, final PersistenceService ps, final Result result, final Logger log) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -70,7 +75,8 @@ public interface PaymentProcessor {
 	 *            Uma instância de {@link PersistenceService} para buscas e gravações no BD
 	 * @param result
 	 *            {@link Result} para se configurar a resposta.
-	 * @param log TODO
+	 * @param log
+	 *            {@link Logger} para se usar
 	 * @return Um {@link PaymentEvent}. Caso essa função <strong>NÃO</strong> retorne {@code null}
 	 *         espera-se que ela tenha utilizado o {@code result} para enviar como resposta o que o
 	 *         serviço de pagamento espera como resposta da notificação (se for apenas um HTTP 200
@@ -82,8 +88,7 @@ public interface PaymentProcessor {
 	 * @see Results#http()
 	 * @see HttpResult#body(String)
 	 */
-	default PaymentEvent processEvent(final Institution institution, final HttpServletRequest request,
-			final PersistenceService ps, final Result result, final Logger log) throws Exception {
+	default PaymentEvent processEvent(final Institution institution, final HttpServletRequest request, final PersistenceService ps, final Result result, final Logger log) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 }

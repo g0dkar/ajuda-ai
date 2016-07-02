@@ -6,7 +6,7 @@
 		<div class="slider">
 			<div><div class="slider-item slider">
 				<div class="slider-img">
-					<img src="<c:out value="${page.headerImage eq null ? institution.banner : page.headerImage}" default="${pageContext.request.contextPath}/res/img/institution-banner-default.jpg" />" title="Banner da Instituição/ONG">
+					<img src="<c:out value="${institution.banner}" default="${pageContext.request.contextPath}/res/img/institution-banner-default.jpg" />" title="Banner da Instituição/ONG">
 				</div>
 			</div></div>
 		</div>
@@ -52,16 +52,16 @@
 			<div class="col-xs-12 col-sm-8">
 				<div class="panel panel-default">
 					<div class="panel-body">
-						<h1 class="page-title"><c:out value="${page.title}" /></h1>
-						<c:if test="${page.subtitle ne null}"><h4 class="page-subtitle"><c:out value="${page.subtitle}" /></h4></c:if>
+						<h1 class="page-title"><c:out value="${institution.name}" /></h1>
+						<h5 class="page-subtitle"><c:out value="${institution.attributes['slogan']}" default="Sua ajuda pode fazer a diferença" /></h5>
 						
-						<hr>
+						<ul class="nav nav-pills">
+							<li role="presentation" class="active"><a href="${pageContext.request.contextPath}/${institution.slug}">Sobre</a></li>
+							<li role="presentation"><a href="${pageContext.request.contextPath}/${institution.slug}/posts">Posts da Instituição <span class="badge">${postCount}</span></a></li>
+							<li role="presentation"><a href="${pageContext.request.contextPath}/${institution.slug}/ajudantes">Ajudantes</a></li>
+						</ul>
 						
-						${page.contentMarkdown}
-						
-						<hr>
-						
-						<div class="page-signature text-right">Publicado em <time datetime="<fmt:formatDate value="${page.creation.time}" pattern="yyyy-MM-dd'T'HH:mm'Z'" timeZone="UTC" />"><fmt:formatDate value="${page.creation.time}" pattern="dd/MM/yyyy HH'h'mm'm'" /></time><c:if test="${page.creation.lastUpdate ne null}">, Última alteração: <time datetime="<fmt:formatDate value="${page.creation.lastUpdate}" pattern="yyyy-MM-dd'T'HH:mm'Z'" timeZone="UTC" />"><fmt:formatDate value="${page.creation.lastUpdate}" pattern="dd/MM/yyyy HH'h'mm'm'" /></time></c:if></div>
+						${institution.descriptionMarkdown}
 					</div>
 				</div>
 			</div>

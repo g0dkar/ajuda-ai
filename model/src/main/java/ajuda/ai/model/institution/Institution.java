@@ -12,9 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -27,9 +25,10 @@ import ajuda.ai.model.Slug;
 import ajuda.ai.model.billing.PaymentServiceEnum;
 import ajuda.ai.model.extra.CreationInfo;
 import ajuda.ai.util.JsonUtils;
+import ajuda.ai.util.StringUtils;
 
 /**
- * Representa uma Instituição que será ajudada por seus {@link InstitutionHelper Ajudantes}
+ * Representa uma Instituição que será ajudada por seus {@link Helper Ajudantes}
  * 
  * @author Rafael Lins - g0dkar
  *
@@ -55,18 +54,11 @@ public class Institution extends Slug {
 	@Column(nullable = false, columnDefinition = "MEDIUMTEXT")
 	private String description;
 	
-	@Expose
-	@ManyToOne(fetch = FetchType.EAGER)
-	private InstitutionPost pinnedPost;
-	
-	@OneToMany(mappedBy = "institution", orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<InstitutionHelper> helpers;
-	
 	/**
 	 * Para o futuro: Lista de usuários que poderão gerenciar essa instituição
 	 */
-	@ElementCollection(fetch = FetchType.LAZY)
 	@Column(length = 36)
+	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<String> leaders;
 	
 	@Expose
@@ -74,10 +66,6 @@ public class Institution extends Slug {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private PaymentServiceEnum paymentService;
-	
-	@NotBlank
-	@Column(nullable = false, length = 1024)
-	private String paymentServiceData;
 	
 	@URL
 	@Expose
@@ -89,11 +77,10 @@ public class Institution extends Slug {
 	@Column(length = 1024)
 	private String banner;
 	
-	@Expose
-	@ElementCollection
-	@JoinTable(name = "institution_attributes", joinColumns = @JoinColumn(name="id"))
-	@MapKeyColumn(name = "attribute")
-	@Column(name = "value")
+	@Column(name = "value", length = 512)
+	@ElementCollection(fetch = FetchType.EAGER)
+	@MapKeyColumn(name = "attribute", length = 24)
+	@JoinTable(name = "institution_attributes", joinColumns = @JoinColumn(name = "id"))
 	private Map<String, String> attributes;
 
 	public CreationInfo getCreation() {
@@ -115,25 +102,13 @@ public class Institution extends Slug {
 	public String getDescription() {
 		return description;
 	}
+	
+	public String getDescriptionMarkdown() {
+		return StringUtils.markdown(description);
+	}
 
 	public void setDescription(final String description) {
 		this.description = description;
-	}
-
-	public InstitutionPost getPinnedPost() {
-		return pinnedPost;
-	}
-
-	public void setPinnedPost(final InstitutionPost pinnedPost) {
-		this.pinnedPost = pinnedPost;
-	}
-
-	public Set<InstitutionHelper> getHelpers() {
-		return helpers;
-	}
-
-	public void setHelpers(final Set<InstitutionHelper> helpers) {
-		this.helpers = helpers;
 	}
 
 	public Set<String> getLeaders() {
@@ -150,18 +125,6 @@ public class Institution extends Slug {
 
 	public void setPaymentService(final PaymentServiceEnum paymentService) {
 		this.paymentService = paymentService;
-	}
-
-	public String getPaymentServiceData() {
-		return paymentServiceData;
-	}
-	
-	public Map<String, String> getPaymentServiceDataMap() {
-		return paymentServiceData == null ? null : JsonUtils.fromJson(paymentServiceData, Map.class);
-	}
-
-	public void setPaymentServiceData(final String paymentServiceData) {
-		this.paymentServiceData = paymentServiceData;
 	}
 
 	public String getLogo() {
@@ -186,6 +149,10 @@ public class Institution extends Slug {
 
 	public Map<String, String> getAttributes() {
 		return attributes;
+	}
+	
+	public String attributeMarkdown(final String attribute) {
+		return StringUtils.markdown(attributes.get(attribute));
 	}
 
 	public void setAttributes(final Map<String, String> attributes) {

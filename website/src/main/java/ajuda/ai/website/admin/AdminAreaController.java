@@ -71,7 +71,7 @@ public class AdminAreaController extends AdminController {
 	@Transactional
 	@Post("/institution")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
-	public void newInstitution(Institution institution) {
+	public void newInstitution(Institution institution, final String paymentservicedata) {
 		if (institution != null) {
 			final int slugCount = ((Number) ps.createQuery("SELECT count(*) FROM Slug WHERE slug = :slug").setParameter("slug", institution.getSlug()).getSingleResult()).intValue();
 			
@@ -80,7 +80,7 @@ public class AdminAreaController extends AdminController {
 			}
 			
 			if (institution.getPaymentService() != null) {
-				institution.setPaymentServiceData(institution.getPaymentService().extractPaymentServiceData(institution.getPaymentServiceData()));
+				institution.getAttributes().putAll(institution.getPaymentService().extractPaymentServiceData(paymentservicedata));
 			}
 			
 			institution.setCreation(new CreationInfo());
