@@ -80,6 +80,12 @@ public class SiteController {
 		
 	}
 	
+	@Path("/aleatorio")
+	public void random() {
+		final String slug = (String) ps.createQuery("SELECT slug FROM Institution ORDER BY RAND()").setMaxResults(1).getSingleResult();
+		result.redirectTo(InstitutionSiteController.class).institution(slug);
+	}
+	
 	@Get("/contato")
 	public void contact() {
 		

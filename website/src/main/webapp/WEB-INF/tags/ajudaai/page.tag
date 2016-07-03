@@ -42,9 +42,6 @@
 <link href="${pageContext.request.contextPath}/res/css/ajuda-ai-v1.min.css" rel="stylesheet" type="text/css">
 
 <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-79132344-1','auto');ga('send', 'pageview');</script>
-<script async defer src="https://buttons.github.io/buttons.js"></script>
-<script src="https://www.google.com/recaptcha/api.js"></script>
-<script src="${pageContext.request.contextPath}/res/js/ajuda-ai-v1.min.js"></script>
 <style type="text/css">body{background:#f5f3f2;font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif}#page-content{opacity:0;transition:opacity 1s ease}#page-content.loaded{opacity:1}#noscript{padding:50px;text-align:center}</style>
 </head>
 <body>
@@ -137,6 +134,9 @@
 		
 		<a href="https://github.com/g0dkar/ajuda-ai/issues/new" id="bug-found" title="Achou um erro? Reporte ele pra gente!" target="_blank">Achei um erro!</a>
 	</div>
+	<script src="https://buttons.github.io/buttons.js"></script>
+	<script src="https://www.google.com/recaptcha/api.js"></script>
+	<script src="${pageContext.request.contextPath}/res/js/ajuda-ai-v1.min.js"></script>
 </body>
 </html>
 </compressor:html>

@@ -4,7 +4,7 @@
 <ajudaai:institutionPage institution="${institution}" menu="1">
 	<h2><strong>Sua ajuda</strong> vai garantir a continuidade desse trabalho!</h2>
 			
-	<form action="${pageContext.request.contextPath}/${institution.slug}/api/doar" method="post" name="formDonate" class="donation-form clearfix">
+	<form action="${pageContext.request.contextPath}/${institution.slug}/doar" method="post" name="formDonate" class="donation-form clearfix">
 		<div class="row donation-tier selected" aria-role="button" data-value="10">
 			<div class="col-xs-3 col-md-2">
 				<div class="ajuda-ai-btn donation-btn">
@@ -116,7 +116,8 @@
 		<hr>
 		
 		<h2>O último passo será na Plataforma de Pagamento</h2>
-		<button type="submit" class="ajuda-ai-btn ajuda-ai-btn-lg"><span class="heart-right">Ok, continuar para lá...</span></button>
+		<button type="submit" class="ajuda-ai-btn ajuda-ai-btn-lg" disabled><span class="heart-right">Ok, continuar para lá...</span></button>
+		<p style="color:#c00"><strong>Doações Temporariamente Indisponíveis</strong></p>
 		<input type="hidden" name="token" id="token" value="${token}">
 	</form>
 </ajudaai:institutionPage>
