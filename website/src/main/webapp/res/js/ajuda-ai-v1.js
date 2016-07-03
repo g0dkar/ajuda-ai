@@ -88,6 +88,23 @@ try {
 				}
 				tryGetData();
 			}
+			
+			$(".facebook-share-link").on("click tap", function (event) {
+				var $this = $(this);
+				event.preventDefault();
+				
+				if (FB && FB.ui) {
+					FB.ui({
+						method: "share",
+						mobile_iframe: true,
+						href: $this.data("href"),
+						quote: $this.data("quote"),
+						hashtag: $this.data("hashtag")
+					});
+				}
+				
+				return false;
+			});
 		});
 	})(jQuery, autosize);
 } catch (e) {

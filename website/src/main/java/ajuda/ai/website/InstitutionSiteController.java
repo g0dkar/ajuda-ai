@@ -212,8 +212,10 @@ public class InstitutionSiteController {
 			result.include("institution", institution);
 			
 			final String transactionId = request.getParameter(institution.getPaymentService().getThanksTransactionIdParameter());
-			final Payment payment = (Payment) ps.createQuery("SELECT p FROM Payment p JOIN FETCH p.institutionHelper WHERE p.paymentServiceId = :id").setParameter("id", transactionId).getSingleResult();
-			result.include("payment", payment);
+			if (transactionId != null && transactionId.matches("[a-f0-9]{32}")) {
+				final Payment payment = ps.find(Payment.class, transactionId);
+				result.include("payment", payment);
+			}
 		}
 		else {
 			result.include("notFound", true);

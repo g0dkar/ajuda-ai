@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 
@@ -35,7 +34,6 @@ import br.com.caelum.vraptor.Result;
 public class SiteController {
 	private final Logger log;
 	private final Result result;
-	private final HttpServletRequest request;
 	private final Configuration conf;
 	private final Locale locale;
 	private final PersistenceService ps;
@@ -43,13 +41,12 @@ public class SiteController {
 	private final ReCaptchaService recaptcha;
 	
 	/** @deprecated CDI */ @Deprecated
-	SiteController() { this(null, null, null, null, null, null, null, null, null); }
+	SiteController() { this(null, null, null, null, null, null, null, null); }
 	
 	@Inject
-	public SiteController(final Logger log, final Result result, final HttpServletRequest request, final Configuration conf, final KeycloakUser user, final Locale locale, final PersistenceService ps, final SendMail sendmail, final ReCaptchaService recaptcha) {
+	public SiteController(final Logger log, final Result result, final Configuration conf, final KeycloakUser user, final Locale locale, final PersistenceService ps, final SendMail sendmail, final ReCaptchaService recaptcha) {
 		this.log = log;
 		this.result = result;
-		this.request = request;
 		this.conf = conf;
 		this.locale = locale;
 		this.ps = ps;
@@ -102,6 +99,7 @@ public class SiteController {
 				result.include("messageContactForm", conf.get("contact.message.success", "Mensagem enviada. Obrigado!"));
 			}
 			else {
+				if (log.isDebugEnabled()) { log.debug("Contact ReCaptcha failed."); }
 				result.include("name", name);
 				result.include("email", email);
 				result.include("content", content);
@@ -129,6 +127,7 @@ public class SiteController {
 			result.include("page", page);
 		}
 		else {
+			if (log.isDebugEnabled()) { log.debug("Page Not Found: /{} (trying Institution)", slug); }
 			result.forwardTo(InstitutionSiteController.class).institution(slug);
 		}
 	}
