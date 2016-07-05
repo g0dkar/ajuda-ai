@@ -41,6 +41,9 @@ public class Helper implements Serializable {
 	@Column(nullable = false)
 	private Date timestamp;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastLoginTimestamp;
+	
 	@Size(max = 128)
 	@Column(length = 128)
 	private String name;
@@ -54,7 +57,7 @@ public class Helper implements Serializable {
 	@Column(nullable = false)
 	private boolean anonymous;
 	
-	@Column(length = 60)
+	@Column(length = 60, name = "pass")
 	private String password;
 	
 	@Column(nullable = false)
@@ -126,5 +129,13 @@ public class Helper implements Serializable {
 	
 	public void incScore() {
 		score++;
+	}
+
+	public Date getLastLoginTimestamp() {
+		return lastLoginTimestamp;
+	}
+
+	public void setLastLoginTimestamp(final Date lastLoginTimestamp) {
+		this.lastLoginTimestamp = lastLoginTimestamp;
 	}
 }

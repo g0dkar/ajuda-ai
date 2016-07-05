@@ -5,7 +5,7 @@
 	<div class="slider" data-slick='{"dots":true,"autoplay":true,"autoplaySpeed":25000}'>
 		<div><div class="slider-item">
 			<div class="slider-img">
-				<img src="${pageContext.request.contextPath}/res/img/index-img-01.jpg" alt="Imagem de Pessoas ajudando umas as outras, colhendo e compartilhando alimentos vegetais">
+				<img src="${cdn}/res/img/index-img-01.jpg" alt="Imagem de Pessoas ajudando umas as outras, colhendo e compartilhando alimentos vegetais">
 			</div>
 			<div class="slider-title">
 				<h1>Juntamos quem <strong>quer ajudar</strong> a quem <strong>precisa de ajuda</strong>.</h1>
@@ -16,7 +16,7 @@
 		
 		<div><div class="slider-item">
 			<div class="slider-img">
-				<img src="${pageContext.request.contextPath}/res/img/index-img-02.jpg" alt="Imagem de uma área de convivência com várias pequenas salas">
+				<img src="${cdn}/res/img/index-img-02.jpg" alt="Imagem de uma área de convivência com várias pequenas salas">
 			</div>
 			<div class="slider-title">
 				<h1>Fazer a diferença está <strong>mais fácil que nunca</strong></h1>
@@ -49,10 +49,10 @@
 					<a href="${pageContext.request.contextPath}/${institution.slug}" class="panel panel-default institution-panel">
 						<span class="panel-body">
 							<span class="panel-image">
-								<img src="<c:out value="${institution.banner}" default="${pageContext.request.contextPath}/res/img/default-banner.jpg" />" alt="Banner da Insituição" class="panel-image-img">
+								<img src="<c:out value="${institution.banner}" default="${cdn}/res/img/default-banner.jpg" />" alt="Banner da Insituição" class="panel-image-img">
 							</span>
 							<span class="panel-avatar">
-								<img src="<c:out value="${institution.logo}" default="${pageContext.request.contextPath}/res/img/institution-default.jpg" />" alt="Logo da Instituição" class="panel-avatar-img">
+								<img src="<c:out value="${institution.logo}" default="${cdn}/res/img/institution-default.jpg" />" alt="Logo da Instituição" class="panel-avatar-img">
 							</span>
 							<span class="panel-title-bg">
 								<span class="panel-title"><c:out value="${institution.name}" /></span>

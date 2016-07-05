@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 
@@ -41,10 +42,10 @@ public class SiteController {
 	private final ReCaptchaService recaptcha;
 	
 	/** @deprecated CDI */ @Deprecated
-	SiteController() { this(null, null, null, null, null, null, null, null); }
+	SiteController() { this(null, null, null, null, null, null, null, null, null); }
 	
 	@Inject
-	public SiteController(final Logger log, final Result result, final Configuration conf, final KeycloakUser user, final Locale locale, final PersistenceService ps, final SendMail sendmail, final ReCaptchaService recaptcha) {
+	public SiteController(final Logger log, final Result result, final HttpServletRequest request, final Configuration conf, final KeycloakUser user, final Locale locale, final PersistenceService ps, final SendMail sendmail, final ReCaptchaService recaptcha) {
 		this.log = log;
 		this.result = result;
 		this.conf = conf;
@@ -55,6 +56,7 @@ public class SiteController {
 		
 		if (result != null) {
 			result.include("user", user);
+			result.include("cdn", conf.get("cdn", request.getContextPath()));
 		}
 	}
 	

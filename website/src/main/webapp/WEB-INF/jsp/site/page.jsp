@@ -6,7 +6,7 @@
 	<div class="slider">
 		<div><div class="slider-item">
 			<div class="slider-img">
-				<img src="<c:out value="${page.headerImage}" default="${pageContext.request.contextPath}/res/img/default-page-banner.jpg" />" alt="Imagem decorativa desta página">
+				<img src="<c:out value="${page.headerImage}" default="${cdn}/res/img/default-page-banner.jpg" />" alt="Imagem decorativa desta página">
 			</div>
 			<div class="slider-title">
 				<h1>${page.headerLine1}</h1>
@@ -29,7 +29,7 @@
 						
 						<hr>
 						
-						<div class="page-signature text-right">Publicado em <time datetime="<fmt:formatDate value="${page.creation.time}" pattern="yyyy-MM-dd'T'HH:mm'Z'" timeZone="UTC" />"><fmt:formatDate value="${page.creation.time}" pattern="dd/MM/yyyy HH'h'mm'm'" /></time><c:if test="${page.creation.lastUpdate ne null}">, Última alteração: <time datetime="<fmt:formatDate value="${page.creation.lastUpdate}" pattern="yyyy-MM-dd'T'HH:mm'Z'" timeZone="UTC" />"><fmt:formatDate value="${page.creation.lastUpdate}" pattern="dd/MM/yyyy HH'h'mm'm'" /></time></c:if></div>
+						<div class="page-signature"><small>Publicado em <time datetime="<fmt:formatDate value="${page.creation.time}" pattern="yyyy-MM-dd'T'HH:mm'Z'" timeZone="UTC" />"><fmt:formatDate value="${page.creation.time}" pattern="dd/MM/yyyy HH'h'mm'm'" /></time><c:if test="${page.creation.lastUpdate ne null}">, Última alteração: <time datetime="<fmt:formatDate value="${page.creation.lastUpdate}" pattern="yyyy-MM-dd'T'HH:mm'Z'" timeZone="UTC" />"><fmt:formatDate value="${page.creation.lastUpdate}" pattern="dd/MM/yyyy HH'h'mm'm'" /></time></c:if></small></div>
 					</div>
 				</div>
 			</div>

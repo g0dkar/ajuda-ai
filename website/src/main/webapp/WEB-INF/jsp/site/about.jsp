@@ -5,7 +5,7 @@
 	<div class="slider">
 		<div><div class="slider-item">
 			<div class="slider-img">
-				<img src="${pageContext.request.contextPath}/res/img/index-img-02.jpg" alt="Imagem de Pessoas ajudando umas as outras">
+				<img src="${cdn}/res/img/index-img-02.jpg" alt="Imagem de Pessoas ajudando umas as outras">
 			</div>
 			<div class="slider-title">
 				<h1>De onde viemos e para onde <strong>vamos</strong></h1>

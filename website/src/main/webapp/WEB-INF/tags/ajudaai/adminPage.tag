@@ -17,16 +17,16 @@
 <meta name="application-name" content="Ajuda.Ai" />
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="${pageContext.request.contextPath}/res/css/ajuda-ai-admin.css" rel="stylesheet" type="text/css">
+<link href="${cdn}/res/css/ajuda-ai-admin.css" rel="stylesheet" type="text/css">
 
 <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-79132344-1','auto');ga('send', 'pageview');</script>
 <script type="text/javascript">WebFontConfig = {google:{families:["Lato:300,400,600:latin","Josefin+Sans:300,400,600:latin"]}};</script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/res/js/markdown.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/res/js/autosize.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ajuda-ai-admin.js"></script>
-<c:if test="${user.isRole('admin')}"><script type="text/javascript" src="${pageContext.request.contextPath}/res/js/ajuda-ai-admin-area.js"></script></c:if>
+<script type="text/javascript" src="${cdn}/res/js/markdown.min.js"></script>
+<script type="text/javascript" src="${cdn}/res/js/autosize.min.js"></script>
+<script type="text/javascript" src="${cdn}/res/js/ajuda-ai-admin.js"></script>
+<c:if test="${user.isRole('admin')}"><script type="text/javascript" src="${cdn}/res/js/ajuda-ai-admin-area.js"></script></c:if>
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 </head>
 <body>

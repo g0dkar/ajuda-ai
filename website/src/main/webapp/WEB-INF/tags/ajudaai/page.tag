@@ -12,7 +12,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><c:out value="${title}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda" /> - Ajuda.Ai!</title>
-<link rel="icon" type="image/png" href="/res/img/favicon.png" />
+<link rel="icon" type="image/png" href="${cdn}/res/img/favicon.png" />
 <%-- for Google --%>
 <meta name="robots" content="index,follow" />
 <meta name="description" content="<c:out value="${description}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda. Ajude facilmente ONGs e Instituições. Faça a diferença!" />" />
@@ -25,35 +25,27 @@
 <meta property="og:title" content="<c:out value="${title}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda" /> - Ajuda.Ai!" />
 <meta property="og:description" content="<c:out value="${description}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda. Ajude facilmente ONGs e Instituições. Faça a diferença!" />" />
 <meta property="og:type" content="article" />
-<meta property="og:image" content="https://ajuda.ai${pageContext.request.contextPath}/res/img/facebook-preview.jpg" />
+<meta property="og:image" content="${cdn}/res/img/facebook-preview.jpg" />
 <meta property="og:url" content="https://ajuda.ai${pageContext.request.contextPath}/${institution.slug}" />
 
 <%-- for Twitter --%>
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="<c:out value="${title}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda" /> - Ajuda.Ai!" />
 <meta name="twitter:description" content="<c:out value="${description}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda. Ajude facilmente ONGs e Instituições. Faça a diferença!" />" />
-<meta name="twitter:image" content="${pageContext.request.contextPath}/res/img/twitter-preview.png" />
+<meta name="twitter:image" content="${cdn}/res/img/twitter-preview.png" />
 
 <%-- Schema.org Metadata --%>
-<script type="application/ld+json">{"@context": "http://schema.org","@type": "WebPage","name": "<c:out value="${title}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda" /> - Ajuda.Ai!","description": "<c:out value="${description}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda. Ajude facilmente ONGs e Instituições. Faça a diferença!" />","reviewedBy": "Rafael M. Lins","primaryImageOfPage": "https://ajuda.ai${pageContext.request.contextPath}/res/img/facebook-preview.jpg","image": "https://ajuda.ai${pageContext.request.contextPath}/res/img/facebook-preview.jpg","significantLink": "https://ajuda.ai/ama/","alternativeHeadline": "Juntamos quem quer Ajudar a quem precisa de Ajuda","sameAs": "https://github.com/g0dkar/ajuda-ai","license": "http://www.apache.org/licenses/LICENSE-2.0"}</script>
+<script type="application/ld+json">{"@context": "http://schema.org","@type": "WebPage","name": "<c:out value="${title}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda" /> - Ajuda.Ai!","description": "<c:out value="${description}" default="Juntamos quem quer Ajudar a quem precisa de Ajuda. Ajude facilmente ONGs e Instituições. Faça a diferença!" />","reviewedBy": "Rafael M. Lins","primaryImageOfPage": "${cdn}/res/img/facebook-preview.jpg","image": "${cdn}/res/img/facebook-preview.jpg","alternativeHeadline": "Juntamos quem quer Ajudar a quem precisa de Ajuda","sameAs": "https://github.com/g0dkar/ajuda-ai","license": "http://www.apache.org/licenses/LICENSE-2.0"}</script>
 
 <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,700|Open+Sans:400,700" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/res/css/ajuda-ai.fonts.css" rel="stylesheet" type="text/css">
-<link href="${pageContext.request.contextPath}/res/css/ajuda-ai-v1.min.css" rel="stylesheet" type="text/css">
+<link href="${cdn}/res/css/ajuda-ai.fonts.css" rel="stylesheet" type="text/css">
+<link href="${cdn}/res/css/ajuda-ai-v1.min.css" rel="stylesheet" type="text/css">
 
 <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-79132344-1','auto');ga('send', 'pageview');</script>
 <style type="text/css">body{background:#f5f3f2;font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif}#page-content{opacity:0;transition:opacity 1s ease}#page-content.loaded{opacity:1}#noscript{padding:50px;text-align:center}</style>
 </head>
 <body>
 	<a href="#content" class="sr-only">Ir para o Conteúdo</a>
-	
-	<noscript>
-		<div id="noscript">
-			<h1>Você está usando o NoScript? Talvez só não curte JavaScript?</h1>
-			<p>Sem problemas! Eu <em>(também?)</em> uso o NoScript! É excelente para proteção quando navegamos pela Internet. Garanto que somos seguros, mas se não quiser arriscar, esses são os domínios e o que usamos: <code>ajuda.ai</code> (nosso JS), <code>google.com</code> (ReCaptcha), <code>maxcdn.bootstrapcdn.com</code> (CSS do Bootstrap)</p>
-		</div>
-	</noscript>
-	
 	<div id="fb-root"></div><script>!function(e,t,n){var o,c=e.getElementsByTagName(t)[0];e.getElementById(n)||(o=e.createElement(t),o.id=n,o.src="//connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v2.6&appId=1579957135597873",c.parentNode.insertBefore(o,c))}(document,"script","facebook-jssdk");</script>
 	
 	<div id="page-content">
@@ -67,7 +59,7 @@
 						<span class="icon-bar"></span>
 					</button>
 					
-					<a class="navbar-brand" href="${pageContext.request.contextPath}/" title="Voltar a Página Inicial"><img src="/res/img/main-logo.png" height="45" width="150" alt="Ajuda.Ai" /></a>
+					<a class="navbar-brand" href="${pageContext.request.contextPath}/" title="Voltar a Página Inicial"><img src="${cdn}/res/img/main-logo.png" height="45" width="150" alt="Ajuda.Ai" /></a>
 				</div>
 	
 				<div class="collapse navbar-collapse">
@@ -76,7 +68,7 @@
 						<li<c:if test="${menu == 2}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/sobre" title="Conheça um pouco mais sobre a gente">Sobre<c:if test="${menu == 2}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
 						<li<c:if test="${menu == 3}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/contato" title="Gostamos de ouvir, fale com a gente">Contato<c:if test="${menu == 3}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
 						<%--li<c:if test="${menu == 4}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/ajude" title="Quer ajudar o Ajuda.Ai? Veja do que estamos precisando">Ajude-nos!<c:if test="${menu == 4}"> <span class="sr-only">(você está aqui)</span></c:if></a></li--%>
-						<%--li<c:if test="${menu == 5}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/recibos" title="Verifique e reenvie os recibos de suas doações">Minhas Doações<c:if test="${menu == 5}"> <span class="sr-only">(você está aqui)</span></c:if></a></li--%>
+						<%--li<c:if test="${menu == 5}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/minhas-doacoes" title="Verifique e reenvie os recibos de suas doações">Minhas Doações<c:if test="${menu == 5}"> <span class="sr-only">(você está aqui)</span></c:if></a></li--%>
 					</ul>
 					<%--form class="navbar-form navbar-left" action="${pageContext.request.contextPath}/encontre" role="search">
 						<div class="form-group">
@@ -134,9 +126,17 @@
 		
 		<a href="https://github.com/g0dkar/ajuda-ai/issues/new" id="bug-found" title="Achou um erro? Reporte ele pra gente!" target="_blank">Achei um erro!</a>
 	</div>
+	
+	<noscript>
+		<div id="noscript">
+			<h1>Você está usando o NoScript? Talvez só não curte JavaScript?</h1>
+			<p>Sem problemas! Eu <em>(também?)</em> uso o NoScript! É excelente para proteção quando navegamos pela Internet. Garanto que somos seguros, mas se não quiser arriscar, esses são os domínios e o que usamos: <code>ajuda.ai</code> (nosso JS), <code>google.com</code> (ReCaptcha), <code>maxcdn.bootstrapcdn.com</code> (CSS do Bootstrap)</p>
+		</div>
+	</noscript>
+	
 	<script src="https://buttons.github.io/buttons.js"></script>
 	<script src="https://www.google.com/recaptcha/api.js"></script>
-	<script src="${pageContext.request.contextPath}/res/js/ajuda-ai-v1.min.js"></script>
+	<script src="${cdn}/res/js/ajuda-ai-v1.min.js"></script>
 </body>
 </html>
 </compressor:html>

@@ -73,6 +73,7 @@ public class InstitutionSiteController {
 		
 		if (result != null) {
 			result.include("user", user);
+			result.include("cdn", conf.get("cdn", request.getContextPath()));
 		}
 	}
 	
@@ -273,15 +274,24 @@ public class InstitutionSiteController {
 	private static final String SPECIAL = "0123456789:.^%=-+[]{}~`_ ,<>å¡!²³&ä®";
 	/** @return A random 100 characters long string */
 	private String randomPassword() {
+		return randomPassword(100, true);
+	}
+	
+	public static String randomPassword(final int size, final boolean special) {
 		final SecureRandom r = new SecureRandom();
 		final StringBuilder pwd = new StringBuilder();
 		
-		for (int i = 0; i < 100; i++) {
-			if (r.nextBoolean()) {
-				pwd.append(LETTERS.charAt(r.nextInt(LETTERS.length())));
+		for (int i = 0; i < size; i++) {
+			if (special) {
+				if (r.nextBoolean()) {
+					pwd.append(LETTERS.charAt(r.nextInt(LETTERS.length())));
+				}
+				else {
+					pwd.append(SPECIAL.charAt(r.nextInt(SPECIAL.length())));
+				}
 			}
 			else {
-				pwd.append(SPECIAL.charAt(r.nextInt(SPECIAL.length())));
+				pwd.append(LETTERS.charAt(r.nextInt(LETTERS.length())));
 			}
 		}
 		

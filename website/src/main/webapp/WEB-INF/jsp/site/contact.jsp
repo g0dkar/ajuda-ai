@@ -5,7 +5,7 @@
 	<div class="slider">
 		<div><div class="slider-item">
 			<div class="slider-img">
-				<img src="${pageContext.request.contextPath}/res/img/index-img-03.jpg" alt="Imagem de Pessoas ajudando umas as outras">
+				<img src="${cdn}/res/img/index-img-03.jpg" alt="Imagem de Pessoas ajudando umas as outras">
 			</div>
 			<div class="slider-title">
 				<h1>Queremos <strong>ouvir</strong> (na verdade, ler) tudo que você tem a nos dizer</h1>

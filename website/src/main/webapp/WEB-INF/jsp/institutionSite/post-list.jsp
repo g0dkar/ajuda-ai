@@ -6,7 +6,7 @@
 		<div class="slider">
 			<div><div class="slider-item slider">
 				<div class="slider-img">
-					<img src="<c:out value="${institution.banner}" default="${pageContext.request.contextPath}/res/img/institution-banner-default.jpg" />" title="Banner da Instituição/ONG">
+					<img src="<c:out value="${institution.banner}" default="${cdn}/res/img/institution-banner-default.jpg" />" title="Banner da Instituição/ONG">
 				</div>
 			</div></div>
 		</div>
@@ -27,7 +27,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-xs-6 col-sm-3 col-md-2 text-center">
-						<div class="institution-avatar"><img src="<c:out value="${institution.logo}" default="${pageContext.request.contextPath}/res/img/institution-default.jpg"></c:out>" width="150" height="150" class="institution-avatar-img"></div>
+						<div class="institution-avatar"><img src="<c:out value="${institution.logo}" default="${cdn}/res/img/institution-default.jpg"></c:out>" width="150" height="150" class="institution-avatar-img"></div>
 					</div>
 					<div class="col-xs-6 col-sm-9 col-md-10">
 						<div class="row institution-data-row" data-s="${institution.slug}">
