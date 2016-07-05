@@ -169,6 +169,19 @@ public class MyDonationsController {
 	}
 	
 	@Transactional
+	@Post("/mail-login")
+	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
+	public void loginFromMail(final String t) {
+		validator.onErrorForwardTo(this).index();
+		
+		if (helper != null) {
+			if (t != null && t.matches("[a-f0-9]{32}")) {
+				final HelperLoginRequest loginRequest = (HelperLoginRequest) ps.createQuery("FROM HelperLoginRequest WHERE id = :t AND active = false AND useTimestamp IS NOT NULL").setParameter("t", t).getSingleResult();
+			}
+		}
+	}
+	
+	@Transactional
 	@Post("/mudar-senha")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
 	public void setPasswordFromMail(final String currentPassword, final String newPassword, final String t) {
@@ -183,12 +196,29 @@ public class MyDonationsController {
 					final Calendar timeLimit = Calendar.getInstance();
 					timeLimit.add(Calendar.MINUTE, -30);
 					
-					ps.createQuery("UPDATE Helper SET password = :password WHERE id = :id").setParameter("password", BCrypt.hashpw(newPassword, BCrypt.gensalt(conf.get("bcrypt.rounds", 10)))).setParameter("id", helper.getId()).executeUpdate();
+					if (loginRequest.getUseTimestamp().after(timeLimit.getTime())) {
+						ps.createQuery("UPDATE Helper SET password = :password WHERE id = :id").setParameter("password", BCrypt.hashpw(newPassword, BCrypt.gensalt(conf.get("bcrypt.rounds", 10)))).setParameter("id", helper.getId()).executeUpdate();
+					}
+					else {
+						validator.add(new SimpleMessage("error", "Desculpe, mas por segurança a mudança de senha só é permitida por 30 minutos após o login."));
+					}
 				}
 				else {
-					
+					validator.add(new SimpleMessage("error", "Token Inválido."));
 				}
 			}
+			else {
+				if (BCrypt.checkpw(currentPassword, helper.getPassword())) {
+					ps.createQuery("UPDATE Helper SET password = :password WHERE id = :id").setParameter("password", BCrypt.hashpw(newPassword, BCrypt.gensalt(conf.get("bcrypt.rounds", 10)))).setParameter("id", helper.getId()).executeUpdate();
+					result.include("messageLogin", "Senha alterada com sucesso!");
+				}
+				else {
+					validator.add(new SimpleMessage("error", "Senha errada. Por favor, tente novamente."));
+				}
+			}
+		}
+		else {
+			result.redirectTo(this).index();
 		}
 	}
 	
