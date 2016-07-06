@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 
+import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.institution.Helper;
 import ajuda.ai.model.institution.HelperLoginRequest;
 import ajuda.ai.util.StringUtils;
@@ -172,11 +173,24 @@ public class MyDonationsController {
 	@Post("/mail-login")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
 	public void loginFromMail(final String t) {
-		validator.onErrorForwardTo(this).index();
+		validator.onErrorRedirectTo(this).index();
+		result.redirectTo(this).index();
 		
-		if (helper != null) {
+		if (helper == null) {
 			if (t != null && t.matches("[a-f0-9]{32}")) {
-				final HelperLoginRequest loginRequest = (HelperLoginRequest) ps.createQuery("FROM HelperLoginRequest WHERE id = :t AND active = false AND useTimestamp IS NOT NULL").setParameter("t", t).getSingleResult();
+				final Calendar minTimestamp = Calendar.getInstance();
+				minTimestamp.add(Calendar.HOUR_OF_DAY, -1);
+				final HelperLoginRequest loginRequest = (HelperLoginRequest) ps.createQuery("FROM HelperLoginRequest WHERE id = :t AND active = true AND timestamp BETWEEN :minTimestamp AND NOW() AND useTimestamp IS NOT NULL").setParameter("t", t).setParameter("minTimestamp", minTimestamp.getTime()).getSingleResult();
+				if (loginRequest != null) {
+					ps.createQuery("UPDATE HelperLoginRequest SET active = false, useTimestamp = NOW() WHERE id  = :id").setParameter("id", loginRequest.getId()).executeUpdate();
+					request.getSession().setAttribute(SESSION_PARAM, loginRequest.getHelper().getId());
+				}
+				else {
+					validator.add(new SimpleMessage("error", "Você demorou demais para utilizar o link que mandamos ao seu e-mail. Por favor, comece o processo novamente. Você tem 1 hora para fazer login após o pedido de login via e-mail."));
+				}
+			}
+			else {
+				validator.add(new SimpleMessage("error", "Token inválido."));
 			}
 		}
 	}
@@ -264,5 +278,23 @@ public class MyDonationsController {
 		}
 		
 		return TEMPLATE;
+	}
+	
+	@Path("/recibo")
+	public void reciept(final String id) {
+		if (helper == null) {
+			result.redirectTo(this).login();
+		}
+		else {
+			final Payment payment = (Payment) ps.createQuery("FROM Payment p JOIN FETCH p.institution WHERE p.helper = :helper AND p.id = :id").setParameter("helper", helper).setParameter("id", id).getSingleResult();
+			
+			if (payment != null) {
+				result.include("helper", helper);
+				result.include("payment", payment);
+			}
+			else {
+				result.notFound();
+			}
+		}
 	}
 }
