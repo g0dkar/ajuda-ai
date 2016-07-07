@@ -88,20 +88,20 @@ public class MyDonationsController {
 	}
 	
 	@Path("/")
-	public void index() {
+	public void myDonations() {
 		if (helper == null) {
-			result.redirectTo(this).login();
+			result.redirectTo(this).myDonationsLogin();
 		}
 		else {
 			result.include("helper", helper);
-			result.include("payments", ps.createQuery("FROM Payment p JOIN FETCH p.institution WHERE helper = :helper").getResultList());
+			result.include("payments", ps.createQuery("FROM Payment p JOIN FETCH p.institution WHERE helper = :helper ORDER BY timestamp DESC").setParameter("helper", helper).getResultList());
 		}
 	}
 	
 	@Get("/entrar")
-	public void login() {
+	public void myDonationsLogin() {
 		if (helper != null) {
-			result.redirectTo(this).index();
+			result.redirectTo(this).myDonations();
 		}
 	}
 	
@@ -109,10 +109,10 @@ public class MyDonationsController {
 	@Post("/entrar")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
 	public void doLogin(final String email, final String password, final String ml) {
-		validator.onErrorForwardTo(this).login();
+		log.info("email = {}, password = {}, ml = {}", email, password, ml);
 		
 		if (helper != null) {
-			result.redirectTo(this).index();
+			result.redirectTo(this).myDonations();
 		}
 		else {
 			if (!StringUtils.isBlank(email)) {
@@ -143,46 +143,53 @@ public class MyDonationsController {
 						
 						if (sendLoginRequestMail(loginRequest)) {
 							result.include("messageLogin", "Para fazer continuar, siga as instruções que enviamos ao seu e-mail :)");
-							result.redirectTo(this).index();
+							result.redirectTo(this).myDonations();
 						}
 						else {
 							validator.add(new SimpleMessage("error", "Não conseguimos enviar o e-mail para você. Por favor, aguarde alguns instantes e tente novamente."));
 						}
 					}
-					else if (!StringUtils.isEmpty(password)) {
-						if (BCrypt.checkpw(password, helper.getPassword())) {
-							request.getSession().setAttribute(SESSION_PARAM, helper.getId());
-							result.redirectTo(this).index();
+					else {
+						if (!StringUtils.isEmpty(password)) {
+							if (BCrypt.checkpw(password, helper.getPassword())) {
+								request.getSession().setAttribute(SESSION_PARAM, helper.getId());
+								result.redirectTo(this).myDonations();
+							}
+							else {
+								validator.add(new SimpleMessage("error", "E-mail e senha não conferem"));
+							}
 						}
 						else {
-							validator.add(new SimpleMessage("error", "E-mail e senha não conferem"));
+							validator.add(new SimpleMessage("error", "Por favor, digite sua senha"));
 						}
 					}
 				}
 				else {
-					validator.add(new SimpleMessage("error", "E-mail e senha não conferem"));
+					validator.add(new SimpleMessage("error", "Este E-mail (ainda) não fez uma doação"));
 				}
 			}
 			else {
 				validator.add(new SimpleMessage("error", "E-mail e senha não conferem"));
 			}
 		}
+		
+		if (validator.hasErrors()) {
+			validator.onErrorForwardTo(this).myDonationsLogin();
+		}
 	}
 	
 	@Transactional
-	@Post("/mail-login")
+	@Path("/mail-login")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
 	public void loginFromMail(final String t) {
-		validator.onErrorRedirectTo(this).index();
-		result.redirectTo(this).index();
-		
 		if (helper == null) {
 			if (t != null && t.matches("[a-f0-9]{32}")) {
 				final Calendar minTimestamp = Calendar.getInstance();
 				minTimestamp.add(Calendar.HOUR_OF_DAY, -1);
-				final HelperLoginRequest loginRequest = (HelperLoginRequest) ps.createQuery("FROM HelperLoginRequest WHERE id = :t AND active = true AND timestamp BETWEEN :minTimestamp AND NOW() AND useTimestamp IS NOT NULL").setParameter("t", t).setParameter("minTimestamp", minTimestamp.getTime()).getSingleResult();
+				log.info("minTimestamp = {}", minTimestamp.getTime());
+				final HelperLoginRequest loginRequest = (HelperLoginRequest) ps.createQuery("FROM HelperLoginRequest WHERE id = :t AND active = true AND timestamp BETWEEN :minTimestamp AND NOW() AND useTimestamp IS NULL").setParameter("t", t).setParameter("minTimestamp", minTimestamp.getTime()).getSingleResult();
 				if (loginRequest != null) {
-					ps.createQuery("UPDATE HelperLoginRequest SET active = false, useTimestamp = NOW() WHERE id  = :id").setParameter("id", loginRequest.getId()).executeUpdate();
+					ps.createQuery("UPDATE HelperLoginRequest SET active = false, useTimestamp = NOW() WHERE id = :id").setParameter("id", loginRequest.getId()).executeUpdate();
 					request.getSession().setAttribute(SESSION_PARAM, loginRequest.getHelper().getId());
 				}
 				else {
@@ -193,14 +200,21 @@ public class MyDonationsController {
 				validator.add(new SimpleMessage("error", "Token inválido."));
 			}
 		}
+		
+		if (validator.hasErrors()) {
+			validator.onErrorRedirectTo(this).myDonations();
+		}
+		else {
+			result.redirectTo(this).myDonations();
+		}
 	}
 	
 	@Transactional
 	@Post("/mudar-senha")
 	@Consumes({ "application/json", "application/x-www-form-urlencoded" })
-	public void setPasswordFromMail(final String currentPassword, final String newPassword, final String t) {
-		validator.onErrorForwardTo(this).index();
-		result.redirectTo(this).index();
+	public void changePassword(final String currentPassword, final String newPassword, final String t) {
+		validator.onErrorForwardTo(this).myDonations();
+		result.redirectTo(this).myDonations();
 		
 		if (helper != null) {
 			if (t != null && t.matches("[a-f0-9]{32}")) {
@@ -212,6 +226,7 @@ public class MyDonationsController {
 					
 					if (loginRequest.getUseTimestamp().after(timeLimit.getTime())) {
 						ps.createQuery("UPDATE Helper SET password = :password WHERE id = :id").setParameter("password", BCrypt.hashpw(newPassword, BCrypt.gensalt(conf.get("bcrypt.rounds", 10)))).setParameter("id", helper.getId()).executeUpdate();
+						result.include("messageLogin", "Senha alterada com sucesso!");
 					}
 					else {
 						validator.add(new SimpleMessage("error", "Desculpe, mas por segurança a mudança de senha só é permitida por 30 minutos após o login."));
@@ -232,7 +247,7 @@ public class MyDonationsController {
 			}
 		}
 		else {
-			result.redirectTo(this).index();
+			result.redirectTo(this).myDonations();
 		}
 	}
 	
@@ -241,17 +256,17 @@ public class MyDonationsController {
 		
 		if (template != null) {
 			final String subject = conf.get("mailLogin.subject", "Login no Ajuda.Ai");
-			final Map<String, String> templateValues = new HashMap<>();
+			final Map<String, String> templateValues = new HashMap<>(8);
 			templateValues.put("subject", subject);
 			templateValues.put("title", conf.get("mailLogin.title", "Login no Ajuda.Ai"));
-			templateValues.put("content", StringUtils.markdown(conf.get("mailLogin.content", "Recebemos um pedido de login no Ajuda.Ai com seu e-mail.\n\nPara fazer login, basta clicar no **botão abaixo**. Se não foi você que fez esse pedido, desconsidere. Está tudo bem, ninguém tem acesso a sua conta se não clicar nesse botão aqui :)")));
+			templateValues.put("content", StringUtils.markdown(conf.get("mailLogin.content", "Recebemos um pedido de login no Ajuda.Ai com seu e-mail.\n\nPara fazer login, basta **clicar no botão abaixo**.\n\n**Você tem até " + DateFormat.getDateInstance(DateFormat.FULL, locale).format(new Date()) + " para fazer login**\n\n_Se não foi você que fez esse pedido, desconsidere. Está tudo bem, ninguém tem acesso a sua conta se não clicar nesse botão aqui_ ;)")));
 			templateValues.put("actionText", conf.get("mailLogin.actionText", "Continuar no Ajuda.Ai"));
 			templateValues.put("actionUrl", "https://ajuda.ai/minhas-doacoes/mail-login?t=" + loginRequest.getId());
 			templateValues.put("timestamp", DateFormat.getTimeInstance(DateFormat.FULL, locale).format(new Date()));
 			templateValues.put("email", loginRequest.getHelper().getEmail());
 			templateValues.put("sendReason", "Pedido de Login sem Senha no Ajuda.Ai");
 			
-			sendmail.sendAsync(conf.get("mail.from"), loginRequest.getHelper().getEmail(), subject, template, templateValues);
+			sendmail.sendAsync(conf.get("mail.from", "no-reply@ajuda.ai"), loginRequest.getHelper().getEmail(), subject, template, templateValues);
 			return true;
 		}
 		else {
@@ -280,10 +295,28 @@ public class MyDonationsController {
 		return TEMPLATE;
 	}
 	
-	@Path("/recibo")
+	@Path("/recibo/{id:[a-f0-9]+}")
 	public void reciept(final String id) {
 		if (helper == null) {
-			result.redirectTo(this).login();
+			result.redirectTo(this).myDonationsLogin();
+		}
+		else {
+			final Payment payment = (Payment) ps.createQuery("FROM Payment p JOIN FETCH p.institution WHERE p.helper = :helper AND p.id = :id").setParameter("helper", helper).setParameter("id", id).getSingleResult();
+			
+			if (payment != null) {
+				result.include("helper", helper);
+				result.include("payment", payment);
+			}
+			else {
+				result.notFound();
+			}
+		}
+	}
+	
+	@Path("/enviar-recibo/{id:[a-f0-9]+}")
+	public void mailReciept(final String id) {
+		if (helper == null) {
+			result.redirectTo(this).myDonationsLogin();
 		}
 		else {
 			final Payment payment = (Payment) ps.createQuery("FROM Payment p JOIN FETCH p.institution WHERE p.helper = :helper AND p.id = :id").setParameter("helper", helper).setParameter("id", id).getSingleResult();

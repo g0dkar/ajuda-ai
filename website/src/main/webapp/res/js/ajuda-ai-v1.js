@@ -18,32 +18,44 @@ try {
 			$(".slider").slick();
 			$("textarea").each(function () { autosize(this); });
 			
-			var tiers = $(".institution-page .donation-tier:not(.donation-tier-custom)");
-			var changeTimeout = null;
-			var valueInput = $(".donation-tier-custom input").on("focus", function () {
+			var tiers = $(".institution-page .donation-checkpoint"), progressBar = $("#donation-progress .progress-bar"), donationDesc = $("#donation-desc");
+			var progressBarMax = parseInt(progressBar.attr("aria-valuemax"));
+			var valueInput = $(".donation-value-input input").on("focus", function () {
 				$(this).change();
-			}).on("change", function () {
+			}).on("change keyup", function () {
+				console.log("[evt] change keyup");
 				var val = parseInt(this.value);
-				if (val) {
+				if (val && val >= 5) {
+					var pclass = "warning";
+					progressBar.attr("aria-valuenow", val);
+					progressBar.css("width", Math.max(16.66, Math.min((val / progressBarMax) * 100, 100)) + "%");
 					$("#addcosts-cc").html("$" + ((Math.ceil((val * 100 + 65) / 0.9451) - val * 100) / 100).toFixed(2) + " (cartão de crédito)");
 					$("#addcosts-others").html("$" + ((Math.ceil((val * 100 + 65) / 0.9651) - val * 100) / 100).toFixed(2) + " (outras formas de pagamento)");
 					tiers.each(function (i) {
 						var $this = $(this), tierVal = parseInt($this.data("value"));
 						if (tierVal) {
 							if (i == 0 || val >= tierVal) {
-								$this.addClass("selected");
+								if (i == 1) { pclass = "info"; }
+								else if (i == 2) { pclass = "success"; }
+								
+								$this.addClass("active");
+								donationDesc.html($this.data("desc"));
 								if (i == 0 && val < tierVal) {
 									$this.find(".donation-value").html("$" + val);
 								}
 								else {
-									$this.find(".donation-value").html("$" + tierVal + "+");
+									$this.find(".donation-value").html("$" + tierVal);
 								}
 							}
 							else {
-								$this.removeClass("selected");
+								$this.removeClass("active");
 							}
 						}
 					});
+					progressBar.removeClass("progress-bar-info progress-bar-warning progress-bar-success").addClass("progress-bar-" + pclass);
+				}
+				else {
+					valueInput.val("5").change();
 				}
 			});
 			valueInput.change();

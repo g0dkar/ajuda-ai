@@ -135,8 +135,9 @@ public class SiteController {
 			result.include("page", page);
 		}
 		else {
-			if (log.isDebugEnabled()) { log.debug("Page Not Found: /{} (trying Institution)", slug); }
-			result.forwardTo(InstitutionSiteController.class).institution(slug);
+//			if (log.isDebugEnabled()) { log.debug("Page Not Found: /{} (trying Institution)", slug); }
+//			result.forwardTo(InstitutionSiteController.class).institution(slug);
+			result.notFound();
 		}
 	}
 }

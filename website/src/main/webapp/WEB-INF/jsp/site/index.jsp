@@ -46,7 +46,7 @@
 		<div class="row home-institution-list">
 			<c:forEach items="${institutions}" var="institution">
 				<div class="col-xs-12 col-sm-6 col-lg-4">
-					<a href="${pageContext.request.contextPath}/${institution.slug}" class="panel panel-default institution-panel">
+					<a href="${linkTo[InstitutionSiteController].institution(institution.slug)}" class="panel panel-default institution-panel">
 						<span class="panel-body">
 							<span class="panel-image">
 								<img src="<c:out value="${institution.banner}" default="${cdn}/res/img/default-banner.jpg" />" alt="Banner da Insituição" class="panel-image-img">

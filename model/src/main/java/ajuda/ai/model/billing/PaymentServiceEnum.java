@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
+import ajuda.ai.util.StringUtils;
+
 /**
  * Serviços de Pagamento suportados. Uma {@link Enum} é usada pois é a forma mais legal de se fazer
  * Singletons. Créditos da Técnica: Daniel Mário
@@ -136,4 +138,8 @@ public enum PaymentServiceEnum {
 	public abstract String getThanksTransactionIdParameter();
 	public abstract Map<String, String> extractPaymentServiceData(final String data);
 	public abstract int valuePlusTariffs(final int value, final int paymentType);
+	
+	public String toString() {
+		return StringUtils.capitalizeFully(super.toString().replaceAll("_", " "));
+	}
 }

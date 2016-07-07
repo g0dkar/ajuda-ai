@@ -29,7 +29,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-xs-6 col-sm-3 col-md-2 text-center">
-						<div class="institution-avatar"><a href="${pageContext.request.contextPath}/${institution.slug}" title="Link para Página da Instituição"><img src="<c:out value="${institution.logo}" default="${cdn}/res/img/institution-default.jpg"></c:out>" width="150" height="150" class="institution-avatar-img"></a></div>
+						<div class="institution-avatar"><a href="${linkTo[InstitutionSiteController].institution(institution.slug)}" title="Link para Página da Instituição"><img src="<c:out value="${institution.logo}" default="${cdn}/res/img/institution-default.jpg"></c:out>" width="150" height="150" class="institution-avatar-img"></a></div>
 					</div>
 					<div class="col-xs-6 col-sm-9 col-md-10">
 						<div class="row institution-data-row">
@@ -58,8 +58,8 @@
 						<h5 class="page-subtitle"><c:out value="${institution.attributes['slogan']}" default="Sua ajuda pode fazer a diferença" /></h5>
 						
 						<ul class="nav nav-pills" aria-role="menu">
-							<li role="presentation"<c:if test="${menu == 0}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/${institution.slug}">Sobre <c:if test="${menu == 0}"><span class="sr-only">(você está aqui)</span></c:if></a></li>
-							<li role="presentation"<c:if test="${menu == 1}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/${institution.slug}/doar">Fazer uma Doação <c:if test="${menu == 1}"><span class="sr-only">(você está aqui)</span></c:if></a></li>
+							<li role="presentation"<c:if test="${menu == 0}"> class="active"</c:if>><a href="${linkTo[InstitutionSiteController].institution(institution.slug)}">Sobre <c:if test="${menu == 0}"><span class="sr-only">(você está aqui)</span></c:if></a></li>
+							<li role="presentation"<c:if test="${menu == 1}"> class="active"</c:if>><a href="${linkTo[InstitutionSiteController].donation(institution.slug)}">Fazer uma Doação <c:if test="${menu == 1}"><span class="sr-only">(você está aqui)</span></c:if></a></li>
 							<%--li role="presentation"><a href="${pageContext.request.contextPath}/${institution.slug}/posts">Posts da Instituição <span class="badge">${postCount}</span></a></li>
 							<%--li role="presentation"><a href="${pageContext.request.contextPath}/${institution.slug}/ajudantes">Ajudantes</a></li--%>
 						</ul>

@@ -64,11 +64,10 @@
 	
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<li<c:if test="${menu == 1}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/inicio" title="Página Inicial">Início<c:if test="${menu == 1}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
-						<li<c:if test="${menu == 2}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/sobre" title="Conheça um pouco mais sobre a gente">Sobre<c:if test="${menu == 2}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
-						<li<c:if test="${menu == 3}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/contato" title="Gostamos de ouvir, fale com a gente">Contato<c:if test="${menu == 3}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
-						<%--li<c:if test="${menu == 4}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/ajude" title="Quer ajudar o Ajuda.Ai? Veja do que estamos precisando">Ajude-nos!<c:if test="${menu == 4}"> <span class="sr-only">(você está aqui)</span></c:if></a></li--%>
-						<%--li<c:if test="${menu == 5}"> class="active"</c:if>><a href="${pageContext.request.contextPath}/minhas-doacoes" title="Verifique e reenvie os recibos de suas doações">Minhas Doações<c:if test="${menu == 5}"> <span class="sr-only">(você está aqui)</span></c:if></a></li--%>
+						<li<c:if test="${menu == 1}"> class="active"</c:if>><a href="${linkTo[SiteController].index}" title="Página Inicial">Início<c:if test="${menu == 1}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
+						<li<c:if test="${menu == 2}"> class="active"</c:if>><a href="${linkTo[SiteController].about}" title="Conheça um pouco mais sobre a gente">Sobre<c:if test="${menu == 2}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
+						<li<c:if test="${menu == 3}"> class="active"</c:if>><a href="${linkTo[SiteController].contact}" title="Gostamos de ouvir, fale com a gente">Contato<c:if test="${menu == 3}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
+						<li<c:if test="${menu == 4}"> class="active"</c:if>><a href="${linkTo[MyDonationsController].myDonations}" title="Verifique e reenvie os recibos de suas doações">Minhas Doações<c:if test="${menu == 4}"> <span class="sr-only">(você está aqui)</span></c:if></a></li>
 					</ul>
 					<%--form class="navbar-form navbar-left" action="${pageContext.request.contextPath}/encontre" role="search">
 						<div class="form-group">
@@ -79,8 +78,8 @@
 						</button>
 					</form--%>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="${pageContext.request.contextPath}/aleatorio" title="Clicando aqui lhe mandaremos aleatoriamente a uma das Instituições/ONGs cadastradas!" class="ajuda-ai-btn-nav"><span class="ajuda-ai-btn">Visitar uma Instituição Aleatória</span></a></li>
-						<li><a href="${pageContext.request.contextPath}/admin" title="Acesso Administrativo das Instituições"><c:out value="${user.givenName}" default="Entrar" /></a></li>
+						<li><a href="${linkTo[SiteController].random}" title="Clicando aqui lhe mandaremos aleatoriamente a uma das Instituições/ONGs cadastradas!" class="ajuda-ai-btn-nav"><span class="ajuda-ai-btn">Visitar uma Instituição Aleatória</span></a></li>
+						<li><a href="${linkTo[AdminAreaController].adminArea}" title="Acesso Administrativo das Instituições"><c:out value="${user.givenName}" default="Entrar" /></a></li>
 					</ul>
 				</div>
 			</div>

@@ -140,7 +140,7 @@ public class InstitutionSiteController {
 		final Institution institution = findInstitution(slug);
 		
 		if (institution != null) {
-			if (recaptcha.isRecaptchaSuccess()) {
+			if (conf.get("ignoreCaptcha", false) || recaptcha.isRecaptchaSuccess()) {
 				if (!StringUtils.isBlank(name) && !StringUtils.isBlank(email)) {
 					Helper helper = (Helper) ps.createQuery("FROM Helper WHERE LOWER(email) = LOWER(:email)").setParameter("email", email).getSingleResult();
 					final int helpValue = StringUtils.parseInteger(value.replaceAll("\\D+", ""), 0) * 100;

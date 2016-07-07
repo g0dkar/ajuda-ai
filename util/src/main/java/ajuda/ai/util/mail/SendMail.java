@@ -39,7 +39,7 @@ public class SendMail {
 	 * @return {@link Future} to an invokation of {@link #send(String, String, String, String, Map)}
 	 */
 	public Future<Boolean> sendFuture(final String from, final String email, final String subject, final String template, final Map<String, String> templateValues) {
-		return new FutureTask<Boolean>(() -> send(from, email, subject, template, templateValues));
+		return new FutureTask<>(() -> send(from, email, subject, template, templateValues));
 	}
 	
 	/**
@@ -72,7 +72,13 @@ public class SendMail {
 				final Matcher matcher = Pattern.compile("\\$\\{([^}]+)\\}").matcher(template);
 				
 				while (matcher.find()) {
-					matcher.appendReplacement(html, templateValues.get(matcher.group(1)));
+					if (templateValues.get(matcher.group(1)) != null) {
+						matcher.appendReplacement(html, templateValues.get(matcher.group(1)));
+					}
+					else {
+						if (log.isDebugEnabled()) { log.debug("Chave de Template inexistente: {}", matcher.group(1)); }
+						matcher.appendReplacement(html, matcher.group(1));
+					}
 				}
 				
 				matcher.appendTail(html);
@@ -110,7 +116,7 @@ public class SendMail {
 			return InternetAddress.parse(addresses, false);
 		}
 		catch (final Exception e) {
-			final List<InternetAddress> addrs = new LinkedList<InternetAddress>();
+			final List<InternetAddress> addrs = new LinkedList<>();
 			final String[] parts = addresses.split("\\s*[,;\\s]\\s*");
 			
 			for (final String address : parts) {

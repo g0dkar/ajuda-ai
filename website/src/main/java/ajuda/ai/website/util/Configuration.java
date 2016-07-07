@@ -51,7 +51,9 @@ public class Configuration {
 			query.setHint("org.hibernate.cacheable", false);
 			
 			final String value = (String) query.getSingleResult();
-			cache.put(name, value);
+			if (value != null) {
+				cache.put(name, value);
+			}
 			
 			if (log.isDebugEnabled()) { log.debug("Loaded into Cache: {} = {}", name, value); }
 		}
