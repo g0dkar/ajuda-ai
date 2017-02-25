@@ -2,7 +2,6 @@ package ajuda.ai.model.institution;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -26,14 +25,14 @@ import org.hibernate.validator.constraints.URL;
 
 import com.google.gson.annotations.Expose;
 
-import ajuda.ai.model.Slug;
 import ajuda.ai.model.billing.PaymentServiceEnum;
 import ajuda.ai.model.extra.CreationInfo;
+import ajuda.ai.model.user.User;
 import ajuda.ai.util.JsonUtils;
 import ajuda.ai.util.StringUtils;
 
 /**
- * Representa uma Instituição que será ajudada por seus {@link Helper Ajudantes}
+ * Representa uma Instituição que será ajudada por seus {@link User Ajudantes}
  * 
  * @author Rafael Lins - g0dkar
  *

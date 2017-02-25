@@ -7,6 +7,16 @@
 	<packaging>pom</packaging>
 	<name>Projeto Ajuda.Ai</name>
 	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<wildfly.version>10.0.0.Final</wildfly.version>
+		<hibernate.version>5.0.7.Final</hibernate.version>
+		<keycloak.version>1.9.4.Final</keycloak.version>
+		<vraptor.version>4.1.4</vraptor.version>
+		<infinispan.version>8.1.0.Final</infinispan.version>
+	</properties>
+	
 	<modules>
 		<module>persistence-sql</module>
 		<module>model</module>

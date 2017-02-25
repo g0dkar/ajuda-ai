@@ -9,12 +9,6 @@
 	<artifactId>util</artifactId>
 	<name>Utilitários para o Projeto Ajuda.Ai</name>
 	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<keycloak.version>1.9.4.Final</keycloak.version>
-	</properties>
-	
 	<build>
 		<plugins>
 			<plugin>

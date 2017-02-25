@@ -9,12 +9,6 @@
 	<artifactId>model</artifactId>
 	<name>Modelo de Dados do Ajuda.Ai</name>
 	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<wildfly.version>10.0.0.Final</wildfly.version>
-	</properties>
-	
 	<build>
 		<plugins>
 			<plugin>

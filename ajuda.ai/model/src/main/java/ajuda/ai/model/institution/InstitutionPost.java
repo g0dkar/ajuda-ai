@@ -75,7 +75,7 @@ public class InstitutionPost implements Serializable {
 	
 	@Column(nullable = false)
 	private long pageviews;
-
+	
 	public Long getId() {
 		return id;
 	}

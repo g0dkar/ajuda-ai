@@ -10,16 +10,6 @@
 	<packaging>war</packaging>
 	<name>Servidor Back-end do Ajuda.Ai</name>
 	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<wildfly.version>10.0.0.Final</wildfly.version>
-		<hibernate.version>5.0.7.Final</hibernate.version>
-		<keycloak.version>1.9.4.Final</keycloak.version>
-		<vraptor.version>4.1.4</vraptor.version>
-		<infinispan.version>8.1.0.Final</infinispan.version>
-	</properties>
-	
 	<build>
 		<finalName>ajuda-ai</finalName>
 		<outputDirectory>${basedir}/src/main/webapp/WEB-INF/classes</outputDirectory>
@@ -152,12 +142,6 @@
 			<artifactId>javax.mail-api</artifactId>
 			<version>1.5.3</version>
 			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.mindrot</groupId>
-			<artifactId>jbcrypt</artifactId>
-			<version>0.3m</version>
 		</dependency>
 		
 		<dependency>

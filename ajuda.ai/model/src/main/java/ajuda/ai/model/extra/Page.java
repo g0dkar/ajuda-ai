@@ -5,14 +5,19 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 
-import ajuda.ai.model.Slug;
+import com.google.gson.annotations.Expose;
+
 import ajuda.ai.util.StringUtils;
 
 /**
@@ -22,8 +27,20 @@ import ajuda.ai.util.StringUtils;
  *	
  */
 @Entity
-public class Page extends Slug implements Serializable {
+public class Page implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	@Expose
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	/** "Endereço" desta entidade. Se {@code exemplo} for o slug podemos ter algo como {@code https://ajuda.ai/exemplo} */
+	@Expose
+	@NotBlank
+	@Size(min = 2, max = 64)
+	@Column(nullable = false, unique = true, length = 64)
+	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9](/[a-z][a-z0-9\\-]*[a-z0-9])?")
+	private String slug;
 
 	@Embedded
 	private CreationInfo creation;
@@ -69,11 +86,9 @@ public class Page extends Slug implements Serializable {
 			content = content.trim();
 		}
 		
-		if (getSlug() == null) {
-			setSlug(StringUtils.slug(title));
+		if (slug == null) {
+			slug = StringUtils.slug(title);
 		}
-		
-//		setDirectory(null);
 	}
 	
 	public CreationInfo getCreation() {
@@ -142,5 +157,21 @@ public class Page extends Slug implements Serializable {
 
 	public void setSubtitle(final String subtitle) {
 		this.subtitle = subtitle;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getSlug() {
+		return slug;
+	}
+
+	public void setSlug(String slug) {
+		this.slug = slug;
 	}
 }
