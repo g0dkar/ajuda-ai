@@ -1,5 +1,6 @@
 package ajuda.ai.model.institution;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,10 +11,14 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.MapKeyColumn;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -34,9 +39,21 @@ import ajuda.ai.util.StringUtils;
  *
  */
 @Entity
-public class Institution extends Slug {
+public class Institution implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
+	
+	@Expose
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	/** "Endereço" desta entidade. Se {@code exemplo} for o slug podemos ter algo como {@code https://ajuda.ai/exemplo} */
+	@Expose
+	@NotBlank
+	@Size(min = 2, max = 64)
+	@Column(nullable = false, unique = true, length = 64)
+	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9](/[a-z][a-z0-9\\-]*[a-z0-9])?")
+	private String slug;
 	
 	@Expose
 	@Embedded
@@ -54,13 +71,6 @@ public class Institution extends Slug {
 	@Column(nullable = false, columnDefinition = "MEDIUMTEXT")
 	private String description;
 	
-	/**
-	 * Para o futuro: Lista de usuários que poderão gerenciar essa instituição
-	 */
-	@Column(length = 36)
-	@ElementCollection(fetch = FetchType.LAZY)
-	private Set<String> leaders;
-	
 	@Expose
 	@NotNull
 	@Column(nullable = false)
@@ -77,11 +87,20 @@ public class Institution extends Slug {
 	@Column(length = 1024)
 	private String banner;
 	
+	@Expose
 	@Column(name = "value", length = 512)
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "attribute", length = 24)
 	@JoinTable(name = "institution_attributes", joinColumns = @JoinColumn(name = "id"))
 	private Map<String, String> attributes;
+	
+	public String getSlug() {
+		return slug;
+	}
+	
+	public void setSlug(final String slug) {
+		this.slug = slug != null ? slug.toLowerCase() : null;
+	}
 
 	public CreationInfo getCreation() {
 		return creation;
@@ -109,14 +128,6 @@ public class Institution extends Slug {
 
 	public void setDescription(final String description) {
 		this.description = description;
-	}
-
-	public Set<String> getLeaders() {
-		return leaders;
-	}
-
-	public void setLeaders(final Set<String> leaders) {
-		this.leaders = leaders;
 	}
 
 	public PaymentServiceEnum getPaymentService() {

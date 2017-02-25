@@ -24,8 +24,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
-import ajuda.ai.model.institution.Helper;
 import ajuda.ai.model.institution.Institution;
+import ajuda.ai.model.user.User;
 
 @Entity
 public class Payment implements Serializable {
@@ -38,7 +38,7 @@ public class Payment implements Serializable {
 	private Institution institution;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	private Helper helper;
+	private User helper;
 	
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -104,11 +104,11 @@ public class Payment implements Serializable {
 		this.id = id;
 	}
 
-	public Helper getHelper() {
+	public User getHelper() {
 		return helper;
 	}
 
-	public void setHelper(final Helper helper) {
+	public void setHelper(final User helper) {
 		this.helper = helper;
 	}
 

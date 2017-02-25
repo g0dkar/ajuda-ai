@@ -5,15 +5,16 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Pattern.Flag;
 
 import com.google.gson.annotations.Expose;
+
+import ajuda.ai.model.user.User;
 
 /**
  * Info about the creation and update of an Entity
@@ -25,26 +26,35 @@ import com.google.gson.annotations.Expose;
 public class CreationInfo implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
-
+	
 	@Expose
 	@Column(nullable = false, name = "creation_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date time;
 	
 	@Expose
+	@Column(name = "last_update_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate;
 	
 	@Expose
-	@NotNull
-	@Column(nullable = false, length = 36)
-	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
-	private String creator;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User creator;
 	
 	@Expose
-	@Column(length = 36)
-	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
-	private String lastUpdateBy;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User lastUpdateBy;
+	
+//	@Expose
+//	@NotNull
+//	@Column(nullable = false, length = 36)
+//	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
+//	private String creator;
+//	
+//	@Expose
+//	@Column(length = 36)
+//	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
+//	private String lastUpdateBy;
 	
 	/**
 	 * Before saving, set the creation time if not already set
@@ -80,19 +90,19 @@ public class CreationInfo implements Serializable {
 		this.lastUpdate = lastUpdate;
 	}
 
-	public String getCreator() {
+	public User getCreator() {
 		return creator;
 	}
 
-	public void setCreator(final String creator) {
+	public void setCreator(final User creator) {
 		this.creator = creator;
 	}
 
-	public String getLastUpdateBy() {
+	public User getLastUpdateBy() {
 		return lastUpdateBy;
 	}
 
-	public void setLastUpdateBy(final String lastUpdateBy) {
+	public void setLastUpdateBy(final User lastUpdateBy) {
 		this.lastUpdateBy = lastUpdateBy;
 	}
 }
