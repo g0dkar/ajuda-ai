@@ -37,11 +37,12 @@ public class Page implements Serializable {
 	/** "Endereço" desta entidade. Se {@code exemplo} for o slug podemos ter algo como {@code https://ajuda.ai/exemplo} */
 	@Expose
 	@NotBlank
-	@Size(min = 2, max = 64)
-	@Column(nullable = false, unique = true, length = 64)
+	@Size(min = 2, max = 128)
+	@Column(nullable = false, unique = true, length = 128)
 	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9](/[a-z][a-z0-9\\-]*[a-z0-9])?")
 	private String slug;
-
+	
+	@Expose
 	@Embedded
 	private CreationInfo creation;
 	
@@ -51,24 +52,16 @@ public class Page implements Serializable {
 	private String headerImage;
 	
 	@NotBlank
-	@Size(max = 255)
-	@Column(nullable = false, length = 255)
-	private String headerLine1;
-	
-	@Size(max = 255)
-	@Column(length = 255)
-	private String headerLine2;
-	
-	@NotBlank
-	@Size(max = 255)
-	@Column(nullable = false, length = 255)
+	@Size(max = 128)
+	@Column(nullable = false, length = 128)
 	private String title;
 	
-	@Size(max = 255)
-	@Column(length = 255)
+	@Size(max = 128)
+	@Column(length = 128)
 	private String subtitle;
 	
 	@NotBlank
+	@Size(max = 65525)
 	@Column(nullable = false, columnDefinition = "MEDIUMTEXT")
 	private String content;
 	
@@ -133,22 +126,6 @@ public class Page implements Serializable {
 
 	public void setHeaderImage(final String headerImage) {
 		this.headerImage = headerImage;
-	}
-
-	public String getHeaderLine1() {
-		return headerLine1;
-	}
-
-	public void setHeaderLine1(final String headerLine1) {
-		this.headerLine1 = headerLine1;
-	}
-
-	public String getHeaderLine2() {
-		return headerLine2;
-	}
-
-	public void setHeaderLine2(final String headerLine2) {
-		this.headerLine2 = headerLine2;
 	}
 
 	public String getSubtitle() {

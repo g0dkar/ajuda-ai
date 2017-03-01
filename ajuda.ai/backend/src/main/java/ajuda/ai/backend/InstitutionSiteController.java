@@ -2,9 +2,7 @@ package ajuda.ai.backend;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
@@ -12,7 +10,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
-import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 
 import ajuda.ai.backend.paymentServices.PaymentProcessor;
@@ -22,9 +19,9 @@ import ajuda.ai.backend.util.Configuration;
 import ajuda.ai.backend.util.PersistenceService;
 import ajuda.ai.backend.util.ReCaptchaService;
 import ajuda.ai.model.billing.Payment;
-import ajuda.ai.model.institution.Helper;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionPost;
+import ajuda.ai.model.user.User;
 import ajuda.ai.util.StringUtils;
 import ajuda.ai.util.keycloak.KeycloakUser;
 import br.com.caelum.vraptor.Consumes;
@@ -145,22 +142,19 @@ public class InstitutionSiteController {
 					final int helpValue = StringUtils.parseInteger(value.replaceAll("\\D+", ""), 0) * 100;
 					
 					if (helpValue < 500) {
-						Helper helper = (Helper) ps.createQuery("FROM Helper WHERE LOWER(email) = LOWER(:email)").setParameter("email", email).getSingleResult();
+						User helper = (User) ps.createQuery("FROM Helper WHERE LOWER(email) = LOWER(:email)").setParameter("email", email).getSingleResult();
 						
 						if (helper == null) {
-							helper = new Helper();
-							helper.setInstitutions(new HashSet<>(1));
-							helper.getInstitutions().add(institution);
-							helper.setName(StringUtils.stripHTML(name));
+							helper = new User();
+//							helper.setFirstName(StringUtils.stripHTML(name));
+//							helper.setLastName(StringUtils.stripHTML(name));
 							helper.setEmail(StringUtils.stripHTML(email));
-							helper.setTimestamp(new Date());
-							helper.setAnonymous(StringUtils.parseBoolean(anonymous, StringUtils.isBlank(name)));
-							helper.setPassword(BCrypt.hashpw(StringUtils.isEmpty(password) ? randomPassword() : password, BCrypt.gensalt(conf.get("bcrypt.rounds", 10))));
+							helper.setPassword(StringUtils.isEmpty(password) ? randomPassword() : password);
 							ps.persist(helper);
 						}
 						else {
-							helper.setName(name);
-							helper = ps.merge(helper);
+//							helper.setName(name);
+//							helper = ps.merge(helper);
 						}
 						
 						final PaymentProcessor paymentProcessor = paymentService.get(institution.getPaymentService());

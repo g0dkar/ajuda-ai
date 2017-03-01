@@ -25,7 +25,6 @@ import org.hibernate.validator.constraints.URL;
 
 import com.google.gson.annotations.Expose;
 
-import ajuda.ai.model.billing.PaymentServiceEnum;
 import ajuda.ai.model.extra.CreationInfo;
 import ajuda.ai.model.user.User;
 import ajuda.ai.util.JsonUtils;
@@ -74,7 +73,7 @@ public class Institution implements Serializable {
 	@NotNull
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private PaymentServiceEnum paymentService;
+	private String paymentService;
 	
 	@URL
 	@Expose
@@ -129,11 +128,11 @@ public class Institution implements Serializable {
 		this.description = description;
 	}
 
-	public PaymentServiceEnum getPaymentService() {
+	public String getPaymentService() {
 		return paymentService;
 	}
 
-	public void setPaymentService(final PaymentServiceEnum paymentService) {
+	public void setPaymentService(final String paymentService) {
 		this.paymentService = paymentService;
 	}
 

@@ -45,17 +45,6 @@ public class CreationInfo implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User lastUpdateBy;
 	
-//	@Expose
-//	@NotNull
-//	@Column(nullable = false, length = 36)
-//	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
-//	private String creator;
-//	
-//	@Expose
-//	@Column(length = 36)
-//	@Pattern(regexp = "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", flags = { Flag.CASE_INSENSITIVE })
-//	private String lastUpdateBy;
-	
 	/**
 	 * Before saving, set the creation time if not already set
 	 */

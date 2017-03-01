@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -53,8 +51,7 @@ public class Payment implements Serializable {
 	private String description;
 	
 	@Column(nullable = false, length = 32)
-	@Enumerated(EnumType.STRING)
-	private PaymentServiceEnum paymentService;
+	private String paymentService;
 	
 	@Column(length = 64)
 	private String paymentServiceId;
@@ -128,11 +125,11 @@ public class Payment implements Serializable {
 		this.description = description;
 	}
 
-	public PaymentServiceEnum getPaymentService() {
+	public String getPaymentService() {
 		return paymentService;
 	}
 
-	public void setPaymentService(final PaymentServiceEnum paymentService) {
+	public void setPaymentService(final String paymentService) {
 		this.paymentService = paymentService;
 	}
 
