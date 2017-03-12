@@ -19,6 +19,7 @@ module.exports = function(grunt) {
 				src: [
 					"<%= path.src %>/bower_components/angular/angular.js",
 					"<%= path.src %>/bower_components/angular-animate/angular-animate.js",
+					"<%= path.src %>/bower_components/angular-ui-router/release/angular-ui-router.js",
 					"<%= path.src %>/js/ajudaai.js"
 				],
 				dest: "<%= path.src %>/js/ajuda-ai-1.0.0.js",
