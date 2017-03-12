@@ -8,8 +8,9 @@ module.exports = function(grunt) {
 	// 3. All configuration goes here
 	grunt.initConfig({
 		path: {
-			src: "src",			// Dev files
-			dest: "dist",		// Dist files
+			src: "src",					// Dev files
+			dest: "dist",				// Dist files
+			bower: "bower_components"	// Bower Files
 		},
 		concat: {
 			options: {
@@ -17,9 +18,9 @@ module.exports = function(grunt) {
 			},
 			js: {
 				src: [
-					"<%= path.src %>/bower_components/angular/angular.js",
-					"<%= path.src %>/bower_components/angular-animate/angular-animate.js",
-					"<%= path.src %>/bower_components/angular-ui-router/release/angular-ui-router.js",
+					"<%= path.bower %>/angular/angular.js",
+					"<%= path.bower %>/angular-animate/angular-animate.js",
+					"<%= path.bower %>/angular-ui-router/release/angular-ui-router.js",
 					"<%= path.src %>/js/ajudaai.js"
 				],
 				dest: "<%= path.src %>/js/ajuda-ai-1.0.0.js",
