@@ -15,6 +15,8 @@
 		<keycloak.version>1.9.4.Final</keycloak.version>
 		<vraptor.version>4.1.4</vraptor.version>
 		<infinispan.version>8.1.0.Final</infinispan.version>
+		<javaee-web-api.version>7.0</javaee-web-api.version>
+		<slf4j.version>1.7.7</slf4j.version>
 	</properties>
 	
 	<modules>
@@ -22,5 +24,8 @@
 		<module>model</module>
 		<module>backend</module>
 		<module>util</module>
+		<module>payment-api</module>
+		<module>payment-impl-moip</module>
+		<module>frontend</module>
 	</modules>
 </project>

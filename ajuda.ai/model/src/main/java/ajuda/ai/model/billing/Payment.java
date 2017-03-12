@@ -8,6 +8,8 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -22,6 +24,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.google.gson.annotations.Expose;
+
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.user.User;
 
@@ -29,8 +33,13 @@ import ajuda.ai.model.user.User;
 public class Payment implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	@Id @Column(length = 32)
-	private String id;
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	@Expose
+	@NotBlank
+	@Column(unique = true, length = 32)
+	private String uuid;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	private Institution institution;
@@ -90,14 +99,14 @@ public class Payment implements Serializable {
 	
 	@PrePersist
 	public void beforeSave() {
-		if (id == null) { id = UUID.randomUUID().toString().replaceAll("-", "").toLowerCase(); }
+		if (uuid == null) { uuid = UUID.randomUUID().toString().replaceAll("-", "").toLowerCase(); }
 	}
 	
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(final String id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -219,5 +228,13 @@ public class Payment implements Serializable {
 
 	public void setRealValue(final int realValue) {
 		this.realValue = realValue;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }

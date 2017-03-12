@@ -1,4 +1,4 @@
-package ajuda.ai.backend.paymentServices;
+package ajuda.ai.payment;
 
 import java.math.BigDecimal;
 
@@ -6,22 +6,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 
-import ajuda.ai.backend.util.PersistenceService;
 import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.billing.PaymentEvent;
-import ajuda.ai.model.institution.Helper;
 import ajuda.ai.model.institution.Institution;
+import ajuda.ai.model.user.User;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 
 /**
- * Define ações de um Serviço de Pagamento
+ * Define um Serviço de Pagamento
  * 
  * @author Rafael Lins
  *
  */
-public interface PaymentProcessor {
+public interface PaymentGateway {
 	public static final BigDecimal HUNDRED = new BigDecimal(100);
 	
 	/**
@@ -46,15 +45,9 @@ public interface PaymentProcessor {
 	 *            {@link Result} para se configurar a resposta.
 	 * @param log
 	 *            {@link Logger} para se usar
-	 * @param name
-	 *            Nome do Cliente (preenchido no website)
-	 * @param email
-	 *            E-mail do Cliente (preenchido no website)
-	 * @param phone
-	 *            Telefone do Cliente (preenchido no website - OPCIONAL)
 	 * @return Objeto {@link Payment} referente a esse pagamento.
 	 */
-	default Payment createPayment(final Institution institution, final Helper helper, final int value, final boolean addCosts, final int paymentType, final PersistenceService ps, final Result result, final Logger log) {
+	default Payment createPayment(final Institution institution, final User helper, final int value, final boolean addCosts, final int paymentType, final Result result, final Logger log) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -71,8 +64,6 @@ public interface PaymentProcessor {
 	 * @param request
 	 *            O {@link HttpServletRequest request} enviado (verificação se é {@code GET} ou
 	 *            {@code POST} deve ser feita {@link HttpServletRequest#getMethod() manualmente})
-	 * @param ps
-	 *            Uma instância de {@link PersistenceService} para buscas e gravações no BD
 	 * @param result
 	 *            {@link Result} para se configurar a resposta.
 	 * @param log
@@ -88,7 +79,7 @@ public interface PaymentProcessor {
 	 * @see Results#http()
 	 * @see HttpResult#body(String)
 	 */
-	default PaymentEvent processEvent(final Institution institution, final HttpServletRequest request, final PersistenceService ps, final Result result, final Logger log) throws Exception {
+	default PaymentEvent processEvent(final Institution institution, final HttpServletRequest request, final Result result, final Logger log) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 }

@@ -1,4 +1,4 @@
-package ajuda.ai.backend.paymentServices;
+package ajuda.ai.payment;
 //package ajuda.ai.website.paymentServices;
 //
 //import java.math.BigDecimal;

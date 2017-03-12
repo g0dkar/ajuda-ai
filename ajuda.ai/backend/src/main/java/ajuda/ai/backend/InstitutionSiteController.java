@@ -224,7 +224,7 @@ public class InstitutionSiteController {
 		}
 	}
 	
-	@Get("/api/info-doacoes")
+	@Get("/api/donation-stats")
 	public void donationInfo(final String slug) {
 		final Institution institution = findInstitution(slug);
 		
