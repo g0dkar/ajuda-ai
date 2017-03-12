@@ -21,14 +21,14 @@ module.exports = function(grunt) {
 					"<%= path.src %>/bower_components/angular-animate/angular-animate.js",
 					"<%= path.src %>/js/ajudaai.js"
 				],
-				dest: "<%= path.src %>/js/ajudaai.js",
+				dest: "<%= path.src %>/js/ajuda-ai-1.0.0.js",
 			},
 			css: {
 				src: [
 					"<%= path.src %>/css/reset.css",
 					"<%= path.src %>/css/ajudaai.css"
 				],
-				dest: "<%= path.src %>/css/ajudaai.css",
+				dest: "<%= path.src %>/css/ajuda-ai-1.0.0.css",
 			}
 		},
 		
@@ -36,12 +36,12 @@ module.exports = function(grunt) {
 			options: {
 				sourceMap: true,
 				sourceMapIncludeSources: true,
-				sourceMapIn: "<%= path.src %>/js/ajudaai.js.map",
+				sourceMapIn: "<%= path.src %>/js/ajuda-ai-1.0.0.js.map",
 				compress: { drop_console: true }
 			},
 			dev: {
 				files: {
-					"<%= path.dest %>/js/ajudaai.js": ["<%= path.src %>/js/ajudaai.js"]
+					"<%= path.dest %>/js/ajuda-ai-1.0.0.js": ["<%= path.src %>/js/ajuda-ai-1.0.0.js"]
 				}
 			}
 		},
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 		cssnano: {
 			dist: {
 				files: {
-					"<%= path.dest %>/css/ajudaai.css": "<%= path.src %>/css/ajudaai.css"
+					"<%= path.dest %>/css/ajuda-ai-1.0.0.css": "<%= path.src %>/css/ajuda-ai-1.0.0.css"
 				}
 			}
 		},
@@ -65,11 +65,31 @@ module.exports = function(grunt) {
 			}
 		},
 		
-		copy: {
-			html: {
-				src: "<%= path.src %>/**/*.html",	// copy all files and subfolders **with ending .html**
-				dest: "<%= path.dest %>/",			// destination folder
-//				expand: true				// required when using cwd
+		htmlmin: {
+			dist: {
+				options: {
+					removeComments: true,
+					collapseWhitespace : true,
+					minifyCSS: true,
+					minifyJS: true,
+					removeRedundantAttributes: true
+				},
+				files: [{
+					expand: true,
+					cwd: "<%= path.src %>",
+					src: ["**/*.html"],				// copy all files and subfolders ending in .html
+					dest: "<%= path.dest %>",		// destination folder
+				}]
+			}
+		},
+		
+
+		connect: {
+			server: {
+				options: {
+					port: 8000,
+					base: "dist"
+				}
 			}
 		},
 		
@@ -88,11 +108,11 @@ module.exports = function(grunt) {
 			},
 			html: {
 				files: "<%= path.src %>/**/*.html",
-				tasks: ["copy:html"],
+				tasks: ["htmlmin:dist"],
 			}
 		}
 	});
 
 	// 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
-	grunt.registerTask("default", ["concat:js", "uglify", "concat:css", "cssnano", "imagemin", "copy"/*, "watch"*/]);
+	grunt.registerTask("default", ["concat:js", "uglify", "concat:css", "cssnano", "imagemin", "htmlmin", "connect", "watch"]);
 };

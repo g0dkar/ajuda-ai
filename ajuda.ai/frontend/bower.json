@@ -1,0 +1,21 @@
+{
+  "name": "ajudaai-frontend",
+  "description": "Frontend do Ajuda.Ai",
+  "main": "src/js/ajudaai.js",
+  "authors": [
+    "Rafael g0dkar <rafael.lins777@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "ajudaai"
+  ],
+  "homepage": "https://github.com/g0dkar/ajuda-ai",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
