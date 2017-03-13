@@ -27,7 +27,7 @@ module.exports = function(grunt) {
 			},
 			css: {
 				src: [
-					"<%= path.src %>/css/reset.css",
+					"<%= path.bower %>/bootstrap/dist/css/bootstrap.css",
 					"<%= path.src %>/css/ajudaai.css"
 				],
 				dest: "<%= path.src %>/css/ajuda-ai-1.0.0.css",
