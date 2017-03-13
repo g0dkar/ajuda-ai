@@ -6827,9 +6827,9 @@ nav.navbar-ajuda-ai {
 .slider {
 	height: 450px;
 }
-.slider-item, .home-institution-list .panel-image {
+.slider-item, .panel .panel-image {
 	position: relative;
-	height: 450px;
+	height: 100%;
 	overflow: hidden;
 	display: -webkit-box;
 	display: -webkit-flex;
@@ -6843,6 +6843,9 @@ nav.navbar-ajuda-ai {
 	-webkit-justify-content: center;
 	-ms-flex-pack: center;
 	justify-content: center;
+}
+.slider-item, .home-institution-list .panel-image {
+	height: 450px;
 }
 .slick-arrow {
 	position: absolute;
@@ -6985,9 +6988,19 @@ nav.navbar-ajuda-ai {
 	height: 300px;
 	position: relative;
 }
-.home-institution-list .panel-image {
-	height: 250px;
+.panel .panel-image {
+	margin: -15px -15px 0 -15px;
 	border-radius: 4px 4px 0 0;
+}
+.panel .panel-title {
+	margin: 0 -15px 15px -15px;
+	border-bottom: 1px solid #f0f0f0;
+	padding: 15px;
+	font-weight: 600;
+}
+.home-institution-list .panel-image {
+	margin: 0;
+	height: 250px;
 }
 .home-institution-list .panel-image-img {
 	height: 100%;
@@ -7321,6 +7334,10 @@ nav.navbar-ajuda-ai {
 }
 .payment-list-item p.lg {
 	font-size: 1.5em;
+}
+#login-page {
+	padding-top: 65px;
+	padding-bottom: 115px
 }
 
 

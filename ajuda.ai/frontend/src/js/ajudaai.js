@@ -1,7 +1,7 @@
 (function (angular) {
 	var app = angular.module("ajuda-ai", ["ngAnimate", "ui.router"]);
 	var debug = true;
-	var html5mode = true;
+	var html5mode = false;
 	var apiEndpoint = "http://localhost/api";
 	
 	/* ***************************************** */
@@ -29,13 +29,44 @@
 		});
 	}]);
 	
+	app.controller("LoginController", ["$scope", "$http", "$window", "$state", "$stateParams", function ($scope, $http, $window, $state, $stateParams) {
+		$scope.data = { username: "", password: "" };
+		
+		$scope.loggingIn = false;
+		
+		$scope.doLogin = function (evt) {
+			evt.preventDefault();
+			$scope.loggingIn = true;
+			
+			$http.post(apiEndpoint + "/login").then(function (response) {
+				if (response.data && response.data.id) {
+					$scope.setUser(response.data.user);
+					
+					if ($stateParams.nextState) {
+						$state.go($stateParams.nextState, $stateParams.nextStateParams);
+					}
+					else {
+						$state.go("admin.index");
+					}
+				}
+				else {
+					$scope.loggingIn = false;
+					$window.alert("Usuário ou Senha incorretos. Por favor, tente novamente.");
+				}
+			}, function () {
+				$scope.loggingIn = false;
+				$window.alert("Falha na autenticação. Por favor, tente novamente.");
+			});
+		};
+	}]);
+	
 	/* ***************************************** */
 	/* Configurações e outras coisas             */
 	/* ***************************************** */
 	
 	app.run(["$rootScope", "$location", "$state", function ($rootScope, $location, $state) {
 		// When something explodes...
-		$rootScope.$on("$stateChangeError", function (event, toState, toParams, fromState, fromParams, error) {
+		$rootScope.$on("$stateChangeError", function (evt, toState, toParams, fromState, fromParams, error) {
 			console.log("[$stateChangeError] args =", arguments);
 //			$state.go("main.index");
 		});
@@ -48,7 +79,14 @@
 		$rootScope.template = template;
 		$rootScope.setTemplate = function (what, value) {
 			template[what] = value;
-		}
+		};
+		
+		var user = {};
+		$rootScope.user = user;
+		$rootScope.setUser = function (value) {
+			user = value;
+			$rootScope.user = user;
+		};
 		
 		var pageContentElement = angular.element(document.getElementById("page-content"));
 		
@@ -62,6 +100,16 @@
 		
 		$rootScope.$on("$stateChangeStart", function () {
 			pageContentElement.removeClass("loaded");
+		});
+		
+		// Force login for all admin states
+		$rootScope.$on("$stateChangeStart", function(evt, toState, toParams, fromState, fromParams) {
+			if (toState.name.indexOf("admin") === -1 || $rootScope.user.id) {
+				return;
+			}
+			
+			evt.preventDefault(); // stop current execution
+			$state.go("main.login", { nextState: toState, nextStateParams: toParams }); // go to login
 		});
 	}]);
 	
@@ -90,6 +138,31 @@
 //			}
 //		};
 //	}]);
+	
+	var _requireHttpTries = {};
+	function requireHttp(id, $q, $http, url, opts) {
+		if (_requireHttpTries[id] == undefined) {
+			_requireHttpTries[id] = 0;
+		}
+		else if (_requireHttpTries[id] >= 10) {
+			return $q(function (resolve) { resolve(null); });
+		}
+		
+		return $q(function (resolve, reject) {
+			console.log("[requireHttp] url = ", url);
+			
+			$http.get(url, opts).then(function (data) {
+				console.log("[requireHttp.success] url = ", url, ", data = ", data.data);
+				delete _requireHttpTries[id];
+				resolve(data.data);
+			},
+			function (data) {
+				console.log("[requireHttp.error] url = ", url, ", data = ", data.data);
+				_requireHttpTries[id]++;
+				reject(data.data);
+			});
+		});
+	}
 	
 	// ROUTER
 	app.config(["$httpProvider", "$locationProvider", "$compileProvider", "$urlRouterProvider", "$urlMatcherFactoryProvider", "$stateProvider", function ($httpProvider, $locationProvider, $compileProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $stateProvider) {
@@ -125,8 +198,37 @@
 		})
 		.state("main.contato", {
 			url: "/contato",
-			templateUrl: "/fragments/main.contato.html"
+			templateUrl: "/fragments/main.contato.html",
+			controller: "ContatoController"
 		})
+		.state("main.login", {
+			url: "/login",
+			templateUrl: "/fragments/main.login.html",
+			controller: "LoginController"
+		})
+		
+		.state("admin", {
+			url: "/admin",
+			"abstract": true,
+			template: "<ui-view/>"
+		})
+		.state("admin.index", {
+			url: "",
+			templateUrl: "/fragments/admin.index.html",
+			controller: "AdminIndexController"
+		})
+		
+		.state("main.instituicao", {
+			url: "/:slug",
+			templateUrl: "/fragments/main.instituicao.html",
+			controller: "InstitutionController",
+			resolve: {
+				institution: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
+					return requireHttp("mainInst", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+				}]
+			}
+		})
+		//admin.index
 //		.state("admin.quiz.create", {
 //			url: "/create",
 //			templateUrl: context + "/api/ng/quiz-create",
