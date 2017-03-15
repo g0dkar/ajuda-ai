@@ -1,3 +1,4 @@
+package ajuda.ai.backend.v0.util;
 //package ajuda.ai.backend.util;
 //
 //import javax.annotation.PreDestroy;

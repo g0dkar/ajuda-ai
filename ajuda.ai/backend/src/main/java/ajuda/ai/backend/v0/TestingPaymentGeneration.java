@@ -1,4 +1,4 @@
-package ajuda.ai.backend;
+package ajuda.ai.backend.v0;
 
 public class TestingPaymentGeneration {
 //	public static void main(final String[] args) throws IOException {

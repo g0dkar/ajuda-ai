@@ -1,4 +1,4 @@
-package ajuda.ai.backend.util;
+package ajuda.ai.backend.v0.util;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;

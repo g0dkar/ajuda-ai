@@ -1,4 +1,4 @@
-package ajuda.ai.backend.task;
+package ajuda.ai.backend.v0.task;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;

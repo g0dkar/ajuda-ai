@@ -1,10 +1,10 @@
-package ajuda.ai.backend.admin;
+package ajuda.ai.backend.v0.admin;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 
-import ajuda.ai.backend.util.PersistenceService;
+import ajuda.ai.backend.v0.util.PersistenceService;
 import ajuda.ai.util.StringUtils;
 import ajuda.ai.util.keycloak.KeycloakUser;
 import br.com.caelum.vraptor.Result;

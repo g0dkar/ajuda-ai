@@ -1,4 +1,4 @@
-package ajuda.ai.backend.util;
+package ajuda.ai.backend.v0.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -50,7 +50,9 @@ public class ReCaptchaService {
 				payload.append("&response=");
 				payload.append(StringUtils.encodeURLComponent(captchaResponse));
 				
-				if (log.isDebugEnabled()) { log.debug("Verificando ReCaptcha. Payload: {}", payload); }
+				if (log.isDebugEnabled()) {
+					log.debug("Verificando ReCaptcha. Payload: {}", payload);
+				}
 				
 				final URL url = new URL(conf.get("recaptcha.endpoint", "https://www.google.com/recaptcha/api/siteverify"));
 				final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -64,7 +66,9 @@ public class ReCaptchaService {
 					response.append(line);
 				}
 				
-				if (log.isDebugEnabled()) { log.debug("Resposta recebida do ReCaptcha (sem quebras de linha): {}", response); }
+				if (log.isDebugEnabled()) {
+					log.debug("Resposta recebida do ReCaptcha (sem quebras de linha): {}", response);
+				}
 				
 				return JsonUtils.fromJson(response.toString(), Map.class);
 			}
@@ -87,7 +91,9 @@ public class ReCaptchaService {
 			final Boolean success = (Boolean) captchaResponse.get("success");
 			final String hostname = (String) captchaResponse.get("hostname");
 			
-			if (log.isDebugEnabled()) { log.debug("Sucesso no Captcha? {}, Hostname: {}", success, hostname); }
+			if (log.isDebugEnabled()) {
+				log.debug("Sucesso no Captcha? {}, Hostname: {}", success, hostname);
+			}
 			
 			return success && (hostname.equals("localhost") || hostname.endsWith(conf.get("hostname", "ajuda.ai")));
 		}

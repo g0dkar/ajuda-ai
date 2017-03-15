@@ -1,4 +1,4 @@
-package ajuda.ai.backend.admin;
+package ajuda.ai.backend.v0.admin;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 
-import ajuda.ai.backend.util.PersistenceService;
+import ajuda.ai.backend.v0.util.PersistenceService;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.util.StringUtils;
 import ajuda.ai.util.keycloak.KeycloakUser;
