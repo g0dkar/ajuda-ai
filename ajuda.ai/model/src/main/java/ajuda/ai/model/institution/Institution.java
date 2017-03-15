@@ -92,6 +92,14 @@ public class Institution implements Serializable {
 	@JoinTable(name = "institution_attributes", joinColumns = @JoinColumn(name = "id"))
 	private Map<String, String> attributes;
 	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	public String getSlug() {
 		return slug;
 	}
