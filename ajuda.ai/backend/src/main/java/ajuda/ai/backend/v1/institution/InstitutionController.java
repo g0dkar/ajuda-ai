@@ -1,4 +1,4 @@
-package ajuda.ai.backend.v1;
+package ajuda.ai.backend.v1.institution;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;

@@ -1,7 +1,6 @@
 package ajuda.ai.util;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -26,11 +25,8 @@ import br.com.caelum.vraptor.environment.Environment;
  * @author Rafael M. Lins
  *
  */
-@Singleton
-public class Config implements Serializable {
-	/** Serial Version UID */
-	private static final long serialVersionUID = 1L;
-
+@ApplicationScoped
+public class Config {
 	private static final DateFormat ISO_DATE = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss,zzz'Z'");
 	
 	private final Logger log;
