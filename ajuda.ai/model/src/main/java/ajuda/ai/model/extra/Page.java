@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.validation.constraints.Pattern;
@@ -15,8 +17,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
-
-import com.google.gson.annotations.Expose;
 
 import ajuda.ai.util.StringUtils;
 
@@ -27,22 +27,20 @@ import ajuda.ai.util.StringUtils;
  *	
  */
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Page implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	@Expose
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	/** "Endereço" desta entidade. Se {@code exemplo} for o slug podemos ter algo como {@code https://ajuda.ai/exemplo} */
-	@Expose
 	@NotBlank
 	@Size(min = 2, max = 128)
-	@Column(nullable = false, unique = true, length = 128)
+	@Column(nullable = false, length = 128)
 	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9](/[a-z][a-z0-9\\-]*[a-z0-9])?")
 	private String slug;
 	
-	@Expose
 	@Embedded
 	private CreationInfo creation;
 	
@@ -67,6 +65,9 @@ public class Page implements Serializable {
 	
 	@Column(nullable = false)
 	private boolean published;
+	
+	@Column(nullable = false)
+	private long pageviews;
 	
 	@PreUpdate
 	@PrePersist
@@ -140,7 +141,7 @@ public class Page implements Serializable {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -148,7 +149,15 @@ public class Page implements Serializable {
 		return slug;
 	}
 
-	public void setSlug(String slug) {
+	public void setSlug(final String slug) {
 		this.slug = slug;
+	}
+	
+	public long getPageviews() {
+		return pageviews;
+	}
+
+	public void setPageviews(final long pageviews) {
+		this.pageviews = pageviews;
 	}
 }

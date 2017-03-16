@@ -2,10 +2,11 @@ package ajuda.ai.model.institution;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import ajuda.ai.model.extra.Page;
@@ -17,6 +18,7 @@ import ajuda.ai.model.extra.Page;
  *
  */
 @Entity
+@Table(indexes = { @Index(name = "unique_post_per_institution", unique = true, columnList = "slug, institution") })
 public class InstitutionPost extends Page implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
@@ -25,22 +27,11 @@ public class InstitutionPost extends Page implements Serializable {
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Institution institution;
 	
-	@Column(nullable = false)
-	private long pageviews;
-	
 	public Institution getInstitution() {
 		return institution;
 	}
 
-	public void setInstitution(Institution institution) {
+	public void setInstitution(final Institution institution) {
 		this.institution = institution;
-	}
-
-	public long getPageviews() {
-		return pageviews;
-	}
-
-	public void setPageviews(long pageviews) {
-		this.pageviews = pageviews;
 	}
 }

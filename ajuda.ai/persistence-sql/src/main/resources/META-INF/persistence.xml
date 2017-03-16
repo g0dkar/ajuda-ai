@@ -2,6 +2,16 @@
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="ajuda-ai" transaction-type="JTA">
 		<jta-data-source>java:/datasources/ajuda-ai</jta-data-source>
+		
+		<!--exclude-unlisted-classes>false</exclude-unlisted-classes-->
+		<class>ajuda.ai.model.Configuration</class>
+		<class>ajuda.ai.model.billing.Payment</class>
+		<class>ajuda.ai.model.billing.PaymentEvent</class>
+		<class>ajuda.ai.model.extra.CreationInfo</class>
+		<class>ajuda.ai.model.extra.Page</class>
+		<class>ajuda.ai.model.institution.Institution</class>
+		<class>ajuda.ai.model.institution.InstitutionPost</class>
+		<class>ajuda.ai.model.user.User</class>
 
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="update" />

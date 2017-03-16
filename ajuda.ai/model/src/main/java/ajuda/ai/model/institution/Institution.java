@@ -7,8 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,8 +20,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
-
-import com.google.gson.annotations.Expose;
 
 import ajuda.ai.model.extra.CreationInfo;
 import ajuda.ai.model.user.User;
@@ -41,51 +37,41 @@ public class Institution implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
 	
-	@Expose
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	/** "Endereço" desta entidade. Se {@code exemplo} for o slug podemos ter algo como {@code https://ajuda.ai/exemplo} */
-	@Expose
 	@NotBlank
 	@Size(min = 2, max = 64)
 	@Column(nullable = false, unique = true, length = 64)
-	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9](/[a-z][a-z0-9\\-]*[a-z0-9])?")
+	@Pattern(regexp = "[a-z][a-z0-9\\-]*[a-z0-9]")
 	private String slug;
 	
-	@Expose
 	@Embedded
 	private CreationInfo creation;
 	
-	@Expose
 	@NotBlank
 	@Size(max = 64)
 	@Column(nullable = false, length = 64)
 	private String name;
 	
-	@Expose
 	@NotBlank
 	@Size(max = 65535)
 	@Column(nullable = false, columnDefinition = "MEDIUMTEXT")
 	private String description;
 	
-	@Expose
 	@NotNull
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 16)
 	private String paymentService;
 	
 	@URL
-	@Expose
 	@Column(length = 1024)
 	private String logo;
 	
 	@URL
-	@Expose
 	@Column(length = 1024)
 	private String banner;
 	
-	@Expose
 	@Column(name = "value", length = 512)
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "attribute", length = 24)
@@ -96,7 +82,7 @@ public class Institution implements Serializable {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 	

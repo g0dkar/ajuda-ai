@@ -1,5 +1,7 @@
 package ajuda.ai.backend.v1.auth;
 
+import java.io.Serializable;
+
 import javax.enterprise.context.SessionScoped;
 
 import ajuda.ai.model.user.User;
@@ -10,7 +12,9 @@ import ajuda.ai.model.user.User;
  *
  */
 @SessionScoped
-public class AuthenticatedUser {
+public class AuthenticatedUser implements Serializable {
+	private static final long serialVersionUID = -7033448814743585706L;
+	
 	private User user;
 	
 	public void setUser(User user) {

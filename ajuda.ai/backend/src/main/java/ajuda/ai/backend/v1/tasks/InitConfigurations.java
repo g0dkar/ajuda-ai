@@ -2,6 +2,7 @@ package ajuda.ai.backend.v1.tasks;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -12,10 +13,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 
+import ajuda.ai.backend.v1.util.LoremIpsum;
 import ajuda.ai.model.extra.CreationInfo;
 import ajuda.ai.model.institution.Institution;
+import ajuda.ai.model.institution.InstitutionPost;
 import ajuda.ai.model.user.User;
 
 /**
@@ -37,6 +41,8 @@ public class InitConfigurations {
 	@PostConstruct
 	public void execute() {
 		User rafael = null;
+		final LoremIpsum lorem = new LoremIpsum();
+		final Random rng = new Random();
 		
 		try {
 			log.info("Verificando se há o usuário 'rafael' no Sistema");
@@ -47,7 +53,7 @@ public class InitConfigurations {
 			
 			rafael = new User();
 			rafael.setUsername("rafael");
-			rafael.setPassword("rafael");
+			rafael.setPassword(BCrypt.hashpw("rafael", BCrypt.gensalt()));
 			rafael.setEmail("rafael@ajuda.ai");
 			rafael.setFirstname("Rafael");
 			rafael.setLastname("Lins");
@@ -84,6 +90,21 @@ public class InitConfigurations {
 			ama.getAttributes().put("nationalId", "05.311.137/0001-80");
 			
 			entityManager.persist(ama);
+			
+			for (int i = 0, max = 3 + rng.nextInt(15); i < max; i++) {
+				final InstitutionPost post = new InstitutionPost();
+				post.setSlug("random-post-" + (i + 1));
+				post.setTitle(lorem.getWords(1 + rng.nextInt(10)));
+				post.setSubtitle(lorem.getWords(1 + rng.nextInt(15)));
+				post.setCreation(new CreationInfo());
+				post.getCreation().setCreator(rafael);
+				post.getCreation().setTime(new Date());
+				post.setInstitution(ama);
+				post.setPublished(rng.nextBoolean());
+				post.setContent(lorem.getParagraphs(1 + rng.nextInt(4)));
+				entityManager.persist(post);
+			}
+			
 			log.info("AMA foi cadastrada: ID {} = /{}", ama.getId(), ama.getSlug());
 		}
 		
@@ -115,6 +136,21 @@ public class InitConfigurations {
 			apipa.getAttributes().put("nationalId", "10.216.609/0001-56");
 			
 			entityManager.persist(apipa);
+			
+			for (int i = 0, max = 3 + rng.nextInt(15); i < max; i++) {
+				final InstitutionPost post = new InstitutionPost();
+				post.setSlug("random-post-" + (i + 1));
+				post.setTitle(lorem.getWords(1 + rng.nextInt(10)));
+				post.setSubtitle(lorem.getWords(1 + rng.nextInt(15)));
+				post.setCreation(new CreationInfo());
+				post.getCreation().setCreator(rafael);
+				post.getCreation().setTime(new Date());
+				post.setInstitution(apipa);
+				post.setPublished(rng.nextBoolean());
+				post.setContent(lorem.getParagraphs(1 + rng.nextInt(4)));
+				entityManager.persist(post);
+			}
+			
 			log.info("APIPA foi cadastrada: ID {} = /{}", apipa.getId(), apipa.getSlug());
 		}
 	}

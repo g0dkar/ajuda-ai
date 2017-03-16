@@ -1,12 +1,18 @@
 package ajuda.ai.backend.v1.institution;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 
+import ajuda.ai.backend.v1.ApiController;
 import ajuda.ai.backend.v1.recaptcha.ReCaptchaService;
 import ajuda.ai.model.institution.Institution;
+import ajuda.ai.model.institution.InstitutionPost;
 import ajuda.ai.payment.PaymentService;
 import ajuda.ai.persistence.model.institution.InstitutionPersistence;
 import br.com.caelum.vraptor.Controller;
@@ -17,33 +23,120 @@ import br.com.caelum.vraptor.validator.Validator;
 
 @Controller
 @Path("/institution")
-public class InstitutionController {
-	private final Logger log;
-	private final Result result;
-	private final Validator validator;
+public class InstitutionController extends ApiController {
 	private final InstitutionPersistence ps;
-	private final HttpServletRequest request;
 	private final PaymentService paymentService;
 	private final ReCaptchaService recaptcha;
 	
+	/** @deprecated CDI **/ @Deprecated
+	InstitutionController() { this(null, null, null, null, null, null, null); }
+	
 	@Inject
-	public InstitutionController(Logger log, Result result, Validator validator, InstitutionPersistence ps, HttpServletRequest request, PaymentService paymentService, ReCaptchaService recaptcha) {
+	public InstitutionController(final Logger log, final Result result, final HttpServletRequest request, final Validator validator, final InstitutionPersistence ps, final PaymentService paymentService, final ReCaptchaService recaptcha) {
 		this.log = log;
 		this.result = result;
-		this.validator = validator;
-		this.ps = ps;
 		this.request = request;
+		this.validator = validator;
+		
+		this.ps = ps;
 		this.paymentService = paymentService;
 		this.recaptcha = recaptcha;
 	}
 	
-	@Get("/{slug:[a-z][a-z0-9\\-]*[a-z0-9](/[a-z][a-z0-9\\-]*[a-z0-9])?}")
-	public Institution get(String slug) {
-		return ps.getSlug(slug);
+	@Get
+	@Path(value = "/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}", priority = Path.LOW)
+	public Institution getFromSlug(final String slug) {
+		final Institution institution = ps.getSlug(slug);
+		
+		if (institution != null) {
+			response(institution);
+		}
+		else {
+			result.notFound();
+		}
+		
+		return institution;
 	}
 	
 	@Get("/{id:\\d+}")
-	public Institution get(Long id) {
-		return ps.get(id);
+	public Institution getFromId(final Long id) {
+		final Institution institution = ps.get(id);
+		
+		if (institution != null) {
+			response(institution);
+		}
+		else {
+			result.notFound();
+		}
+		
+		return institution;
+	}
+	
+	@Get("/random")
+	public Institution random() {
+		final Institution institution = (Institution) ps.query("FROM Institution ORDER BY RAND()").setMaxResults(1).getSingleResult();
+		
+		if (institution != null) {
+			response(institution);
+		}
+		else {
+			result.notFound();
+		}
+		
+		return institution;
+	}
+	
+	@Get("/random-list")
+	public List<Institution> randomList() {
+		final List<Institution> institution = ps.query("FROM Institution ORDER BY RAND()").setMaxResults(10).getResultList();
+		
+		if (institution != null) {
+			response(institution);
+		}
+		else {
+			result.notFound();
+		}
+		
+		return institution;
+	}
+	
+	@Get("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/donation-stats")
+	public int[] donationStats(final String slug) {
+		final Institution institution = ps.getSlug(slug);
+		final int[] stats = new int[2];
+		
+		if (institution != null) {
+			final Object[] rawStats = (Object[]) ps.query("SELECT count(*), sum(value) FROM Payment WHERE institution = :institution").setParameter("institution", institution).getSingleResult();
+			
+			stats[0] = ((Number) rawStats[0]).intValue();
+			stats[1] = rawStats[1] == null ? 0 : (((Number) rawStats[1]).intValue() / 100);
+			
+			final Map<String, Object> response = new HashMap<>(2);
+			response.put("count", stats[0]);
+			response.put("value", stats[1]);
+			
+			response(response);
+		}
+		else {
+			result.notFound();
+		}
+		
+		return stats;
+	}
+	
+	@Get("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/posts")
+	public List<InstitutionPost> posts(final String slug) {
+		final Institution institution = ps.getSlug(slug);
+		List<InstitutionPost> posts = null;
+		
+		if (institution != null) {
+			posts = ps.query("FROM InstitutionPost WHERE institution = :institution AND published = true ORDER BY creation.time DESC").setParameter("institution", institution).getResultList();
+			serializer(posts).excludeAll().include("id", "slug", "title", "subtitle", "creation", "creation.creator").serialize();
+		}
+		else {
+			result.notFound();
+		}
+		
+		return posts;
 	}
 }

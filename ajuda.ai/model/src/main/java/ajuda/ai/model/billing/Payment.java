@@ -28,6 +28,7 @@ import com.google.gson.annotations.Expose;
 
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.user.User;
+import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 @Entity
 public class Payment implements Serializable {
@@ -93,13 +94,16 @@ public class Payment implements Serializable {
 	@Column(length = 128)
 	private String payeeEmail;
 	
+	@SkipSerialization
 	@OrderBy("timestamp DESC")
 	@OneToMany(mappedBy = "payment", orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<PaymentEvent> events;
 	
 	@PrePersist
 	public void beforeSave() {
-		if (uuid == null) { uuid = UUID.randomUUID().toString().replaceAll("-", "").toLowerCase(); }
+		if (uuid == null) {
+			uuid = UUID.randomUUID().toString().replaceAll("-", "").toLowerCase();
+		}
 	}
 	
 	public Long getId() {
@@ -234,7 +238,7 @@ public class Payment implements Serializable {
 		return uuid;
 	}
 
-	public void setUuid(String uuid) {
+	public void setUuid(final String uuid) {
 		this.uuid = uuid;
 	}
 }

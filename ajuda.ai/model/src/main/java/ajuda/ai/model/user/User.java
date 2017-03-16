@@ -14,6 +14,8 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.google.gson.annotations.Expose;
 
+import br.com.caelum.vraptor.serialization.SkipSerialization;
+
 /**
  * Representa um usuário
  * @author Rafael Lins
@@ -21,9 +23,8 @@ import com.google.gson.annotations.Expose;
  */
 @Entity
 public class User implements Serializable {
-	/** Serial Version UID */
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -8760246744870950716L;
+
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
@@ -34,6 +35,7 @@ public class User implements Serializable {
 	private String username;
 	
 	@NotBlank
+	@SkipSerialization
 	@Size(min = 60, max = 60)
 	@Column(nullable = false, length = 60)
 	private String password;
@@ -56,12 +58,12 @@ public class User implements Serializable {
 	@Size(max = 128)
 	@Column(nullable = false, length = 128)
 	private String lastname;
-
+	
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -69,7 +71,7 @@ public class User implements Serializable {
 		return username;
 	}
 
-	public void setUsername(String username) {
+	public void setUsername(final String username) {
 		this.username = username;
 	}
 
@@ -77,7 +79,7 @@ public class User implements Serializable {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(final String password) {
 		this.password = password;
 	}
 
@@ -85,7 +87,7 @@ public class User implements Serializable {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(final String email) {
 		this.email = email;
 	}
 
@@ -93,7 +95,7 @@ public class User implements Serializable {
 		return firstname;
 	}
 
-	public void setFirstname(String firstname) {
+	public void setFirstname(final String firstname) {
 		this.firstname = firstname;
 	}
 
@@ -101,7 +103,7 @@ public class User implements Serializable {
 		return lastname;
 	}
 
-	public void setLastname(String lastname) {
+	public void setLastname(final String lastname) {
 		this.lastname = lastname;
 	}
 }

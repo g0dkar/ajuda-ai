@@ -5,14 +5,11 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.google.gson.annotations.Expose;
 
 import ajuda.ai.model.user.User;
 
@@ -27,22 +24,18 @@ public class CreationInfo implements Serializable {
 	/** Serial Version UID */
 	private static final long serialVersionUID = 1L;
 	
-	@Expose
 	@Column(nullable = false, name = "creation_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date time;
 	
-	@Expose
 	@Column(name = "last_update_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate;
 	
-	@Expose
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	private User creator;
 	
-	@Expose
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	private User lastUpdateBy;
 	
 	/**
