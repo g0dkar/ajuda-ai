@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -32,6 +33,7 @@ public class User implements Serializable {
 	@NotBlank
 	@Size(max = 64)
 	@Column(nullable = false, unique = true, length = 64)
+	@Pattern(regexp = "[a-zA-Z0-9.\\-]+")
 	private String username;
 	
 	@NotBlank

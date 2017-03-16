@@ -1,11 +1,14 @@
 package ajuda.ai.backend.v1;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.serialization.Serializer;
+import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
 
@@ -20,12 +23,35 @@ public abstract class ApiController {
 	protected Validator validator;
 	protected HttpServletRequest request;
 	
-	protected void response(final Object object) {
-		if (object == null) {
+	protected boolean errorResponse() {
+		if (validator.hasErrors()) {
+			final List<Message> errors = validator.getErrors();
+			
+			if ("application/xml".equals(request.getContentType())) {
+				validator.onErrorUse(Results.xml()).from(errors);
+			}
+			else {
+				validator.onErrorUse(Results.json()).from(errors);
+			}
+		}
+		
+		return validator.hasErrors();
+	}
+	
+	protected void response() {
+		if (!errorResponse()) {
 			result.nothing();
 		}
-		else {
-			serializer(object).recursive().serialize();
+	}
+	
+	protected void response(final Object object) {
+		if (!errorResponse()) {
+			if (object == null) {
+				result.nothing();
+			}
+			else {
+				serializer(object).recursive().serialize();
+			}
 		}
 	}
 	

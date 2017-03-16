@@ -20,18 +20,26 @@ public class UserPersistence implements Persistence<User> {
 	UserPersistence() { this(null, null); }
 	
 	@Inject
-	public UserPersistence(PersistenceService ps, ConfigurationPersistence conf) {
+	public UserPersistence(final PersistenceService ps, final ConfigurationPersistence conf) {
 		this.ps = ps;
 		this.conf = conf;
 	}
 
 	@Override
-	public User get(Long id) {
+	public User get(final Long id) {
 		return ps.find(User.class, id);
 	}
 	
+	public User getUsername(final String username) {
+		return (User) ps.createQuery("FROM User WHERE username = :username").setParameter("username", username).getSingleResult();
+	}
+	
+	public User getUsernameOrEmail(final String username) {
+		return (User) ps.createQuery("FROM User WHERE username = :username OR email = :username").setParameter("username", username).getSingleResult();
+	}
+	
 	@Override
-	public void persist(User object) {
+	public void persist(final User object) {
 		if (!object.getPassword().matches("\\$[0-9a-zA-Z]{2}\\$\\d{1,2}\\$.+")) {
 			object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt(conf.get("bcrypt.log_rounds", 10))));
 		}
@@ -40,7 +48,7 @@ public class UserPersistence implements Persistence<User> {
 	}
 	
 	@Override
-	public User merge(User object) {
+	public User merge(final User object) {
 		if (object.getPassword() == null) {
 			object.setPassword((String) ps.createQuery("SELECT password FROM User WHERE id = :id").setParameter("id", object.getId()).getSingleResult());
 		}
@@ -52,13 +60,13 @@ public class UserPersistence implements Persistence<User> {
 	}
 
 	@Override
-	public User remove(User object) {
+	public User remove(final User object) {
 		ps.remove(object);
 		return object;
 	}
 
 	@Override
-	public Query query(String query) {
+	public Query query(final String query) {
 		return ps.createQuery(query);
 	}
 
