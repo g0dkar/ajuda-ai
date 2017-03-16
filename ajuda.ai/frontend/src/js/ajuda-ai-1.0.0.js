@@ -42187,7 +42187,7 @@ angular.module('ui.router.state')
 	var app = angular.module("ajuda-ai", ["ngAnimate", "ui.router"]);
 	var debug = true;
 	var html5mode = false;
-	var apiEndpoint = "http://localhost/api";
+	var apiEndpoint = "http://localhost:8080/v1";
 	
 	/* ***************************************** */
 	/* Controllers                               */

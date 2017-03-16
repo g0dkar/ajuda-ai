@@ -41,20 +41,20 @@
 	</div>
 	
 	<div class="row home-institution-list">
-		<div class="loading-indicator" ng-show="homeInstitutionsLoading || !homeInstitutions.length"></div>
-		<div class="col-xs-12 col-sm-6 col-lg-4" ng-repeat="inst in homeInstitutions">
-			<a ui-sref="main.institution(inst.slug)}" class="panel panel-default institution-panel">
+		<div class="loading-indicator" ng-if="!homeInstitutions.length"></div>
+		<div class="col-xs-12 col-sm-6 col-lg-4 home-institutions-list-item" ng-repeat="inst in homeInstitutions">
+			<a ui-sref="main.instituicao({ slug: inst.slug })" class="panel panel-default institution-panel">
 				<span class="panel-body">
 					<span class="panel-image">
-						<img ng-src="::(inst.banner || 'img/default-banner.jpg')" alt="Banner da Insituição" class="panel-image-img">
+						<img ng-src="{{::(inst.banner || 'img/default-banner.jpg')}}" alt="Banner da Insituição" class="panel-image-img">
 					</span>
 					<span class="panel-avatar">
-						<img ng-src="::(inst.logo || 'img/institution-default.jpg')" alt="Logo da Instituição" class="panel-avatar-img">
+						<img ng-src="{{::(inst.logo || 'img/institution-default.jpg')}}" alt="Logo da Instituição" class="panel-avatar-img">
 					</span>
 					<span class="panel-title-bg">
 						<span class="panel-title" ng-bind="::inst.name"></span>
 					</span>
-					<span class="panel-subtitle"><strong class="helper-count" ng-bind="::inst.attributes.helpers | number"></strong><strong class="donations-count" ng-bind="::(inst.attributes.donations / 100) | number"></strong></span>
+					<span class="panel-subtitle"><strong class="helper-count" ng-bind="::inst.attributes.helpers | number"></strong><strong class="donations-count" ng-bind="::(inst.attributes.donations / 100) | currency"></strong></span>
 				</span>
 			</a>
 		</div>

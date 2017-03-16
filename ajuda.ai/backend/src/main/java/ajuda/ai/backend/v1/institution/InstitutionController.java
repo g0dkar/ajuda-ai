@@ -93,16 +93,17 @@ public class InstitutionController extends ApiController {
 	
 	@Get("/random-list")
 	public List<Institution> randomList() {
-		final List<Institution> institution = ps.query("FROM Institution ORDER BY RAND()").setMaxResults(10).getResultList();
+		final List<Institution> institutions = ps.query("FROM Institution ORDER BY RAND()").setMaxResults(12).getResultList();
 		
-		if (institution != null) {
-			response(institution);
+		if (institutions != null) {
+			ps.addHelperCountDonationsValue(institutions);
+			response(institutions);
 		}
 		else {
 			result.notFound();
 		}
 		
-		return institution;
+		return institutions;
 	}
 	
 	@Get("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/donation-stats")
@@ -111,7 +112,7 @@ public class InstitutionController extends ApiController {
 		final int[] stats = new int[2];
 		
 		if (institution != null) {
-			final Object[] rawStats = (Object[]) ps.query("SELECT count(*), sum(value) FROM Payment WHERE institution = :institution AND paid = true AND cancelled = false").setParameter("institution", institution).getSingleResult();
+			final Object[] rawStats = ps.getHelperCountDonationsValue(institution);
 			
 			stats[0] = ((Number) rawStats[0]).intValue();
 			stats[1] = rawStats[1] == null ? 0 : ((Number) rawStats[1]).intValue();
