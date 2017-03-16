@@ -21,6 +21,11 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.validator.Validator;
 
+/**
+ * Representa a parte da API relacionada a {@link Institution} e {@link InstitutionPost}.
+ * @author Rafael Lins
+ *
+ */
 @Controller
 @Path("/institution")
 public class InstitutionController extends ApiController {
