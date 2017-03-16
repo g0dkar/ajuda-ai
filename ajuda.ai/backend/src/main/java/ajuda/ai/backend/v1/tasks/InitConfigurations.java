@@ -17,6 +17,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 
 import ajuda.ai.backend.v1.util.LoremIpsum;
+import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.extra.CreationInfo;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionPost;
@@ -105,6 +106,19 @@ public class InitConfigurations {
 				entityManager.persist(post);
 			}
 			
+			for (int i = 0, max = 5 + rng.nextInt(45); i < max; i++) {
+				final Payment payment = new Payment();
+				payment.setInstitution(ama);
+				payment.setPaid(rng.nextBoolean());
+				payment.setDescription("Pagamento Aleatório de Teste");
+				payment.setHelper(rafael);
+				payment.setCancelled(rng.nextBoolean());
+				payment.setTimestamp(new Date());
+				payment.setValue(100 + rng.nextInt(50000));
+				payment.setPaymentService(ama.getPaymentService());
+				entityManager.persist(payment);
+			}
+			
 			log.info("AMA foi cadastrada: ID {} = /{}", ama.getId(), ama.getSlug());
 		}
 		
@@ -149,6 +163,19 @@ public class InitConfigurations {
 				post.setPublished(rng.nextBoolean());
 				post.setContent(lorem.getParagraphs(1 + rng.nextInt(4)));
 				entityManager.persist(post);
+			}
+			
+			for (int i = 0, max = 5 + rng.nextInt(45); i < max; i++) {
+				final Payment payment = new Payment();
+				payment.setInstitution(apipa);
+				payment.setPaid(rng.nextBoolean());
+				payment.setDescription("Pagamento Aleatório de Teste");
+				payment.setHelper(rafael);
+				payment.setCancelled(rng.nextBoolean());
+				payment.setTimestamp(new Date());
+				payment.setValue(100 + rng.nextInt(50000));
+				payment.setPaymentService(apipa.getPaymentService());
+				entityManager.persist(payment);
 			}
 			
 			log.info("APIPA foi cadastrada: ID {} = /{}", apipa.getId(), apipa.getSlug());

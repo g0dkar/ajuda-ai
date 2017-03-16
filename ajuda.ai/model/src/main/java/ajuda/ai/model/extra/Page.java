@@ -66,9 +66,6 @@ public class Page implements Serializable {
 	@Column(nullable = false)
 	private boolean published;
 	
-	@Column(nullable = false)
-	private long pageviews;
-	
 	@PreUpdate
 	@PrePersist
 	public void beforeSave() {
@@ -151,13 +148,5 @@ public class Page implements Serializable {
 
 	public void setSlug(final String slug) {
 		this.slug = slug;
-	}
-	
-	public long getPageviews() {
-		return pageviews;
-	}
-
-	public void setPageviews(final long pageviews) {
-		this.pageviews = pageviews;
 	}
 }

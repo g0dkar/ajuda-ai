@@ -106,10 +106,10 @@ public class InstitutionController extends ApiController {
 		final int[] stats = new int[2];
 		
 		if (institution != null) {
-			final Object[] rawStats = (Object[]) ps.query("SELECT count(*), sum(value) FROM Payment WHERE institution = :institution").setParameter("institution", institution).getSingleResult();
+			final Object[] rawStats = (Object[]) ps.query("SELECT count(*), sum(value) FROM Payment WHERE institution = :institution AND paid = true AND cancelled = false").setParameter("institution", institution).getSingleResult();
 			
 			stats[0] = ((Number) rawStats[0]).intValue();
-			stats[1] = rawStats[1] == null ? 0 : (((Number) rawStats[1]).intValue() / 100);
+			stats[1] = rawStats[1] == null ? 0 : ((Number) rawStats[1]).intValue();
 			
 			final Map<String, Object> response = new HashMap<>(2);
 			response.put("count", stats[0]);
@@ -138,5 +138,27 @@ public class InstitutionController extends ApiController {
 		}
 		
 		return posts;
+	}
+	
+	@Get
+	@Path(value = "/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/{postSlug:[a-z][a-z0-9\\-]*[a-z0-9]}", priority = Path.LOW)
+	public Institution getFromSlug(final String slug, final String postSlug) {
+		final Institution institution = ps.getSlug(slug);
+		
+		if (institution != null) {
+			final InstitutionPost post = (InstitutionPost) ps.query("FROM InstitutionPost WHERE slug = :slug AND institution = :institution AND published = true").setParameter("slug", postSlug).setParameter("institution", institution).getSingleResult();
+			
+			if (post != null) {
+				serializer(post).recursive().exclude("institution").serialize();
+			}
+			else {
+				result.notFound();
+			}
+		}
+		else {
+			result.notFound();
+		}
+		
+		return institution;
 	}
 }
