@@ -42298,6 +42298,14 @@ angular.module('ui.router.state')
 		});
 	}]);
 	
+	app.controller("AdminInstituicaoEditarController", ["$scope", "$http", "institution", function ($scope, $http, institution) {
+		$scope.institution = institution;
+		
+		$scope.doSubmit = function (evt) {
+			evt.preventDefault();
+		};
+	}]);
+	
 	/* ***************************************** */
 	/* Configurações e outras coisas             */
 	/* ***************************************** */
@@ -42493,7 +42501,21 @@ angular.module('ui.router.state')
 		.state("admin.instituicaoEditar", {
 			url: "/:slug",
 			templateUrl: "/fragments/admin.instituicaoEditar.html",
-			controller: "AdminInstituicaoEditarController"
+			controller: "AdminInstituicaoEditarController",
+			resolve: {
+				institution: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
+					if ($stateParams.institution) {
+						return $stateParams.institution;
+					}
+					else {
+						return requireHttp("adminInstEditar", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+					}
+				}]
+			},
+			params: {
+				slug: "",
+				institution: null
+			}
 		})
 		
 		.state("random", {
@@ -42507,8 +42529,17 @@ angular.module('ui.router.state')
 			controller: "InstitutionController",
 			resolve: {
 				institution: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
-					return requireHttp("mainInst", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+					if ($stateParams.institution) {
+						return $stateParams.institution;
+					}
+					else {
+						return requireHttp("mainInst", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+					}
 				}]
+			},
+			params: {
+				slug: "",
+				institution: null
 			}
 		})
 		

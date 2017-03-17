@@ -20,7 +20,10 @@ module.exports = function(grunt) {
 				src: [
 					"<%= path.bower %>/angular/angular.js",
 					"<%= path.bower %>/angular-animate/angular-animate.js",
+					"<%= path.bower %>/angular-sinitize/angular-sinitize.js",
 					"<%= path.bower %>/angular-ui-router/release/angular-ui-router.js",
+					"<%= path.bower %>/showdown/dist/showdown.js",
+					"<%= path.bower %>/ng-showdown/dist/ng-showdown.js",
 					"<%= path.src %>/js/ajudaai.js"
 				],
 				dest: "<%= path.src %>/js/ajuda-ai-1.0.0.js",
@@ -39,7 +42,7 @@ module.exports = function(grunt) {
 				sourceMap: true,
 				sourceMapIncludeSources: true,
 				sourceMapIn: "<%= path.src %>/js/ajuda-ai-1.0.0.js.map",
-				compress: { drop_console: false }
+				compress: { drop_console: true }
 			},
 			dev: {
 				files: {

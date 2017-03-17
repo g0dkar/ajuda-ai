@@ -12,7 +12,7 @@
 					
 						<form action="#" ng-submit="doLogin($event)" method="post" class="form-horizontal">
 							<div class="form-group">
-								<label for="username" class="col-sm-3 control-label">Usuário</label>
+								<label for="username" class="col-sm-3 control-label required-label">Usuário</label>
 								<div class="col-sm-9">
 									<input type="text" class="form-control" id="username" placeholder="Pode ser também seu e-mail ;)" aria-describedby="username-help-block" ng-model="data.username" autofocus ng-disabled="loggingIn">
 									<p id="username-help-block" class="help-block">Seu nome de usuário <strong>ou e-mail</strong> vai neste campo.</p>
@@ -20,7 +20,7 @@
 							</div>
 							
 							<div class="form-group">
-								<label for="password" class="col-sm-3 control-label">Senha</label>
+								<label for="password" class="col-sm-3 control-label required-label">Senha</label>
 								<div class="col-sm-9">
 									<input type="password" class="form-control" id="password" placeholder="Veja se não tem ninguém olhando, hein!" aria-describedby="password-help-block" ng-model="data.password" ng-disabled="loggingIn">
 									<p id="password-help-block" class="help-block">Sua senha. Cuide muito bem dela, ok?</p>

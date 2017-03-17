@@ -6996,7 +6996,6 @@ nav.navbar-ajuda-ai {
 	border-radius: 4px 4px 0 0;
 }
 .panel .panel-title {
-	margin: -15px -15px 15px;
 	border-bottom: 1px solid #f0f0f0;
 	padding: 15px;
 	font-weight: 600;
@@ -7322,7 +7321,7 @@ nav.navbar-ajuda-ai {
 	padding-bottom: 125px;
 }
 .login-box .panel-title {
-	margin-top: 0;
+	margin: 0 -15px 15px;
 }
 #admin-page {
 	padding-top: 15px;

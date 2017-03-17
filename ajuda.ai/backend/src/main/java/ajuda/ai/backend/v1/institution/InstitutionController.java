@@ -194,7 +194,7 @@ public class InstitutionController extends ApiController {
 			institution.getAttributes().put("postsCount", ip.query("SELECT COUNT(*) FROM InstitutionPost WHERE institution = :inst").setParameter("inst", institution).getSingleResult().toString());
 		}
 		
-		serializer(data).recursive().exclude("institutions.description", "institutions.creation.creator", "institutions.creation.lastUpdateBy").serialize();
+		response(data);
 		
 		return data;
 	}

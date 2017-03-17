@@ -1,5 +1,5 @@
 (function (angular, window) {
-	var app = angular.module("ajuda-ai", ["ngAnimate", "ui.router"]);
+	var app = angular.module("ajuda-ai", ["ngAnimate", "ui.router", "ng-showdown"]);
 	var debug = true;
 	var html5mode = false;
 	var apiEndpoint = "http://localhost:8080/v1";
@@ -111,6 +111,14 @@
 		}, function () {
 			$scope.loading = false;
 		});
+	}]);
+	
+	app.controller("AdminInstituicaoEditarController", ["$scope", "$http", "institution", function ($scope, $http, institution) {
+		$scope.institution = institution;
+		
+		$scope.doSubmit = function (evt) {
+			evt.preventDefault();
+		};
 	}]);
 	
 	/* ***************************************** */
@@ -308,7 +316,21 @@
 		.state("admin.instituicaoEditar", {
 			url: "/:slug",
 			templateUrl: "/fragments/admin.instituicaoEditar.html",
-			controller: "AdminInstituicaoEditarController"
+			controller: "AdminInstituicaoEditarController",
+			resolve: {
+				institution: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
+					if ($stateParams.institution) {
+						return $stateParams.institution;
+					}
+					else {
+						return requireHttp("adminInstEditar", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+					}
+				}]
+			},
+			params: {
+				slug: "",
+				institution: null
+			}
 		})
 		
 		.state("random", {
@@ -322,8 +344,17 @@
 			controller: "InstitutionController",
 			resolve: {
 				institution: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
-					return requireHttp("mainInst", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+					if ($stateParams.institution) {
+						return $stateParams.institution;
+					}
+					else {
+						return requireHttp("mainInst", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+					}
 				}]
+			},
+			params: {
+				slug: "",
+				institution: null
 			}
 		})
 		
