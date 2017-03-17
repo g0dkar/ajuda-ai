@@ -29,7 +29,7 @@
 		});
 	}]);
 	
-	app.controller("LoginController", ["$scope", "$http", "$window", "$state", "$stateParams", "$timeout", function ($scope, $http, $window, $state, $stateParams, $timeout) {
+	app.controller("LoginController", ["$scope", "$http", "$window", "$state", "$stateParams", function ($scope, $http, $window, $state, $stateParams) {
 		$scope.data = { username: "", password: "" };
 		
 		$scope.loggingIn = false;
@@ -38,35 +38,25 @@
 			evt.preventDefault();
 			$scope.loggingIn = true;
 			
-			$timeout(function () {
-				$scope.setUser({ id: 1, username: "g0dkar", firstname: "Rafael", lastname: "Lins" });
-				
-				if ($stateParams.nextState) {
-					$state.go($stateParams.nextState, $stateParams.nextStateParams);
+			$http.post(apiEndpoint + "/auth/login", $scope.data).then(function (response) {
+				if (response.data && response.data.id) {
+					$scope.setUser(response.data);
+					
+					if ($stateParams.nextState && $stateParams.nextState.name) {
+						$state.go($stateParams.nextState.name, $stateParams.nextStateParams);
+					}
+					else {
+						$state.go("admin.index");
+					}
 				}
 				else {
-					$state.go("admin.index");
+					$scope.loggingIn = false;
+					$window.alert("Usuário ou Senha incorretos. Por favor, tente novamente.");
 				}
-			}, 1500);
-//			$http.post(apiEndpoint + "/login").then(function (response) {
-//				if (response.data && response.data.id) {
-//					$scope.setUser(response.data.user);
-//					
-//					if ($stateParams.nextState) {
-//						$state.go($stateParams.nextState, $stateParams.nextStateParams);
-//					}
-//					else {
-//						$state.go("admin.index");
-//					}
-//				}
-//				else {
-//					$scope.loggingIn = false;
-//					$window.alert("Usuário ou Senha incorretos. Por favor, tente novamente.");
-//				}
-//			}, function () {
-//				$scope.loggingIn = false;
-//				$window.alert("Falha na autenticação. Por favor, tente novamente.");
-//			});
+			}, function () {
+				$scope.loggingIn = false;
+				$window.alert("Falha na autenticação. Por favor, tente novamente.");
+			});
 		};
 	}]);
 	
@@ -74,72 +64,52 @@
 		$scope.loading = true;
 		
 		$scope.dashData = {
-			donations: parseInt(Math.random() * 100),
-			institutions: parseInt(Math.random() * 15),
-			value: parseInt(Math.random() * 1000000),
-			meanValue: parseInt(Math.random() * 10000),
-			posts: [{
-				id: 123,
-				slug: "teste",
-				title: "Alguma coisa aconteceu",
-				subtitle: "Sério mesmo, aconteceu cara! Você não vai acreditar nisso! Altamente muito louco!",
-				institution: { slug: "insteste", name: "Instituição de Testes" }
-			},{
-				id: 123,
-				slug: "teste",
-				title: "Alguma coisa aconteceu",
-				subtitle: "Sério mesmo, aconteceu cara! Você não vai acreditar nisso! Altamente muito louco!",
-				institution: { slug: "insteste", name: "Instituição de Testes" }
-			},{
-				id: 123,
-				slug: "teste",
-				title: "Alguma coisa aconteceu",
-				subtitle: "Sério mesmo, aconteceu cara! Você não vai acreditar nisso! Altamente muito louco!",
-				institution: { slug: "insteste", name: "Instituição de Testes" }
-			},{
-				id: 123,
-				slug: "teste",
-				title: "Alguma coisa aconteceu",
-				subtitle: "Sério mesmo, aconteceu cara! Você não vai acreditar nisso! Altamente muito louco!",
-				institution: { slug: "insteste", name: "Instituição de Testes" }
-			},{
-				id: 123,
-				slug: "teste",
-				title: "Alguma coisa aconteceu",
-				subtitle: "Sério mesmo, aconteceu cara! Você não vai acreditar nisso! Altamente muito louco!",
-				institution: { slug: "insteste", name: "Instituição de Testes" }
-			}],
-			payments: [{
-				value: parseInt(Math.random() * 10000),
-				institution: { id: 123, slug: "ama", name: "AMA PI - Associação de Amigos do Autista do Piauí" }
-			},{
-				value: parseInt(Math.random() * 10000),
-				institution: { id: 123, slug: "ama", name: "AMA PI - Associação de Amigos do Autista do Piauí" }
-			},{
-				value: parseInt(Math.random() * 10000),
-				institution: { id: 123, slug: "ama", name: "AMA PI - Associação de Amigos do Autista do Piauí" }
-			}]
+			donations: 0,
+			institutions: 0,
+			value: 0,
+			meanValue: 0
 		};
 		
-		var update = function () {
-			$http.get(apiEndpoint + "/dashboard-data").then(function (response) {
-				$scope.loading = false;
-				
-				if (angular.isObject(response.data)) {
-					$scope.dashData = response.data;
-				}
-			}, function () {
-				$scope.loading = false;
-			});
+		$http.get(apiEndpoint + "/profile/dashboard-data").then(function (response) { 
+			$scope.loading = false;
+			
+			if (angular.isObject(response.data)) {
+				$scope.dashData = response.data;
+			}
+		}, function () {
+			$scope.loading = false;
+		});
+	}]);
+	
+	app.controller("AdminInstituicoesController", ["$scope", "$http", "$interval", function ($scope, $http, $interval) {
+		$scope.loading = true;
+		
+		$scope.dashData = {
+			value: 0,
+			helpers: 0,
+			maxValue: 0,
+			meanValue: 0,
+			donations: 0,
+			institutionCount: 0,
+			institutions: []
 		};
 		
-		update();
+		$scope.servicoPagamento = function (servico) {
+			switch (servico) {
+				case "moip": return "MoIP";
+				case "pagseguro": return "PagSeguro";
+				default: return servico;
+			}
+		};
 		
-		// Atualiza a cada 5 minutos
-		var updateInterval = $interval(update, 300000);
-		
-		$scope.$on("$destroy", function () {
-			$interval.cancel(updateInterval);
+		$http.get(apiEndpoint + "/institution/dashboard-data").then(function (response) { 
+			$scope.loading = false;
+			
+			if (angular.isObject(response.data)) {
+				$scope.dashData = response.data;
+			}
+		}, function () {
+			$scope.loading = false;
 		});
 	}]);
 	
@@ -192,7 +162,7 @@
 			}
 			
 			evt.preventDefault(); // stop current execution
-			$state.go("main.login", { nextState: toState, nextStateParams: toParams }, { location: false }); // go to login
+			$state.go("main.login", { nextState: toState, nextStateParams: toParams }); // go to login
 		});
 	}]);
 	
@@ -249,6 +219,9 @@
 	
 	// ROUTER
 	app.config(["$httpProvider", "$locationProvider", "$compileProvider", "$urlRouterProvider", "$urlMatcherFactoryProvider", "$stateProvider", function ($httpProvider, $locationProvider, $compileProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $stateProvider) {
+		// Manda o JSESSIONID sempre
+		$httpProvider.defaults.withCredentials = true;
+		
 //		$httpProvider.interceptors.push("bearerInterceptor");
 		$httpProvider.interceptors.push("errorInterceptor");
 		
@@ -287,7 +260,11 @@
 		.state("main.login", {
 			url: "/login",
 			templateUrl: "/fragments/main.login.html",
-			controller: "LoginController"
+			controller: "LoginController",
+			params: {
+				nextState: { name: "admin.index" }, 
+				nextStateParams: {}
+			}
 		})
 		
 		.state("admin", {
@@ -301,17 +278,17 @@
 							$scope.setUser(response.data);
 						}
 						else {
-//							$scope.setUser({});
-//							$state.go("main.index");
+							$scope.setUser({});
+							$state.go("main.index");
 						}
 					}, function () {
-//						$scope.setUser({});
-//						$state.go("main.index");
+						$scope.setUser({});
+						$state.go("main.index");
 					});
 				};
 				
 				// Atualiza a cada 5 minutos
-				var updateInterval = $interval(update, 3000);
+				var updateInterval = $interval(update, 300000);
 				
 				$scope.$on("$destroy", function () {
 					$interval.cancel(updateInterval);
@@ -322,6 +299,16 @@
 			url: "",
 			templateUrl: "/fragments/admin.index.html",
 			controller: "AdminIndexController"
+		})
+		.state("admin.instituicoes", {
+			url: "/instituicoes",
+			templateUrl: "/fragments/admin.instituicoes.html",
+			controller: "AdminInstituicoesController"
+		})
+		.state("admin.instituicaoEditar", {
+			url: "/:slug",
+			templateUrl: "/fragments/admin.instituicaoEditar.html",
+			controller: "AdminInstituicaoEditarController"
 		})
 		
 		.state("random", {

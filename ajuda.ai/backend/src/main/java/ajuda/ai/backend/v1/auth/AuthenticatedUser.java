@@ -17,7 +17,7 @@ public class AuthenticatedUser implements Serializable {
 	
 	private User user;
 	
-	public void setUser(User user) {
+	public void setUser(final User user) {
 		this.user = user;
 	}
 	

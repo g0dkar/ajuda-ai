@@ -10,11 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 
 import ajuda.ai.backend.v1.ApiController;
+import ajuda.ai.backend.v1.auth.Auth;
+import ajuda.ai.backend.v1.auth.AuthenticatedUser;
 import ajuda.ai.backend.v1.recaptcha.ReCaptchaService;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionPost;
 import ajuda.ai.payment.PaymentService;
 import ajuda.ai.persistence.model.institution.InstitutionPersistence;
+import ajuda.ai.util.StringUtils;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -29,29 +32,31 @@ import br.com.caelum.vraptor.validator.Validator;
 @Controller
 @Path("/institution")
 public class InstitutionController extends ApiController {
-	private final InstitutionPersistence ps;
+	private final InstitutionPersistence ip;
 	private final PaymentService paymentService;
 	private final ReCaptchaService recaptcha;
+	private final AuthenticatedUser authUser;
 	
 	/** @deprecated CDI **/ @Deprecated
-	InstitutionController() { this(null, null, null, null, null, null, null); }
+	InstitutionController() { this(null, null, null, null, null, null, null, null); }
 	
 	@Inject
-	public InstitutionController(final Logger log, final Result result, final HttpServletRequest request, final Validator validator, final InstitutionPersistence ps, final PaymentService paymentService, final ReCaptchaService recaptcha) {
+	public InstitutionController(final Logger log, final Result result, final HttpServletRequest request, final Validator validator, final InstitutionPersistence ip, final PaymentService paymentService, final ReCaptchaService recaptcha, final AuthenticatedUser authUser) {
 		this.log = log;
 		this.result = result;
 		this.request = request;
 		this.validator = validator;
 		
-		this.ps = ps;
+		this.ip = ip;
 		this.paymentService = paymentService;
 		this.recaptcha = recaptcha;
+		this.authUser = authUser;
 	}
 	
 	@Get
 	@Path(value = "/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}", priority = Path.LOW)
 	public Institution getFromSlug(final String slug) {
-		final Institution institution = ps.getSlug(slug);
+		final Institution institution = ip.getSlug(slug);
 		
 		if (institution != null) {
 			response(institution);
@@ -65,7 +70,7 @@ public class InstitutionController extends ApiController {
 	
 	@Get("/{id:\\d+}")
 	public Institution getFromId(final Long id) {
-		final Institution institution = ps.get(id);
+		final Institution institution = ip.get(id);
 		
 		if (institution != null) {
 			response(institution);
@@ -79,7 +84,7 @@ public class InstitutionController extends ApiController {
 	
 	@Get("/random")
 	public Institution random() {
-		final Institution institution = (Institution) ps.query("FROM Institution ORDER BY RAND()").setMaxResults(1).getSingleResult();
+		final Institution institution = (Institution) ip.query("FROM Institution ORDER BY RAND()").setMaxResults(1).getSingleResult();
 		
 		if (institution != null) {
 			response(institution);
@@ -92,11 +97,12 @@ public class InstitutionController extends ApiController {
 	}
 	
 	@Get("/random-list")
-	public List<Institution> randomList() {
-		final List<Institution> institutions = ps.query("FROM Institution ORDER BY RAND()").setMaxResults(12).getResultList();
+	public List<Institution> randomList(final String amount) {
+		final int maxResults = Math.max(1, Math.min(StringUtils.parseInteger(amount, 12), 30));
+		final List<Institution> institutions = ip.query("FROM Institution ORDER BY RAND()").setMaxResults(maxResults).getResultList();
 		
 		if (institutions != null) {
-			ps.addHelperCountDonationsValue(institutions);
+			ip.addHelperCountDonationsValue(institutions);
 			response(institutions);
 		}
 		else {
@@ -108,11 +114,11 @@ public class InstitutionController extends ApiController {
 	
 	@Get("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/donation-stats")
 	public int[] donationStats(final String slug) {
-		final Institution institution = ps.getSlug(slug);
+		final Institution institution = ip.getSlug(slug);
 		final int[] stats = new int[2];
 		
 		if (institution != null) {
-			final Object[] rawStats = ps.getHelperCountDonationsValue(institution);
+			final Object[] rawStats = ip.getHelperCountDonationsValue(institution);
 			
 			stats[0] = ((Number) rawStats[0]).intValue();
 			stats[1] = rawStats[1] == null ? 0 : ((Number) rawStats[1]).intValue();
@@ -132,11 +138,11 @@ public class InstitutionController extends ApiController {
 	
 	@Get("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/posts")
 	public List<InstitutionPost> posts(final String slug) {
-		final Institution institution = ps.getSlug(slug);
+		final Institution institution = ip.getSlug(slug);
 		List<InstitutionPost> posts = null;
 		
 		if (institution != null) {
-			posts = ps.query("FROM InstitutionPost WHERE institution = :institution AND published = true ORDER BY creation.time DESC").setParameter("institution", institution).getResultList();
+			posts = ip.query("FROM InstitutionPost WHERE institution = :institution AND published = true ORDER BY creation.time DESC").setParameter("institution", institution).getResultList();
 			serializer(posts).excludeAll().include("id", "slug", "title", "subtitle", "creation", "creation.creator").serialize();
 		}
 		else {
@@ -149,10 +155,10 @@ public class InstitutionController extends ApiController {
 	@Get
 	@Path(value = "/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/{postSlug:[a-z][a-z0-9\\-]*[a-z0-9]}", priority = Path.LOW)
 	public Institution getFromSlug(final String slug, final String postSlug) {
-		final Institution institution = ps.getSlug(slug);
+		final Institution institution = ip.getSlug(slug);
 		
 		if (institution != null) {
-			final InstitutionPost post = (InstitutionPost) ps.query("FROM InstitutionPost WHERE slug = :slug AND institution = :institution AND published = true").setParameter("slug", postSlug).setParameter("institution", institution).getSingleResult();
+			final InstitutionPost post = (InstitutionPost) ip.query("FROM InstitutionPost WHERE slug = :slug AND institution = :institution AND published = true").setParameter("slug", postSlug).setParameter("institution", institution).getSingleResult();
 			
 			if (post != null) {
 				serializer(post).recursive().exclude("institution").serialize();
@@ -166,5 +172,30 @@ public class InstitutionController extends ApiController {
 		}
 		
 		return institution;
+	}
+	
+	@Auth
+	@Get("/dashboard-data")
+	public InstitutionDashboardData dashboardData() {
+		final InstitutionDashboardData data = new InstitutionDashboardData();
+		
+		final Object[] counts = (Object[]) ip.query("SELECT COUNT(*), SUM(value), COUNT(DISTINCT helper), MAX(value), ROUND(AVG(value), 0) FROM Payment WHERE institution IN (SELECT id FROM Institution WHERE creation.creator = :me) AND cancelled = false AND paid = true").setParameter("me", authUser.get()).getSingleResult();
+		
+		data.setDonations(counts[0]);
+		data.setValue(counts[1]);
+		data.setHelpers(counts[2]);
+		data.setMaxValue(counts[3]);
+		data.setMeanValue(counts[4]);
+		
+		data.setInstitutionCount(ip.query("SELECT count(*) FROM Institution WHERE creation.creator = :me").setParameter("me", authUser.get()).getSingleResult());
+		data.setInstitutions(ip.query("FROM Institution WHERE creation.creator = :me ORDER BY creation.time DESC").setParameter("me", authUser.get()).getResultList());
+		
+		for (final Institution institution : data.getInstitutions()) {
+			institution.getAttributes().put("postsCount", ip.query("SELECT COUNT(*) FROM InstitutionPost WHERE institution = :inst").setParameter("inst", institution).getSingleResult().toString());
+		}
+		
+		serializer(data).recursive().exclude("institutions.description", "institutions.creation.creator", "institutions.creation.lastUpdateBy").serialize();
+		
+		return data;
 	}
 }

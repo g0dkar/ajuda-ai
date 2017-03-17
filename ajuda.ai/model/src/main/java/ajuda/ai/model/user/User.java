@@ -1,24 +1,26 @@
 package ajuda.ai.model.user;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
-import com.google.gson.annotations.Expose;
-
 import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**
- * Representa um usuário
+ * Representa um usuário do sistema
+ * 
  * @author Rafael Lins
  *
  */
@@ -29,7 +31,6 @@ public class User implements Serializable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Expose
 	@NotBlank
 	@Size(max = 64)
 	@Column(nullable = false, unique = true, length = 64)
@@ -42,24 +43,34 @@ public class User implements Serializable {
 	@Column(nullable = false, length = 60)
 	private String password;
 	
-	@Expose
 	@Email
 	@NotBlank
 	@Size(max = 128)
 	@Column(nullable = false, unique = true, length = 128)
 	private String email;
 	
-	@Expose
 	@NotBlank
 	@Size(max = 64)
 	@Column(nullable = false, length = 64)
 	private String firstname;
 	
-	@Expose
 	@NotBlank
 	@Size(max = 128)
 	@Column(nullable = false, length = 128)
 	private String lastname;
+	
+	@SkipSerialization
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
+	private Date creationTime;
+	
+	@SkipSerialization
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastLogin;
+	
+	@SkipSerialization
+	@Column(length = 42)
+	private String lastLoginIp;
 	
 	public Long getId() {
 		return id;
@@ -107,5 +118,29 @@ public class User implements Serializable {
 
 	public void setLastname(final String lastname) {
 		this.lastname = lastname;
+	}
+
+	public Date getCreationTime() {
+		return creationTime;
+	}
+
+	public void setCreationTime(final Date creationTime) {
+		this.creationTime = creationTime;
+	}
+
+	public Date getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(final Date lastLogin) {
+		this.lastLogin = lastLogin;
+	}
+
+	public String getLastLoginIp() {
+		return lastLoginIp;
+	}
+
+	public void setLastLoginIp(final String lastLoginIp) {
+		this.lastLoginIp = lastLoginIp;
 	}
 }

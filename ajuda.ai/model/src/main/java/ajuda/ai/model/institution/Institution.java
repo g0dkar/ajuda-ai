@@ -1,6 +1,7 @@
 package ajuda.ai.model.institution;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -77,6 +79,25 @@ public class Institution implements Serializable {
 	@MapKeyColumn(name = "attribute", length = 24)
 	@JoinTable(name = "institution_attributes", joinColumns = @JoinColumn(name = "id"))
 	private Map<String, String> attributes;
+	
+	@Transient
+	private Integer postsCount;
+	
+	public Institution() {
+		
+	}
+	
+	public Institution(final Long id, final String slug, final Date creation, final String name, final String paymentService, final String logo, final Integer postsCount) {
+		super();
+		this.id = id;
+		this.slug = slug;
+		this.creation = new CreationInfo();
+		this.creation.setTime(creation);
+		this.name = name;
+		this.paymentService = paymentService;
+		this.logo = logo;
+		this.postsCount = postsCount;
+	}
 	
 	public Long getId() {
 		return id;
@@ -160,5 +181,13 @@ public class Institution implements Serializable {
 
 	public void setAttributes(final Map<String, String> attributes) {
 		this.attributes = attributes;
+	}
+
+	public Integer getPostsCount() {
+		return postsCount;
+	}
+
+	public void setPostsCount(final Integer postsCount) {
+		this.postsCount = postsCount;
 	}
 }

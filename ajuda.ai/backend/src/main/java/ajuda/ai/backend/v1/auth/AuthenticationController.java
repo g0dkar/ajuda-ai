@@ -1,7 +1,10 @@
 package ajuda.ai.backend.v1.auth;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
@@ -10,11 +13,13 @@ import ajuda.ai.backend.v1.ApiController;
 import ajuda.ai.backend.v1.user.UserController;
 import ajuda.ai.model.user.User;
 import ajuda.ai.persistence.model.user.UserPersistence;
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.serialization.gson.WithoutRoot;
 import br.com.caelum.vraptor.validator.I18nMessage;
 import br.com.caelum.vraptor.validator.Validator;
 
@@ -38,14 +43,25 @@ public class AuthenticationController extends ApiController {
 		this.authUser = authUser;
 	}
 	
+	@Transactional
 	@Post("/login")
-	public User login(final String username, final String password) {
-		final User user = us.getUsernameOrEmail(username);
+	@Consumes(value = { "application/json", "application/x-www-form-urlencoded" }, options = WithoutRoot.class)
+	public User login(final User loginUser) {
+		final User user = us.getUsernameOrEmail(loginUser.getUsername());
 		
 		if (user != null) {
-			if (password != null && BCrypt.checkpw(password, user.getPassword())) {
-				authUser.setUser(user);
-				result.redirectTo(UserController.class).me();
+			if (loginUser.getPassword() != null && BCrypt.checkpw(loginUser.getPassword(), user.getPassword())) {
+				try {
+					user.setLastLogin(new Date());
+					user.setLastLoginIp(request.getRemoteAddr());
+					us.merge(user);
+					
+					authUser.setUser(user);
+					result.forwardTo(UserController.class).me();
+				} catch (final Exception e) {
+					log.error("Erro ao alterar usuário no seu login", e);
+					validator.add(new I18nMessage("error", "authenticationController.login.exceptionUserUpdate"));
+				}
 			}
 			else {
 				validator.add(new I18nMessage("error", "authenticationController.login.wrongPassword"));

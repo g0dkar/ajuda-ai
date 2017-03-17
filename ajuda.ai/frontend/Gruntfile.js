@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 				sourceMap: true,
 				sourceMapIncludeSources: true,
 				sourceMapIn: "<%= path.src %>/js/ajuda-ai-1.0.0.js.map",
-				compress: { drop_console: true }
+				compress: { drop_console: false }
 			},
 			dev: {
 				files: {

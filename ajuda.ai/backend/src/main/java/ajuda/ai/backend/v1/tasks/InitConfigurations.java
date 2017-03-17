@@ -58,6 +58,7 @@ public class InitConfigurations {
 			rafael.setEmail("rafael@ajuda.ai");
 			rafael.setFirstname("Rafael");
 			rafael.setLastname("Lins");
+			rafael.setCreationTime(new Date());
 			
 			entityManager.persist(rafael);
 			log.info("'rafael' foi cadastrado: ID {}", rafael.getId());
@@ -76,7 +77,7 @@ public class InitConfigurations {
 			ama.setName("AMA/PI - Associação de Amigos do Autista do Piauí");
 			ama.setCreation(new CreationInfo());
 			ama.getCreation().setCreator(rafael);
-			ama.getCreation().setTime(new Date());
+			ama.getCreation().setTime(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
 			ama.setDescription("## O QUE É A AMA/PI\n\nEntidade sem fins lucrativos, reconhecida de utilidade pública municipal - Lei nº 2.964/00, e utilidade pública estadual pela Lei nº 5.201/08/01, inscrita no Conselho Municipal dos Direitos da Criança e do Adolescente de Teresina (CMDCAT) nº 094/02.\n\n## COMO SURGIU A IDEIA\n\nSurgiu da necessidade dos pais em encontrar apoio e suporte técnico para educação e tratamento de seus filhos autistas. Foi fundada em 29 de Janeiro de 2000, por pais e amigos dos autistas residentes em Teresina-PI, que superando a desinformação diante do quadro de Autismo, reuniram-se para transformar questionamentos em ação somando forças para obter serviços estruturados nas áreas de saúde, educação especial, trabalho e assistência social.\n\n[Visite nosso site!](http://amigosautistas.blogspot.com.br)");
 			ama.setPaymentService("moip");
 			ama.setSlug("ama");
@@ -99,7 +100,7 @@ public class InitConfigurations {
 				post.setSubtitle(lorem.getWords(1 + rng.nextInt(15)));
 				post.setCreation(new CreationInfo());
 				post.getCreation().setCreator(rafael);
-				post.getCreation().setTime(new Date());
+				post.getCreation().setTime(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
 				post.setInstitution(ama);
 				post.setPublished(rng.nextBoolean());
 				post.setContent(lorem.getParagraphs(1 + rng.nextInt(4)));
@@ -113,7 +114,7 @@ public class InitConfigurations {
 				payment.setDescription("Pagamento Aleatório de Teste");
 				payment.setHelper(rafael);
 				payment.setCancelled(rng.nextBoolean());
-				payment.setTimestamp(new Date());
+				payment.setTimestamp(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
 				payment.setValue(100 + rng.nextInt(50000));
 				payment.setPaymentService(ama.getPaymentService());
 				entityManager.persist(payment);
@@ -135,7 +136,7 @@ public class InitConfigurations {
 			apipa.setName("APIPA® - ASSOCIAÇÃO PIAUIENSE DE PROTEÇÃO E AMOR AOS ANIMAIS");
 			apipa.setCreation(new CreationInfo());
 			apipa.getCreation().setCreator(rafael);
-			apipa.getCreation().setTime(new Date());
+			apipa.getCreation().setTime(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
 			apipa.setDescription("## Quem somos\n\nA Associação Piauiense de Proteção e Amor aos Animais – APIPA, constituída em 10 de dezembro de 2007 e inscrita no CNPJ sob o Nº 10.216.609/0001-56, é uma pessoa jurídica de direito privado e sem fins lucrativos.\n\nUtilidade Pública Municipal: LEI 3.914, de 14 de setembro de 2009.\n\nUtilidade Pública Estadual: LEI 5.971, de 24 de fevereiro de 2010.\n\n## Finalidade\n\nPromover campanhas educativas visando a conscientização da sociedade quanto aos direitos dos animais. Colaborar com as entidades e órgãos oficiais competentes no sentido de aprimorar a legislação e anteprojetos, contribuindo para ampliação dos Direitos Universais dos Animais em harmonia com os seres humanos e com a natureza. Assistir, defender e proteger, por todos os meios legais, todos os animais.\n\n[Visite nosso site!](http://www.apipa10.org)");
 			apipa.setPaymentService("moip");
 			apipa.setSlug("apipa");
@@ -158,7 +159,7 @@ public class InitConfigurations {
 				post.setSubtitle(lorem.getWords(1 + rng.nextInt(15)));
 				post.setCreation(new CreationInfo());
 				post.getCreation().setCreator(rafael);
-				post.getCreation().setTime(new Date());
+				post.getCreation().setTime(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
 				post.setInstitution(apipa);
 				post.setPublished(rng.nextBoolean());
 				post.setContent(lorem.getParagraphs(1 + rng.nextInt(4)));
@@ -172,7 +173,7 @@ public class InitConfigurations {
 				payment.setDescription("Pagamento Aleatório de Teste");
 				payment.setHelper(rafael);
 				payment.setCancelled(rng.nextBoolean());
-				payment.setTimestamp(new Date());
+				payment.setTimestamp(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
 				payment.setValue(100 + rng.nextInt(50000));
 				payment.setPaymentService(apipa.getPaymentService());
 				entityManager.persist(payment);
