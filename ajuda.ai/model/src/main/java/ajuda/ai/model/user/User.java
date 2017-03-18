@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -43,6 +44,9 @@ public class User implements Serializable {
 	@Column(nullable = false, length = 60)
 	private String password;
 	
+	@Transient
+	private String newPassword;
+	
 	@Email
 	@NotBlank
 	@Size(max = 128)
@@ -71,6 +75,9 @@ public class User implements Serializable {
 	@SkipSerialization
 	@Column(length = 42)
 	private String lastLoginIp;
+	
+	@Column(nullable = false)
+	private boolean isInstitution;
 	
 	public Long getId() {
 		return id;
@@ -142,5 +149,21 @@ public class User implements Serializable {
 
 	public void setLastLoginIp(final String lastLoginIp) {
 		this.lastLoginIp = lastLoginIp;
+	}
+
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(final String newPassword) {
+		this.newPassword = newPassword;
+	}
+
+	public boolean isInstitution() {
+		return isInstitution;
+	}
+
+	public void setInstitution(final boolean isInstitution) {
+		this.isInstitution = isInstitution;
 	}
 }

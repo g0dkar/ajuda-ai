@@ -1,5 +1,5 @@
 (function (angular, window) {
-	var app = angular.module("ajuda-ai", ["ngAnimate", "ui.router", "ng-showdown"]);
+	var app = angular.module("ajuda-ai", ["ngAnimate", "ui.router", "ng-showdown", "ezfb", "vcRecaptcha"]);
 	var debug = true;
 	var html5mode = false;
 	var apiEndpoint = "http://localhost:8080/v1";
@@ -27,6 +27,30 @@
 		$scope.$on("$destroy", function () {
 			$interval.cancel(updateInterval);
 		});
+	}]);
+	
+	app.controller("InstituicaoController", ["$scope", "$http", "$interval", "institution", function ($scope, $http, $interval, institution) {
+		$scope.institution = institution;
+		$scope.donationStats = { value: 0, count: 0 };
+		
+		var update = function () {
+			$http.get(apiEndpoint + "/institution/" + institution.slug + "/donation-stats").then(function (response) {
+				$scope.donationStats = response.data;
+			});
+		};
+		
+		update();
+		
+		// Atualiza a cada 1 minuto
+		var updateInterval = $interval(update, 60000);
+		
+		$scope.$on("$destroy", function () {
+			$interval.cancel(updateInterval);
+		});
+	}]);
+	
+	app.controller("InstituicaoDoarController", ["$scope", "$http", function ($scope, $http) {
+		$scope.recaptchaKey = "6LcJsSMTAAAAALmEuGm_V1yzF05DGn540TLXd6HH";
 	}]);
 	
 	app.controller("LoginController", ["$scope", "$http", "$window", "$state", "$stateParams", function ($scope, $http, $window, $state, $stateParams) {
@@ -81,7 +105,12 @@
 		});
 	}]);
 	
-	app.controller("AdminInstituicoesController", ["$scope", "$http", "$interval", function ($scope, $http, $interval) {
+	app.controller("AdminInstituicoesController", ["$scope", "$http", "$state", function ($scope, $http, $state) {
+		if (!$scope.user.isInstitution) {
+			$state.go("admin.index");
+			return;
+		}
+		
 		$scope.loading = true;
 		
 		$scope.dashData = {
@@ -113,11 +142,82 @@
 		});
 	}]);
 	
-	app.controller("AdminInstituicaoEditarController", ["$scope", "$http", "institution", function ($scope, $http, institution) {
+	app.controller("AdminInstituicaoEditarController", ["$scope", "$http", "$state", "institution", function ($scope, $http, $state, institution) {
+		if (!$scope.user.isInstitution) {
+			$state.go("admin.index");
+			return;
+		}
+		
+		var slug = institution.slug;
 		$scope.institution = institution;
+		$scope.submitting = false;
 		
 		$scope.doSubmit = function (evt) {
 			evt.preventDefault();
+			$scope.submitting = true;
+			
+			$http.post(apiEndpoint + "/institution/save", $scope.institution).then(function (response) { 
+				$scope.submitting = false;
+				
+				if (!angular.isArray(response.data)) {
+					$scope.institution = response.data;
+					if ($scope.institution.slug != slug) {
+						$state.go("admin.instituicaoEditar", { slug: $scope.institution.slug, institution: $scope.institution });
+					}
+				}
+				else {
+					var errors = response.data;
+					for (var i = 0; i < errors.length; i++) {
+						angular.element(document.getElementById("institution_" + errors[i].category)).addClass("has-error");
+					}
+				}
+			}, function () {
+				$scope.submitting = false;
+			});
+		};
+	}]);
+	
+	app.controller("AdminProfileController", ["$scope", "$http", function ($scope, $http) {
+		//$scope.user = $scope.getUser;
+		$scope.submitting = false;
+		
+		var passwordCritique = {
+			upper: false,
+			lower: false,
+			numbers: false,
+			especial: false
+		};
+		
+		$scope.$watch("user.newPassword", function (newValue) {
+			if (newValue) {
+				passwordCritique.upper = /[A-Z]/g.test(newValue);
+				passwordCritique.lower = /[a-z]/g.test(newValue);
+				passwordCritique.numbers = /[0-9]/g.test(newValue);
+				passwordCritique.especial = /[\W_]/g.test(newValue);
+			}
+		});
+		
+		$scope.passwordCritique = passwordCritique;
+		
+		$scope.doSubmit = function (evt) {
+			evt.preventDefault();
+			$scope.submitting = true;
+			
+			$http.post(apiEndpoint + "/profile/save", $scope.user).then(function (response) { 
+				$scope.submitting = false;
+				
+				if (!angular.isArray(response.data)) {
+					$scope.setUser(response.data);
+				}
+				else {
+					var errors = response.data;
+					for (var i = 0; i < errors.length; i++) {
+						angular.element(document.getElementById("user_" + errors[i].category)).addClass("has-error");
+					}
+				}
+			}, function () {
+				$scope.submitting = false;
+			});
 		};
 	}]);
 	
@@ -226,11 +326,10 @@
 	}
 	
 	// ROUTER
-	app.config(["$httpProvider", "$locationProvider", "$compileProvider", "$urlRouterProvider", "$urlMatcherFactoryProvider", "$stateProvider", function ($httpProvider, $locationProvider, $compileProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $stateProvider) {
+	app.config(["$httpProvider", "$locationProvider", "$compileProvider", "$urlRouterProvider", "$urlMatcherFactoryProvider", "$stateProvider", "ezfbProvider", function ($httpProvider, $locationProvider, $compileProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $stateProvider, ezfbProvider) {
 		// Manda o JSESSIONID sempre
 		$httpProvider.defaults.withCredentials = true;
 		
-//		$httpProvider.interceptors.push("bearerInterceptor");
 		$httpProvider.interceptors.push("errorInterceptor");
 		
 		// Setting HTML 5 mode (bretty urls)
@@ -240,10 +339,14 @@
 		$compileProvider.debugInfoEnabled(debug);
 		
 		// A "404" will go to /
-//		$urlRouterProvider.otherwise("/");
+		$urlRouterProvider.otherwise("/");
 		
 		// Trailling "/" are optional 
 		$urlMatcherFactoryProvider.strictMode(false);
+		
+		// Configura o ezfb
+		ezfbProvider.setLocale("pt_BR");
+		ezfbProvider.setInitParams({ appId: "1579957135597873" });
 		
 		// And now... routes.
 		$stateProvider.state("main", {
@@ -286,12 +389,10 @@
 							$scope.setUser(response.data);
 						}
 						else {
-							$scope.setUser({});
-							$state.go("main.index");
+							$state.go("admin.sair");
 						}
 					}, function () {
-						$scope.setUser({});
-						$state.go("main.index");
+						$state.go("admin.sair");
 					});
 				};
 				
@@ -307,6 +408,11 @@
 			url: "",
 			templateUrl: "/fragments/admin.index.html",
 			controller: "AdminIndexController"
+		})
+		.state("admin.profile", {
+			url: "/profile",
+			templateUrl: "/fragments/admin.profile.html",
+			controller: "AdminProfileController"
 		})
 		.state("admin.instituicoes", {
 			url: "/instituicoes",
@@ -332,16 +438,38 @@
 				institution: null
 			}
 		})
+		.state("admin.sair", {
+			url: "/sair",
+			template: "",
+			controller: ["$scope", "$http", "$state", function ($scope, $http, $state) {
+				$http.get(apiEndpoint + "/auth/logout").then(function () {
+					$scope.setUser({});
+					$state.go("main.index");
+				}, function () {
+					$scope.setUser({});
+					$state.go("main.index");
+				});
+			}]
+		})
 		
 		.state("random", {
 			url: "/random",
-			template: ""
+			template: "",
+			controller: ["$state", "institution", function ($state, institution) {
+				$state.go("main.instituicao.index", { slug: institution.slug, institution: institution });
+			}],
+			resolve: {
+				institution: ["$q", "$http", function ($q, $http) {
+					return requireHttp("randomInstitution", $q, $http, apiEndpoint + "/institution/random");
+				}]
+			}
 		})
 		
 		.state("main.instituicao", {
 			url: "/:slug",
+			abstract: true,
 			templateUrl: "/fragments/main.instituicao.html",
-			controller: "InstitutionController",
+			controller: "InstituicaoController",
 			resolve: {
 				institution: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
 					if ($stateParams.institution) {
@@ -358,91 +486,37 @@
 			}
 		})
 		
-		.state("main.instituicaoPost", {
-			url: "/:slug/:postSlug",
-			templateUrl: "/fragments/main.instituicaoPost.html",
+		.state("main.instituicao.index", {
+			url: "",
+			templateUrl: "/fragments/main.instituicao.index.html"
+		})
+		
+		.state("main.instituicao.doar", {
+			url: "/doar",
+			templateUrl: "/fragments/main.instituicao.doar.html",
+			controller: "InstituicaoDoarController"
+		})
+		
+		.state("main.instituicao.post", {
+			url: "/:postSlug",
+			templateUrl: "/fragments/main.instituicao.post.html",
 			controller: "InstitutionPostController",
 			resolve: {
-				institution: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
-					return requireHttp("mainInstPost", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug + "/" + $stateParams.postSlug);
+				institutionPost: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
+					if ($stateParams.institutionPost) {
+						return $stateParams.institutionPost;
+					}
+					else {
+						return requireHttp("mainInst", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug + "/" + $stateParams.postSlug);
+					}
 				}]
+			},
+			params: {
+				slug: "",
+				postSlug: "",
+				institution: null,
+				institutionPost: null
 			}
-		})
-		//admin.index
-//		.state("admin.quiz.create", {
-//			url: "/create",
-//			templateUrl: context + "/api/ng/quiz-create",
-//			controller: "QuizCreateController",
-//			resolve: {
-//				groups: ["$q", "$http", "toastr", function ($q, $http, toastr) {
-//					return requireHttp("qcgl", $q, $http, toastr, context + "/api/group/my-groups");
-//				}]
-//			}
-//		})
-//		.state("admin.quiz.view", {
-//			url: "/view/{quiz_id:[a-z][a-z0-9\\-]*}",
-//			"abstract": true,
-//			templateUrl: context + "/api/ng/quiz-view",
-//			controller: ["$scope", "quiz", "quizzes", function ($scope, quiz, quizzes) {
-//				$scope.quiz = quiz;
-//				$scope.quizzes = quizzes.quizzes;
-//				$scope.setQuiz = function (q) { $scope.quiz = q; };
-//				$scope.setPageClass("page-bg theme-" + quiz.options.theme + "-bg");
-//			}],
-//			resolve: {
-//				quiz: ["$q", "$http", "$stateParams", "toastr", function ($q, $http, $stateParams, toastr) {
-//					return requireHttp("qvq", $q, $http, toastr, context + "/api/quiz/get/" + $stateParams.quiz_id);
-//				}],
-//				quizzes: ["$q", "$http", "toastr", function ($q, $http, toastr) {
-//					return requireHttp("qvql", $q, $http, toastr, context + "/api/quiz/my-quizzes");
-//				}]
-//			}
-//		})
-//		.state("admin.quiz.view.presentation", {
-//			url: "",
-//			templateUrl: context + "/api/ng/quiz-view-presentation",
-//			controller: "QuizPresentationController"
-//		})
-//		.state("admin.quiz.view.questions", {
-//			url: "/questions",
-//			templateUrl: context + "/api/ng/quiz-view-questions",
-//			controller: "QuizQuestionsController"
-//		})
-//		.state("admin.quiz.view.answers", {
-//			url: "/answers",
-//			templateUrl: context + "/api/ng/quiz-view-answers",
-//			controller: "QuizAnswersController"
-//		})
-//		.state("admin.group", {
-//			"abstract": true,
-//			url: "/group",
-//			templateUrl: context + "/api/ng/group-main"
-//		})
-//		.state("admin.group.dashboard", {
-//			url: "",
-//			templateUrl: context + "/api/ng/group-dashboard",
-//			controller: "GroupDashboardController",
-//			resolve: {
-//				groups: ["$q", "$http", "toastr", function ($q, $http, toastr) {
-//					return requireHttp("gdgl", $q, $http, toastr, context + "/api/group/my-groups");
-//				}]
-//			}
-//		})
-//		.state("admin.group.dashboardSingle", {
-//			url: "/dashboard/{group_id:[a-z][a-z0-9\\-]*}",
-//			templateUrl: context + "/api/ng/group-dashboard-single",
-//			controller: "GroupDashboardSingleController",
-//			resolve: {
-//				group: ["$q", "$http", "toastr", "$stateParams", function ($q, $http, toastr, $stateParams) {
-//					return requireHttp("gdsg", $q, $http, toastr, context + "/api/group/get/" + $stateParams.group_id);
-//				}]
-//			}
-//		})
-//		.state("admin.group.create", {
-//			url: "/create",
-//			templateUrl: context + "/api/ng/group-create",
-//			controller: "GroupCreateController"
-//		})
-		;
+		});
 	}]);
 })(angular, window);

@@ -20,10 +20,12 @@ module.exports = function(grunt) {
 				src: [
 					"<%= path.bower %>/angular/angular.js",
 					"<%= path.bower %>/angular-animate/angular-animate.js",
-					"<%= path.bower %>/angular-sinitize/angular-sinitize.js",
+					"<%= path.bower %>/angular-sanitize/angular-sanitize.js",
 					"<%= path.bower %>/angular-ui-router/release/angular-ui-router.js",
 					"<%= path.bower %>/showdown/dist/showdown.js",
 					"<%= path.bower %>/ng-showdown/dist/ng-showdown.js",
+					"<%= path.bower %>/angular-easyfb/build/angular-easyfb.js",
+					"<%= path.bower %>/angular-recaptcha/release/angular-recaptcha.js",
 					"<%= path.src %>/js/ajudaai.js"
 				],
 				dest: "<%= path.src %>/js/ajuda-ai-1.0.0.js",

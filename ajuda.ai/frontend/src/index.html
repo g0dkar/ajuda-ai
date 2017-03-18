@@ -37,7 +37,6 @@
 </head>
 <body>
 	<a href="#content" class="sr-only">Ir para o Conteúdo</a>
-	<div id="fb-root"></div><script>!function(e,t,n){var o,c=e.getElementsByTagName(t)[0];e.getElementById(n)||(o=e.createElement(t),o.id=n,o.src="//connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v2.6&appId=1579957135597873",c.parentNode.insertBefore(o,c))}(document,"script","facebook-jssdk");</script>
 	
 	<div id="page-content">
 		<nav class="navbar navbar-fixed-top navbar-default navbar-ajuda-ai">
@@ -69,7 +68,7 @@
 						</button>
 					</form-->
 					<ul class="nav navbar-nav navbar-right">
-						<li><a ui-sref="random" title="Clicando aqui lhe mandaremos aleatoriamente a uma das Instituições/ONGs cadastradas!" class="ajuda-ai-btn-nav"><span class="ajuda-ai-btn">Visitar uma Instituição Aleatória</span></a></li>
+						<li class="hidden-sm"><a ui-sref="random" title="Clicando aqui lhe mandaremos aleatoriamente a uma das Instituições/ONGs cadastradas!" class="ajuda-ai-btn-nav"><span class="ajuda-ai-btn">Visitar uma Instituição Aleatória</span></a></li>
 						<li ui-sref-active="active"><a ui-sref="admin.index" title="Acesso Administrativo das Instituições" ng-bind="user.firstname || 'Entrar'">Entrar</a></li>
 					</ul>
 				</div>

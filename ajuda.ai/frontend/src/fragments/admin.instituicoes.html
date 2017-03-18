@@ -6,7 +6,7 @@
 			<div class="col-xs-6 col-sm-4 col-md-3">
 				<div class="panel panel-default dashboard-panel">
 					<div class="panel-body">
-						<div class="dashboard-number" ng-bind="(dashData.value || '-') | currency">-</div>
+						<div class="dashboard-number" ng-bind="(dashData.value / 100) | currency">-</div>
 						<div class="dashboard-desc">Recebido de <strong ng-bind="dashData.donations | number"></strong> doações</div>
 					</div>
 				</div>
@@ -14,7 +14,7 @@
 			<div class="col-xs-6 col-sm-4 col-md-3">
 				<div class="panel panel-default dashboard-panel">
 					<div class="panel-body">
-						<div class="dashboard-number" ng-bind="(dashData.helpers || '-') | number">-</div>
+						<div class="dashboard-number" ng-bind="dashData.helpers | number">-</div>
 						<div class="dashboard-desc">Pessoas Ajudaram</div>
 					</div>
 				</div>
@@ -22,7 +22,7 @@
 			<div class="col-xs-6 col-sm-4 col-md-3">
 				<div class="panel panel-default dashboard-panel">
 					<div class="panel-body">
-						<div class="dashboard-number" ng-bind="(dashData.maxValue ? (dashData.maxValue / 100) : '-') | currency">$ -</div>
+						<div class="dashboard-number" ng-bind="(dashData.maxValue / 100) | currency">$ -</div>
 						<div class="dashboard-desc">Maior Doação</div>
 					</div>
 				</div>
@@ -30,7 +30,7 @@
 			<div class="col-xs-6 col-sm-4 col-md-3">
 				<div class="panel panel-default dashboard-panel">
 					<div class="panel-body">
-						<div class="dashboard-number" ng-bind="(dashData.meanValue ? (dashData.meanValue / 100) : '-') | currency">$ -</div>
+						<div class="dashboard-number" ng-bind="(dashData.meanValue / 100) | currency">$ -</div>
 						<div class="dashboard-desc">Valor Médio das Doações</div>
 					</div>
 				</div>
@@ -48,9 +48,9 @@
 								<tr>
 									<th>Instituição</th>
 									<th>URL</th>
-									<th>Serviço de Pagamento</th>
-									<th>Cadastrada em</th>
-									<th>Posts</th>
+									<th class="hidden-xs">Serviço de Pagamento</th>
+									<th class="hidden-xs">Cadastrada em</th>
+									<th class="hidden-xs">Posts</th>
 									<th>Ações</th>
 								</tr>
 							</thead>
@@ -59,9 +59,9 @@
 								<tr ng-repeat="inst in dashData.institutions">
 									<td><a ui-sref="admin.instituicaoEditar({ slug: inst.slug, institution: inst })" ng-bind="::inst.name"></a></td>
 									<td><a ui-sref="main.instituicao({ slug: inst.slug })">/{{::inst.slug}}</a></td>
-									<td ng-bind="::servicoPagamento(inst.paymentService)"></td>
-									<td ng-bind="::inst.creation.time | date"></td>
-									<td ng-bind="::inst.attributes.postsCount | number"></td>
+									<td class="hidden-xs" ng-bind="::servicoPagamento(inst.paymentService)"></td>
+									<td class="hidden-xs" ng-bind="::inst.creation.time | date"></td>
+									<td class="hidden-xs" ng-bind="::inst.attributes.postsCount | number"></td>
 									<td><a ui-sref="admin.instituicaoEditar({ slug: inst.slug, institution: inst })" class="btn btn-xs btn-primary">Editar</a></td>
 								</tr>
 								<tr ng-show="!dashData.institutions.length">
@@ -73,9 +73,9 @@
 								<tr>
 									<th>Instituição</th>
 									<th>URL</th>
-									<th>Serviço de Pagamento</th>
-									<th>Cadastrada em</th>
-									<th>Posts</th>
+									<th class="hidden-xs">Serviço de Pagamento</th>
+									<th class="hidden-xs">Cadastrada em</th>
+									<th class="hidden-xs">Posts</th>
 									<th>Ações</th>
 								</tr>
 							</tfoot>

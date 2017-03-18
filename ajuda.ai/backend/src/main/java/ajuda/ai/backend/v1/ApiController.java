@@ -28,10 +28,10 @@ public abstract class ApiController {
 			final List<Message> errors = validator.getErrors();
 			
 			if ("application/xml".equals(request.getContentType())) {
-				validator.onErrorUse(Results.xml()).from(errors);
+				validator.onErrorUse(Results.xml()).from(errors).serialize();
 			}
 			else {
-				validator.onErrorUse(Results.json()).from(errors);
+				validator.onErrorUse(Results.json()).withoutRoot().from(errors).serialize();
 			}
 		}
 		

@@ -58,6 +58,10 @@ public class UserPersistence implements Persistence<User> {
 		
 		return ps.merge(object);
 	}
+	
+	public void setPassword(final User user, final String password) {
+		user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt(conf.get("bcrypt.log_rounds", 10))));
+	}
 
 	@Override
 	public User remove(final User object) {

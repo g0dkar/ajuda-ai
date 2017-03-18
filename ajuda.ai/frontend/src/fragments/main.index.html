@@ -43,7 +43,7 @@
 	<div class="row home-institution-list">
 		<div class="loading-indicator" ng-if="!homeInstitutions.length"></div>
 		<div class="col-xs-12 col-sm-6 col-lg-4 home-institutions-list-item" ng-repeat="inst in homeInstitutions">
-			<a ui-sref="main.instituicao({ slug: inst.slug })" class="panel panel-default institution-panel">
+			<a ui-sref="main.instituicao.index({ slug: inst.slug })" class="panel panel-default institution-panel">
 				<span class="panel-body">
 					<span class="panel-image">
 						<img ng-src="{{::(inst.banner || 'img/default-banner.jpg')}}" alt="Banner da Insituição" class="panel-image-img">

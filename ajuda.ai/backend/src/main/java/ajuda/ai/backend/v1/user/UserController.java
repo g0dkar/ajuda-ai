@@ -2,7 +2,10 @@ package ajuda.ai.backend.v1.user;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 
 import ajuda.ai.backend.v1.ApiController;
@@ -10,11 +13,17 @@ import ajuda.ai.backend.v1.auth.Auth;
 import ajuda.ai.backend.v1.auth.AuthenticatedUser;
 import ajuda.ai.model.user.User;
 import ajuda.ai.persistence.model.user.UserPersistence;
+import ajuda.ai.util.StringUtils;
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.serialization.gson.WithoutRoot;
+import br.com.caelum.vraptor.validator.I18nMessage;
 import br.com.caelum.vraptor.validator.Validator;
+import br.com.caelum.vraptor.view.Results;
 
 /**
  * Gerencia a parte da API relacionada a {@link User}.
@@ -81,5 +90,43 @@ public class UserController extends ApiController {
 		data.setPayments(us.query("FROM Payment p JOIN FETCH p.institution WHERE p.helper = :me AND p.cancelled = false AND p.paid = true ORDER BY p.timestamp DESC").setParameter("me", authUser.get()).setMaxResults(10).getResultList());
 		
 		serializer(data).include("posts", "posts.institution", "payments", "payments.institution").exclude("posts.institution.description", "payments.institution.description").serialize();
+	}
+	
+	@Auth
+	@Post("/save")
+	@Consumes(value = { "application/json", "application/x-www-form-urlencoded" }, options = WithoutRoot.class)
+	@Transactional
+	public void saveProfile(User user) {
+		if (user.getId() == authUser.getId()) {
+			if (!StringUtils.isBlank(user.getPassword())) {
+				if (BCrypt.checkpw(user.getPassword(), authUser.getPassword())) {
+					us.setPassword(user, user.getNewPassword());
+				}
+				else {
+					validator.add(new I18nMessage("password", "userController.save.wrongPassword"));
+				}
+			}
+			else {
+				user.setPassword(authUser.getPassword());
+			}
+			
+			user.setCreationTime(authUser.get().getCreationTime());
+			user.setLastLogin(authUser.get().getLastLogin());
+			user.setLastLoginIp(authUser.get().getLastLoginIp());
+				
+			if (!validator.validate(user).hasErrors()) {
+				try {
+					user = us.merge(user);
+				} catch (final Exception e) {
+					log.error("Erro ao salvar usuário #" + user.getId(), e);
+					validator.add(new I18nMessage("error", "userController.save.errorSaving"));
+				}
+			}
+			
+			response(user);
+		}
+		else {
+			result.use(Results.http()).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
 	}
 }

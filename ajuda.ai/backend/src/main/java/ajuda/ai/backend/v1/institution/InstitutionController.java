@@ -1,11 +1,13 @@
 package ajuda.ai.backend.v1.institution;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 
@@ -13,15 +15,20 @@ import ajuda.ai.backend.v1.ApiController;
 import ajuda.ai.backend.v1.auth.Auth;
 import ajuda.ai.backend.v1.auth.AuthenticatedUser;
 import ajuda.ai.backend.v1.recaptcha.ReCaptchaService;
+import ajuda.ai.model.extra.CreationInfo;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionPost;
 import ajuda.ai.payment.PaymentService;
 import ajuda.ai.persistence.model.institution.InstitutionPersistence;
 import ajuda.ai.util.StringUtils;
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.serialization.gson.WithoutRoot;
+import br.com.caelum.vraptor.validator.I18nMessage;
 import br.com.caelum.vraptor.validator.Validator;
 
 /**
@@ -197,5 +204,48 @@ public class InstitutionController extends ApiController {
 		response(data);
 		
 		return data;
+	}
+	
+	@Auth
+	@Post("/save")
+	@Consumes(value = { "application/json", "application/x-www-form-urlencoded" }, options = WithoutRoot.class)
+	@Transactional
+	public Institution saveInstitution(Institution institution) {
+		final Long institutionId = institution.getId() == null ? 0 : institution.getId();
+		CreationInfo creation = (CreationInfo) ip.query("SELECT creation FROM Institution WHERE id = :id").setParameter("id", institutionId).getSingleResult();
+		
+		if (creation == null) {
+			creation = new CreationInfo();
+			creation.setTime(new Date());
+			creation.setCreator(authUser.get());
+		}
+		else {
+			creation.setLastUpdate(new Date());
+			creation.setLastUpdateBy(authUser.get());
+		}
+		
+		institution.setCreation(creation);
+		
+		final boolean isSlugAvailable = ((Number) ip.query("SELECT count(*) FROM Institution WHERE slug = :slug AND id <> :id").setParameter("slug", institution.getSlug()).setParameter("id", institutionId).getSingleResult()).intValue() == 0;
+		if (!isSlugAvailable) {
+			validator.add(new I18nMessage("slug", "institutionController.save.slugUnavailable", institution.getSlug()));
+		}
+		
+		if (!validator.validate(institution).hasErrors()) {
+			try {
+				if (institution.getId() == null) {
+					ip.persist(institution);
+				}
+				else {
+					institution = ip.merge(institution);
+				}
+			} catch (final Exception e) {
+				log.error("Erro ao salvar/alterar Instituição (id = " + institutionId + ")", e);
+			}
+		}
+		
+		response(institution);
+		
+		return institution;
 	}
 }

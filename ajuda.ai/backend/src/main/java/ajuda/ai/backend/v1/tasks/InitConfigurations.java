@@ -90,17 +90,19 @@ public class InitConfigurations {
 			ama.getAttributes().put("facebook", "amapiaui");
 			ama.getAttributes().put("moip_email", "rafael.lins777@gmail.com");
 			ama.getAttributes().put("nationalId", "05.311.137/0001-80");
+			final int postsCount = 3 + rng.nextInt(15);
+			ama.getAttributes().put("postsCount", String.valueOf(postsCount));
 			
 			entityManager.persist(ama);
 			
-			for (int i = 0, max = 3 + rng.nextInt(15); i < max; i++) {
+			for (int i = 0; i < postsCount; i++) {
 				final InstitutionPost post = new InstitutionPost();
 				post.setSlug("random-post-" + (i + 1));
 				post.setTitle(lorem.getWords(1 + rng.nextInt(10)));
 				post.setSubtitle(lorem.getWords(1 + rng.nextInt(15)));
 				post.setCreation(new CreationInfo());
 				post.getCreation().setCreator(rafael);
-				post.getCreation().setTime(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
+				post.getCreation().setTime(new Date(System.currentTimeMillis() - rng.nextInt(1000000000)));
 				post.setInstitution(ama);
 				post.setPublished(rng.nextBoolean());
 				post.setContent(lorem.getParagraphs(1 + rng.nextInt(4)));
@@ -114,8 +116,8 @@ public class InitConfigurations {
 				payment.setDescription("Pagamento Aleatório de Teste");
 				payment.setHelper(rafael);
 				payment.setCancelled(rng.nextBoolean());
-				payment.setTimestamp(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
-				payment.setValue(100 + rng.nextInt(50000));
+				payment.setTimestamp(new Date(System.currentTimeMillis() - rng.nextInt(1000000000)));
+				payment.setValue(100 + rng.nextInt(5000));
 				payment.setPaymentService(ama.getPaymentService());
 				entityManager.persist(payment);
 			}
@@ -136,7 +138,7 @@ public class InitConfigurations {
 			apipa.setName("APIPA® - ASSOCIAÇÃO PIAUIENSE DE PROTEÇÃO E AMOR AOS ANIMAIS");
 			apipa.setCreation(new CreationInfo());
 			apipa.getCreation().setCreator(rafael);
-			apipa.getCreation().setTime(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
+			apipa.getCreation().setTime(new Date(System.currentTimeMillis() - rng.nextInt(1000000000)));
 			apipa.setDescription("## Quem somos\n\nA Associação Piauiense de Proteção e Amor aos Animais – APIPA, constituída em 10 de dezembro de 2007 e inscrita no CNPJ sob o Nº 10.216.609/0001-56, é uma pessoa jurídica de direito privado e sem fins lucrativos.\n\nUtilidade Pública Municipal: LEI 3.914, de 14 de setembro de 2009.\n\nUtilidade Pública Estadual: LEI 5.971, de 24 de fevereiro de 2010.\n\n## Finalidade\n\nPromover campanhas educativas visando a conscientização da sociedade quanto aos direitos dos animais. Colaborar com as entidades e órgãos oficiais competentes no sentido de aprimorar a legislação e anteprojetos, contribuindo para ampliação dos Direitos Universais dos Animais em harmonia com os seres humanos e com a natureza. Assistir, defender e proteger, por todos os meios legais, todos os animais.\n\n[Visite nosso site!](http://www.apipa10.org)");
 			apipa.setPaymentService("moip");
 			apipa.setSlug("apipa");
@@ -149,17 +151,19 @@ public class InitConfigurations {
 			apipa.getAttributes().put("facebook", "apipa.piaui");
 			apipa.getAttributes().put("moip_email", "rafael.lins777@gmail.com");
 			apipa.getAttributes().put("nationalId", "10.216.609/0001-56");
+			final int postsCount = 3 + rng.nextInt(15);
+			apipa.getAttributes().put("postsCount", String.valueOf(postsCount));
 			
 			entityManager.persist(apipa);
 			
-			for (int i = 0, max = 3 + rng.nextInt(15); i < max; i++) {
+			for (int i = 0; i < postsCount; i++) {
 				final InstitutionPost post = new InstitutionPost();
 				post.setSlug("random-post-" + (i + 1));
 				post.setTitle(lorem.getWords(1 + rng.nextInt(10)));
 				post.setSubtitle(lorem.getWords(1 + rng.nextInt(15)));
 				post.setCreation(new CreationInfo());
 				post.getCreation().setCreator(rafael);
-				post.getCreation().setTime(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
+				post.getCreation().setTime(new Date(System.currentTimeMillis() - rng.nextInt(1000000000)));
 				post.setInstitution(apipa);
 				post.setPublished(rng.nextBoolean());
 				post.setContent(lorem.getParagraphs(1 + rng.nextInt(4)));
@@ -173,7 +177,7 @@ public class InitConfigurations {
 				payment.setDescription("Pagamento Aleatório de Teste");
 				payment.setHelper(rafael);
 				payment.setCancelled(rng.nextBoolean());
-				payment.setTimestamp(new Date(System.currentTimeMillis() + (rng.nextBoolean() ? -rng.nextInt(1000000000) : rng.nextInt(1000000000))));
+				payment.setTimestamp(new Date(System.currentTimeMillis() - rng.nextInt(1000000000)));
 				payment.setValue(100 + rng.nextInt(50000));
 				payment.setPaymentService(apipa.getPaymentService());
 				entityManager.persist(payment);

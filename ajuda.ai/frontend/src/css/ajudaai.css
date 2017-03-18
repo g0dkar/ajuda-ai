@@ -320,9 +320,6 @@ nav.navbar-ajuda-ai {
 	content: '❤';
 	color: #E21E3C;
 	margin-right: 5px;
-	-webkit-animation: heartbeat 3s ease infinite;
-	-moz-animation: heartbeat 3s ease infinite;
-	animation: heartbeat 3s ease infinite;
 }
 .heart-right:after {
 	content: '❤';
@@ -549,9 +546,9 @@ nav.navbar-ajuda-ai {
 }
 .donation-checkpoint.active .donation-heart {
 	visibility: visible;
-	-webkit-animation: heartbeat 3s ease infinite;
-	-moz-animation: heartbeat 3s ease infinite;
-	animation: heartbeat 3s ease infinite;
+	-webkit-animation: heartbeat 2s ease infinite;
+	-moz-animation: heartbeat 2s ease infinite;
+	animation: heartbeat 2s ease infinite;
 }
 .payment-list-item {
 	position: relative;
@@ -623,6 +620,14 @@ nav.navbar-ajuda-ai {
 	z-index: 10;
 	width: auto;
 	height: auto;
+}
+.password-critique .fail {
+	color: #c00;
+	font-weight: 600;
+}
+.password-critique .pass {
+	color: #0c0;
+	font-weight: 600;
 }
 
 

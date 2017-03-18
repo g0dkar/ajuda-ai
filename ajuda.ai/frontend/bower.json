@@ -23,6 +23,8 @@
     "angular-animate": "^1.6.3",
     "angular-ui-router": "^0.4.2",
     "bootstrap": "^3.3.7",
-    "ng-showdown": "^1.1.0"
+    "ng-showdown": "^1.1.0",
+    "angular-easyfb": "^1.5.1",
+    "angular-recaptcha": "^4.0.4"
   }
 }
