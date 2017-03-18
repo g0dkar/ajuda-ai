@@ -85,14 +85,19 @@ public class Payment implements Serializable {
 	@Column(nullable = false)
 	private boolean cancelled;
 	
+	@NotBlank
 	@Size(max = 128)
-	@Column(length = 128)
+	@Column(nullable = false, length = 128)
 	private String payeeName;
 	
 	@Email
+	@NotBlank
 	@Size(max = 128)
-	@Column(length = 128)
+	@Column(nullable = false, length = 128)
 	private String payeeEmail;
+	
+	@Column(nullable = false)
+	private boolean anonymous;
 	
 	@SkipSerialization
 	@OrderBy("timestamp DESC")
@@ -240,5 +245,13 @@ public class Payment implements Serializable {
 
 	public void setUuid(final String uuid) {
 		this.uuid = uuid;
+	}
+
+	public boolean isAnonymous() {
+		return anonymous;
+	}
+
+	public void setAnonymous(final boolean anonymous) {
+		this.anonymous = anonymous;
 	}
 }

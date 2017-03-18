@@ -65,7 +65,7 @@ public class UserController extends ApiController {
 		final User foundUser = us.getUsername(user);
 		
 		if (foundUser != null) {
-			response(foundUser);
+			serializer(foundUser).recursive().exclude("email").serialize();
 		}
 		else {
 			result.notFound();

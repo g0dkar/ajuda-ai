@@ -109,7 +109,7 @@ public class InitConfigurations {
 				entityManager.persist(post);
 			}
 			
-			for (int i = 0, max = 5 + rng.nextInt(45); i < max; i++) {
+			for (int i = 0, max = 15 + rng.nextInt(45); i < max; i++) {
 				final Payment payment = new Payment();
 				payment.setInstitution(ama);
 				payment.setPaid(rng.nextBoolean());
@@ -117,8 +117,11 @@ public class InitConfigurations {
 				payment.setHelper(rafael);
 				payment.setCancelled(rng.nextBoolean());
 				payment.setTimestamp(new Date(System.currentTimeMillis() - rng.nextInt(1000000000)));
-				payment.setValue(100 + rng.nextInt(5000));
+				payment.setValue(100 + rng.nextInt(5900));
 				payment.setPaymentService(ama.getPaymentService());
+				payment.setAnonymous(rng.nextBoolean());
+				payment.setPayeeName("Rafael Lins");
+				payment.setPayeeEmail("rafael@ajuda.ai");
 				entityManager.persist(payment);
 			}
 			
@@ -170,7 +173,7 @@ public class InitConfigurations {
 				entityManager.persist(post);
 			}
 			
-			for (int i = 0, max = 5 + rng.nextInt(45); i < max; i++) {
+			for (int i = 0, max = 10 + rng.nextInt(45); i < max; i++) {
 				final Payment payment = new Payment();
 				payment.setInstitution(apipa);
 				payment.setPaid(rng.nextBoolean());
@@ -178,8 +181,11 @@ public class InitConfigurations {
 				payment.setHelper(rafael);
 				payment.setCancelled(rng.nextBoolean());
 				payment.setTimestamp(new Date(System.currentTimeMillis() - rng.nextInt(1000000000)));
-				payment.setValue(100 + rng.nextInt(50000));
+				payment.setValue(100 + rng.nextInt(5900));
 				payment.setPaymentService(apipa.getPaymentService());
+				payment.setAnonymous(rng.nextBoolean());
+				payment.setPayeeName("Rafael Lins");
+				payment.setPayeeEmail("rafael@ajuda.ai");
 				entityManager.persist(payment);
 			}
 			

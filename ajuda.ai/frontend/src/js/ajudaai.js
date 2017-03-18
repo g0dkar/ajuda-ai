@@ -51,6 +51,34 @@
 	
 	app.controller("InstituicaoDoarController", ["$scope", "$http", function ($scope, $http) {
 		$scope.recaptchaKey = "6LcJsSMTAAAAALmEuGm_V1yzF05DGn540TLXd6HH";
+		var donation = {
+			value: 20,
+			anonymous: false,
+			addcosts: false,
+			addcoststype: "0",
+			email: $scope.user.email ? $scope.user.email : "",
+			name: $scope.user.firstname ? ($scope.user.firstname + " " + $scope.user.lastname) : ""
+		};
+		
+		$scope.donation = donation;
+		
+		$scope.calcCosts = function (type) {
+			var value = donation.value;
+			if (type == 0) {
+				switch ($scope.institution.paymentService) {
+					case "moip": return ((Math.ceil((100 * value + 65) / .9451) - 100 * value) / 100).toFixed(2);
+					case "pagseguro": return ((Math.ceil((100 * value + 65) / .9451) - 100 * value) / 100).toFixed(2);
+					default: return 0;
+				}
+			}
+			else {
+				switch ($scope.institution.paymentService) {
+					case "moip": return ((Math.ceil((100 * value + 65) / .9651) - 100 * value) / 100).toFixed(2);
+					case "pagseguro": return ((Math.ceil((100 * value + 65) / .9651) - 100 * value) / 100).toFixed(2);
+					default: return 0;
+				}
+			}
+		}
 	}]);
 	
 	app.controller("LoginController", ["$scope", "$http", "$window", "$state", "$stateParams", function ($scope, $http, $window, $state, $stateParams) {

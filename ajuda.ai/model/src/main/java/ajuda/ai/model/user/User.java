@@ -45,6 +45,7 @@ public class User implements Serializable {
 	private String password;
 	
 	@Transient
+	@SkipSerialization
 	private String newPassword;
 	
 	@Email

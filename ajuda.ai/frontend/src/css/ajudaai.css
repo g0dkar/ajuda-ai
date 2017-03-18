@@ -538,11 +538,11 @@ nav.navbar-ajuda-ai {
 .donation-heart {
 	fill: #E21E3C;
 	visibility: hidden;
-	width: 35px;
-	height: 35px;
+	width: 40px;
+	height: 40px;
 	position: absolute;
-	top: 15px;
-	left: 15px;
+	top: 14px;
+	left: 13px;
 }
 .donation-checkpoint.active .donation-heart {
 	visibility: visible;
