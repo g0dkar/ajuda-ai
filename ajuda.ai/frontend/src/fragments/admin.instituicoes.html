@@ -57,12 +57,12 @@
 							
 							<tbody>
 								<tr ng-repeat="inst in dashData.institutions">
-									<td><a ui-sref="admin.instituicaoEditar({ slug: inst.slug, institution: inst })" ng-bind="::inst.name"></a></td>
-									<td><a ui-sref="main.instituicao({ slug: inst.slug })">/{{::inst.slug}}</a></td>
+									<td><a ui-sref="admin.instituicao.ver({ slug: inst.slug, institution: inst })" ng-bind="::inst.name"></a></td>
+									<td><a ui-sref="main.instituicao({ slug: inst.slug })" target="_blank" title="Visitar página da Instituição">/{{::inst.slug}}</a></td>
 									<td class="hidden-xs" ng-bind="::servicoPagamento(inst.paymentService)"></td>
 									<td class="hidden-xs" ng-bind="::inst.creation.time | date"></td>
 									<td class="hidden-xs" ng-bind="::inst.attributes.postsCount | number"></td>
-									<td><a ui-sref="admin.instituicaoEditar({ slug: inst.slug, institution: inst })" class="btn btn-xs btn-primary">Editar</a></td>
+									<td><a ui-sref="admin.instituicao.editar({ slug: inst.slug, institution: inst })" class="btn btn-xs btn-primary">Editar</a></td>
 								</tr>
 								<tr ng-show="!dashData.institutions.length">
 									<td colspan="6" class="empty-table">Você não tem nenhuma Instituição. Quer entrar no Ajuda.Ai? <a href="mailto:rafael@ajuda.ai">Fale conosco</a>!</td>

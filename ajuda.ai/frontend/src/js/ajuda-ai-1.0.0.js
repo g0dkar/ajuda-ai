@@ -46881,12 +46881,15 @@ https://github.com/pc035860/angular-easyfb.git */
 		});
 	}]);
 	
+	app.controller("AdminInstituicaoVerController", ["$scope", "institutionPosts", function ($scope, institutionPosts) {
+		$scope.institutionPosts = institutionPosts;
+	}]);
+	
+	app.controller("AdminInstituicaoPostController", ["$scope", "institution", "post", function ($scope, $state, institution, post) {
+		$scope.post = post;
+	}]);
+	
 	app.controller("AdminInstituicaoEditarController", ["$scope", "$http", "$state", "institution", function ($scope, $http, $state, institution) {
-		if (!$scope.user.isInstitution) {
-			$state.go("admin.index");
-			return;
-		}
-		
 		var slug = institution.slug;
 		$scope.institution = institution;
 		$scope.submitting = false;
@@ -47158,23 +47161,72 @@ https://github.com/pc035860/angular-easyfb.git */
 			templateUrl: "/fragments/admin.instituicoes.html",
 			controller: "AdminInstituicoesController"
 		})
-		.state("admin.instituicaoEditar", {
+		.state("admin.instituicao", {
 			url: "/:slug",
-			templateUrl: "/fragments/admin.instituicaoEditar.html",
-			controller: "AdminInstituicaoEditarController",
+			abstract: true,
+			template: "<ui-view/>",
+			controller: ["$scope", "$state", "institution", function ($scope, $state, institution) {
+				if (!$scope.user.isInstitution) {
+					$state.go("admin.index");
+					return;
+				}
+				
+				$scope.institution = institution;
+				$scope.servicoPagamento = function (servico) {
+					switch (servico) {
+						case "moip": return "MoIP";
+						case "pagseguro": return "PagSeguro";
+						default: return servico;
+					}
+				};
+			}],
 			resolve: {
 				institution: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
 					if ($stateParams.institution) {
 						return $stateParams.institution;
 					}
 					else {
-						return requireHttp("adminInstEditar", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+						return requireHttp("adminInst", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
 					}
 				}]
 			},
 			params: {
 				slug: "",
 				institution: null
+			}
+		})
+		.state("admin.instituicao.ver", {
+			url: "/view",
+			templateUrl: "/fragments/admin.instituicao.ver.html",
+			controller: "AdminInstituicaoVerController",
+			resolve: {
+				institutionPosts: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
+					return requireHttp("adminInstVer", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug + "/posts?sa=1");
+				}]
+			}
+		})
+		.state("admin.instituicao.editar", {
+			url: "/edit",
+			templateUrl: "/fragments/admin.instituicao.editar.html",
+			controller: "AdminInstituicaoEditarController"
+		})
+		.state("admin.instituicao.post", {
+			url: "/post/:postSlug",
+			templateUrl: "/fragments/admin.instituicao.post.html",
+			controller: "AdminInstituicaoPostController",
+			resolve: {
+				post: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
+					if ($stateParams.post) {
+						return $stateParams.post;
+					}
+					else {
+						return requireHttp("adminInstPost", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+					}
+				}]
+			},
+			params: {
+				postSlug: "",
+				post: null
 			}
 		})
 		.state("admin.sair", {
@@ -47241,20 +47293,18 @@ https://github.com/pc035860/angular-easyfb.git */
 			templateUrl: "/fragments/main.instituicao.post.html",
 			controller: "InstitutionPostController",
 			resolve: {
-				institutionPost: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
-					if ($stateParams.institutionPost) {
-						return $stateParams.institutionPost;
+				post: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
+					if ($stateParams.post) {
+						return $stateParams.post;
 					}
 					else {
-						return requireHttp("mainInst", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug + "/" + $stateParams.postSlug);
+						return requireHttp("mainInstPost", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug + "/" + $stateParams.postSlug);
 					}
 				}]
 			},
 			params: {
-				slug: "",
 				postSlug: "",
-				institution: null,
-				institutionPost: null
+				post: null
 			}
 		});
 	}]);

@@ -7386,6 +7386,13 @@ nav.navbar-ajuda-ai {
 	color: #0c0;
 	font-weight: 600;
 }
+.description-preview {
+	border: 1px dotted #ccc;
+	padding: 15px;
+	border-radius: 3px;
+	max-height: 300px;
+	overflow: auto;
+}
 
 
 

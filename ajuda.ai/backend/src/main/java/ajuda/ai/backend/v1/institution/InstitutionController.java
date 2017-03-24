@@ -144,13 +144,14 @@ public class InstitutionController extends ApiController {
 	}
 	
 	@Get("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/posts")
-	public List<InstitutionPost> posts(final String slug) {
+	public List<InstitutionPost> posts(final String slug, final String sa) {
 		final Institution institution = ip.getSlug(slug);
 		List<InstitutionPost> posts = null;
+		final boolean selectAll = sa != null && sa.equals("1") && authUser.get().isInstitution();
 		
 		if (institution != null) {
-			posts = ip.query("FROM InstitutionPost WHERE institution = :institution AND published = true ORDER BY creation.time DESC").setParameter("institution", institution).getResultList();
-			serializer(posts).excludeAll().include("id", "slug", "title", "subtitle", "creation", "creation.creator").serialize();
+			posts = ip.query("FROM InstitutionPost WHERE institution = :institution" + (!selectAll ? " AND published = true" : "") + " ORDER BY creation.time DESC").setParameter("institution", institution).getResultList();
+			serializer(posts).excludeAll().include("id", "slug", "title", "subtitle", "creation", "creation.creator", "published").serialize();
 		}
 		else {
 			result.notFound();
@@ -161,14 +162,15 @@ public class InstitutionController extends ApiController {
 	
 	@Get
 	@Path(value = "/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/{postSlug:[a-z][a-z0-9\\-]*[a-z0-9]}", priority = Path.LOW)
-	public Institution getFromSlug(final String slug, final String postSlug) {
+	public InstitutionPost getPostFromSlug(final String slug, final String postSlug) {
 		final Institution institution = ip.getSlug(slug);
 		
 		if (institution != null) {
-			final InstitutionPost post = (InstitutionPost) ip.query("FROM InstitutionPost WHERE slug = :slug AND institution = :institution AND published = true").setParameter("slug", postSlug).setParameter("institution", institution).getSingleResult();
+			final InstitutionPost post = (InstitutionPost) ip.query("FROM InstitutionPost WHERE slug = :slug AND institution = :institution").setParameter("slug", postSlug).setParameter("institution", institution).getSingleResult();
 			
-			if (post != null) {
+			if (post != null && (post.isPublished() || (!post.isPublished() && authUser.get().isInstitution()))) {
 				serializer(post).recursive().exclude("institution").serialize();
+				return post;
 			}
 			else {
 				result.notFound();
@@ -178,7 +180,7 @@ public class InstitutionController extends ApiController {
 			result.notFound();
 		}
 		
-		return institution;
+		return null;
 	}
 	
 	@Auth
@@ -247,5 +249,52 @@ public class InstitutionController extends ApiController {
 		response(institution);
 		
 		return institution;
+	}
+	
+	@Auth
+	@Post("/post-save")
+	@Consumes(value = { "application/json", "application/x-www-form-urlencoded" }, options = WithoutRoot.class)
+	@Transactional
+	public InstitutionPost saveInstitutionPost(Institution institution, final InstitutionPost post) {
+		final Institution inst = ip.get(institution.getId());
+		
+		if (inst != null && inst.getCreation().getCreator().equals(authUser.get())) {
+			final Long institutionId = institution.getId() == null ? 0 : institution.getId();
+			CreationInfo creation = (CreationInfo) ip.query("SELECT creation FROM Institution WHERE id = :id").setParameter("id", institutionId).getSingleResult();
+			
+			if (creation == null) {
+				creation = new CreationInfo();
+				creation.setTime(new Date());
+				creation.setCreator(authUser.get());
+			}
+			else {
+				creation.setLastUpdate(new Date());
+				creation.setLastUpdateBy(authUser.get());
+			}
+			
+			institution.setCreation(creation);
+			
+			final boolean isSlugAvailable = ((Number) ip.query("SELECT count(*) FROM Institution WHERE slug = :slug AND id <> :id").setParameter("slug", institution.getSlug()).setParameter("id", institutionId).getSingleResult()).intValue() == 0;
+			if (!isSlugAvailable) {
+				validator.add(new I18nMessage("slug", "institutionController.save.slugUnavailable", institution.getSlug()));
+			}
+			
+			if (!validator.validate(institution).hasErrors()) {
+				try {
+					if (institution.getId() == null) {
+						ip.persist(institution);
+					}
+					else {
+						institution = ip.merge(institution);
+					}
+				} catch (final Exception e) {
+					log.error("Erro ao salvar/alterar Instituição (id = " + institutionId + ")", e);
+				}
+			}
+		}
+		
+		response(post);
+		
+		return post;
 	}
 }
