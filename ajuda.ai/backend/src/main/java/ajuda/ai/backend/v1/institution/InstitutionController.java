@@ -19,6 +19,7 @@ import ajuda.ai.model.extra.CreationInfo;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionPost;
 import ajuda.ai.payment.PaymentService;
+import ajuda.ai.persistence.model.ConfigurationPersistence;
 import ajuda.ai.persistence.model.institution.InstitutionPersistence;
 import ajuda.ai.util.StringUtils;
 import br.com.caelum.vraptor.Consumes;
@@ -43,12 +44,13 @@ public class InstitutionController extends ApiController {
 	private final PaymentService paymentService;
 	private final ReCaptchaService recaptcha;
 	private final AuthenticatedUser authUser;
+	private final ConfigurationPersistence conf;
 	
 	/** @deprecated CDI **/ @Deprecated
-	InstitutionController() { this(null, null, null, null, null, null, null, null); }
+	InstitutionController() { this(null, null, null, null, null, null, null, null, null); }
 	
 	@Inject
-	public InstitutionController(final Logger log, final Result result, final HttpServletRequest request, final Validator validator, final InstitutionPersistence ip, final PaymentService paymentService, final ReCaptchaService recaptcha, final AuthenticatedUser authUser) {
+	public InstitutionController(final Logger log, final Result result, final HttpServletRequest request, final Validator validator, final InstitutionPersistence ip, final PaymentService paymentService, final ReCaptchaService recaptcha, final AuthenticatedUser authUser, final ConfigurationPersistence conf) {
 		this.log = log;
 		this.result = result;
 		this.request = request;
@@ -58,6 +60,7 @@ public class InstitutionController extends ApiController {
 		this.paymentService = paymentService;
 		this.recaptcha = recaptcha;
 		this.authUser = authUser;
+		this.conf = conf;
 	}
 	
 	@Get
@@ -144,14 +147,25 @@ public class InstitutionController extends ApiController {
 	}
 	
 	@Get("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/posts")
-	public List<InstitutionPost> posts(final String slug, final String sa) {
+	public List<InstitutionPost> posts(final String slug, final String sa, final String offset) {
 		final Institution institution = ip.getSlug(slug);
 		List<InstitutionPost> posts = null;
-		final boolean selectAll = sa != null && sa.equals("1") && authUser.get().isInstitution();
 		
 		if (institution != null) {
-			posts = ip.query("FROM InstitutionPost WHERE institution = :institution" + (!selectAll ? " AND published = true" : "") + " ORDER BY creation.time DESC").setParameter("institution", institution).getResultList();
-			serializer(posts).excludeAll().include("id", "slug", "title", "subtitle", "creation", "creation.creator", "published").serialize();
+			final boolean selectAll = sa != null && "1".equals(sa) && authUser.get().isInstitution();
+			final int firstResult = StringUtils.parseInteger(offset, 0);
+			final int maxResults = conf.get("institutionController.posts.listSize", 25);
+			final String whereInstitution = "institution = :institution" + (!selectAll ? " AND published = true" : "");
+			
+			final InstitutionPostList result = new InstitutionPostList();
+			result.setOffset(firstResult);
+			result.setPageSize(maxResults);
+			result.setTotal(((Number) ip.query("SELECT COUNT(*) FROM InstitutionPost WHERE " + whereInstitution).setParameter("institution", institution).getSingleResult()).intValue());
+			
+			posts = ip.query("FROM InstitutionPost WHERE " + whereInstitution + " ORDER BY creation.time DESC").setParameter("institution", institution).getResultList();
+			result.setPosts(posts);
+			
+			serializer(result).recursive().exclude("posts.institution").serialize();
 		}
 		else {
 			result.notFound();

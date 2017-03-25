@@ -40,7 +40,17 @@
 								</div>
 							</div>
 							<div class="col-xs-12 col-md-6">
-								<h3 style="margin-top:0;margin-bottom:10px">Posts <small><a ui-sref="admin.instituicao.editar({ slug: institution.slug, institution: institution })">+ Novo Post</a></small></h3>
+								<h3 style="margin-top:0;margin-bottom:10px">Posts <small><a ui-sref="admin.instituicao.post({ slug: institution.slug, institution: institution })">+ Novo Post</a></small></h3>
+
+								<nav ng-if="institutionPosts.posts.length && institutionPosts.posts.length < institutionPosts.total" aria-label="Navegação das Páginas da Tabela de Posts">
+									<p>Exibindo <strong ng-bind="pagination.items.length | number"></strong> posts de um total de <strong ng-bind="institutionPosts.total | number"></strong> posts.</p>
+									<ul class="pagination">
+										<li ng-class="{'disabled':pagination.current===1}"><a href="#" aria-label="Página Anterior"><span aria-hidden="true">&laquo;</span></a></li>
+										<li ng-repeat="page in pagination.pages() track by $index"><a href="#" ng-click="pagination.go(page)" ng-bind="page | number"></a></li>
+										<li ng-class="{'disabled':pagination.current===pagination.max}"><a href="#" aria-label="Próxima Página"><span aria-hidden="true">&raquo;</span></a></li>
+									</ul>
+								</nav>
+
 								<table class="table table-condensed">
 									<thead>
 										<tr>
@@ -51,14 +61,14 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr ng-repeat="post in institutionPosts" ng-class="{'active':!post.published}">
+										<tr ng-repeat="post in institutionPosts.posts" ng-class="{'success':post.published,'active':!post.published}">
 											<td><span ng-bind="::post.title"></span><br><small><a ui-sref="main.instituicao.post({ slug: institution.slug, postSlug: post.slug })">/<span ng-bind="::institution.slug"></span><strong ng-bind-template="/{{::post.slug}}"></strong></a></small></td>
 											<td ng-bind="::post.creation.time | date"></td>
 											<td ng-bind="::post.published ? 'Sim' : 'Não'"></td>
-											<td><a ui-sref="admin.instituicao.post({ slug: institution.slug, postSlug: post.slug })" class="btn btn-xs btn-primary">Editar</a></td>
+											<td><a ui-sref="admin.instituicao.post({ slug: institution.slug, institution: institution, postSlug: post.slug })" class="btn btn-xs btn-primary">Editar</a></td>
 										</tr>
 										<tr ng-if="!institutionPosts.length">
-											<td colspan="4">Nenhum post. Que tal <a href="#">fazer um</a>?</td>
+											<td colspan="4">Nenhum post. Que tal <a ui-sref="admin.instituicao.post({ slug: institution.slug, institution: institution })">fazer um</a>?</td>
 										</tr>
 									</tbody>
 									<tfoot>

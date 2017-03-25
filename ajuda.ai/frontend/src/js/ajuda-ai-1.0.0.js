@@ -47016,6 +47016,26 @@ https://github.com/pc035860/angular-easyfb.git */
 		});
 	}]);
 	
+	app.factory("pagination", function () {
+		return {
+			max: 0,
+			current: 0,
+			pages: function () {
+				var self = this;
+				if (self.$$pagesCache.length !== self.max) {
+					var arr = [];
+					for (var i = 0; i < self.max; i++) {
+						arr.push(i + 1);
+					}
+					self.$$pagesCache = arr;
+				}
+				
+				return self.$$pagesCache;
+			},
+			$$pagesCache: []
+		};
+	});
+	
 	app.factory("errorInterceptor", ["$q", function ($q) {
 		return {
 			responseError: function (response) {

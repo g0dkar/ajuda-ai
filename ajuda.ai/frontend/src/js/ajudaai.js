@@ -305,6 +305,31 @@
 		});
 	}]);
 	
+	app.factory("pagination", function () {
+		return {
+			max: 0,
+			current: 0,
+			pageSize: 0,
+			pages: function () {
+				var self = this;
+				if (self.$$pagesCache.length !== self.max) {
+					var arr = [];
+					for (var i = 0; i < self.max; i++) {
+						arr.push(i + 1);
+					}
+					self.$$pagesCache = arr;
+				}
+				
+				return self.$$pagesCache;
+			},
+			$$pagesCache: [],
+			go: function (to) {
+				var self = this;
+				if (to > max) { self.current = self.max; }
+			}
+		};
+	});
+	
 	app.factory("errorInterceptor", ["$q", function ($q) {
 		return {
 			responseError: function (response) {
