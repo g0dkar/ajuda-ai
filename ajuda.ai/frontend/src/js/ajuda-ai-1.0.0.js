@@ -46713,7 +46713,9 @@ https://github.com/pc035860/angular-easyfb.git */
 	var app = angular.module("ajuda-ai", ["ngAnimate", "ui.router", "ng-showdown", "ezfb", "vcRecaptcha"]);
 	var debug = true;
 	var html5mode = false;
-	var apiEndpoint = "http://localhost:8080/v1";
+//	var apiEndpoint = "http://localhost:8080/v1";
+//	var apiEndpoint = "https://api.ajuda.ai/v1";
+	var apiEndpoint = "//api.ajuda.ai/v1";
 	
 	/* ***************************************** */
 	/* Controllers                               */
@@ -46790,6 +46792,21 @@ https://github.com/pc035860/angular-easyfb.git */
 				}
 			}
 		}
+	}]);
+	
+	app.controller("InstitutionPostsController", ["$scope", "$http", "institution", function ($scope, $http, institution) {
+		$scope.loadingPosts = true;
+		
+		var update = function () {
+			$http.get(apiEndpoint + "/institution/" + institution.slug + "/posts").then(function (response) {
+				$scope.loadingPosts = false;
+				$scope.postList = response.data;
+			}, function () {
+				$scope.loadingPosts = false;
+				$scope.postList = {};
+			});
+		};
+		update();
 	}]);
 	
 	app.controller("LoginController", ["$scope", "$http", "$window", "$state", "$stateParams", function ($scope, $http, $window, $state, $stateParams) {
@@ -47020,6 +47037,7 @@ https://github.com/pc035860/angular-easyfb.git */
 		return {
 			max: 0,
 			current: 0,
+			pageSize: 0,
 			pages: function () {
 				var self = this;
 				if (self.$$pagesCache.length !== self.max) {
@@ -47032,7 +47050,13 @@ https://github.com/pc035860/angular-easyfb.git */
 				
 				return self.$$pagesCache;
 			},
-			$$pagesCache: []
+			$$pagesCache: [],
+			go: function (to) {
+				var self = this;
+				if (to > self.max) {
+					self.current = self.max;
+				}
+			}
 		};
 	});
 	
@@ -47302,6 +47326,12 @@ https://github.com/pc035860/angular-easyfb.git */
 			templateUrl: "/fragments/main.instituicao.index.html"
 		})
 		
+		.state("main.instituicao.posts", {
+			url: "/posts",
+			templateUrl: "/fragments/main.instituicao.posts.html",
+			controller: "InstitutionPostsController"
+		})
+		
 		.state("main.instituicao.doar", {
 			url: "/doar",
 			templateUrl: "/fragments/main.instituicao.doar.html",
@@ -47311,7 +47341,9 @@ https://github.com/pc035860/angular-easyfb.git */
 		.state("main.instituicao.post", {
 			url: "/:postSlug",
 			templateUrl: "/fragments/main.instituicao.post.html",
-			controller: "InstitutionPostController",
+			controller: ["$scope", "post", function ($scope, post) {
+				$scope.post = post;
+			}],
 			resolve: {
 				post: ["$q", "$http", "$stateParams", function ($q, $http, $stateParams) {
 					if ($stateParams.post) {

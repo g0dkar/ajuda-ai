@@ -5,10 +5,13 @@ body {
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .loading-indicator {
-	background: transparent url(../img/ripple.gif) no-repeat center center;
-	height: 70px;
-	width: 70px;
 	margin: auto;
+	border-radius: 50%;
+	width: 70px;
+	height: 70px;
+	border: .5rem solid #1565c0;
+	border-top-color: #e21e3c;
+	animation: spin 2s infinite linear;
 }
 h1, h2, h3, h4, h5, h6 {
 	font-family: Rainier, "Josefin Sans", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -217,6 +220,8 @@ nav.navbar-ajuda-ai {
 .panel {
 	display: block;
 	border: none;
+	overflow: hidden;
+	position: relative;
 }
 .home-institution-list {
 	min-height: 320px;
@@ -224,15 +229,35 @@ nav.navbar-ajuda-ai {
 .home-institution-list .panel, .helpers-list .panel {
 	transition: all .1s ease;
 }
-.home-institution-list .panel:hover, .helpers-list .panel:hover {
+.institution-post-list-item {
+	margin-bottom: 1em;
+}
+.institution-post-list-item:last-child {
+	margin-bottom: 0;
+}
+.home-institution-list .panel:hover, .helpers-list .panel:hover, .institution-post-list .panel {
 	text-decoration: none;
 	box-shadow: 0 2px 3px rgba(0,0,0,.2);
+	transition: background-color .25s ease;
 }
-.home-institution-list .panel-body, .helpers-list .panel-body {
+.institution-post-list .panel:hover {
+	background: #E3F2FD;
+	box-shadow: 0 2px 3px rgba(0,0,0,.2), 0 1px 2px rgba(0,0,0,.2);
+}
+.home-institution-list .panel:hover .panel-image-img, .institution-post-list .panel:hover .panel-image-img {
+	transform: scale(1.15);
+}
+.institution-post-list .panel:hover .panel-title {
+	color: #1E88E5;
+}
+.home-institution-list .panel-body, .institution-post-list .panel-body, .helpers-list .panel-body {
 	padding: 0;
 	display: block;
 	height: 300px;
 	position: relative;
+}
+.institution-post-list .panel-body {
+	height: 200px;
 }
 .panel .panel-image {
 	margin: -15px -15px 0 -15px;
@@ -243,12 +268,16 @@ nav.navbar-ajuda-ai {
 	padding: 15px;
 	font-weight: 600;
 }
-.home-institution-list .panel-image {
+.home-institution-list .panel-image, .institution-post-list .panel-image {
 	margin: 0;
 	height: 250px;
 }
-.home-institution-list .panel-image-img {
+.institution-post-list .panel-image {
+	height: 150px;
+}
+.home-institution-list .panel-image-img, .institution-post-list .panel-image-img {
 	height: 100%;
+	transition: transform .5s ease;
 }
 .home-institution-list .panel-avatar {
 	position: absolute;
@@ -264,12 +293,12 @@ nav.navbar-ajuda-ai {
 	text-align: center;
 	z-index: 1;
 }
-.home-institution-list .panel-avatar-img {
+.home-institution-list .panel-avatar-img, .institution-post-list .panel-avatar-img {
 	width: 56px;
 	height: 56px;
 	border-radius: 99px;
 }
-.home-institution-list .panel-title-bg {
+.home-institution-list .panel-title-bg, .institution-post-list .panel-title-bg {
 	position: absolute;
 	top: 0;
 	bottom: 50px;
@@ -279,7 +308,11 @@ nav.navbar-ajuda-ai {
 	background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.7) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#03000000', endColorstr='#ab000000',GradientType=0); /* IE6-9 */
 }
-.home-institution-list .panel-title {
+.institution-post-list .panel-title-bg {
+	bottom: auto;
+	height: 150px;
+}
+.home-institution-list .panel-title, .institution-post-list .panel-title {
 	padding: 0 15px 0 90px;
 	position: absolute;
 	bottom: 5px;
@@ -290,13 +323,34 @@ nav.navbar-ajuda-ai {
 	text-shadow: 0 1px 2px #000;
 	margin: 0;
 	border: none;
+	transition: color .25s ease;
 }
-.home-institution-list .panel-subtitle {
-	display: inline-block;
+.institution-post-list .panel-title {
+	bottom: 15px;
+	padding: 0 15px;
+	font-size: 1.65em;
+}
+.home-institution-list .panel-subtitle, .institution-post-list .panel-subtitle {
+	display: block;
 	line-height: 50px;
 	padding: 0 15px 0 90px;
 	color: #000;
 	font-size: 1.25em;
+}
+.institution-post-list .panel-subtitle {
+	padding: 0 15px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.institution-post-list .panel-title-time {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 15px;
+	font-size: .8em;
+	color: #fff;
+	text-shadow: 0 1px 2px #000;
 }
 .helpers-list .panel, .helpers-list .panel-body {
 	height: auto;
@@ -636,6 +690,24 @@ nav.navbar-ajuda-ai {
 	max-height: 300px;
 	overflow: auto;
 }
+#inst-posts-list .list-group-item h3 {
+	margin: 0;
+}
+.post-header-image {
+	position: relative;
+}
+.post-header-image, .post-header-image-img {
+	border-radius: 3px;
+}
+.post-header-time {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 15px;
+	font-size: .8em;
+	color: #fff;
+	text-shadow: 0 1px 2px #000;
+}
 
 
 
@@ -851,4 +923,12 @@ nav.navbar-ajuda-ai {
     -webkit-animation-timing-function: ease-out;
             animation-timing-function: ease-out;
   }
+}
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
