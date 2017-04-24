@@ -1,0 +1,12 @@
+<nav class="navbar navbar-default navbar-admin">
+	<div class="container">
+		<ul class="nav navbar-nav">
+			<li ui-sref-active="active"><a ui-sref="admin.index" title="Informações Rápidas para Você">Dashboard</a></li>
+			<li ng-if="user.isInstitution" ui-sref-active="active"><a ui-sref="admin.instituicoes" title="Gerencie suas Instituições">Minhas Instituições</a></li>
+			<li ui-sref-active="active"><a ui-sref="admin.profile" title="Veja e altere seus Dados Cadastrais">Meus Dados</a></li>
+			<li ui-sref-active="active"><a ui-sref="admin.sair" title="Lembre de sair para que não mexam na sua conta :)">Sair</a></li>
+		</ul>
+	</div>
+</nav>
+
+<div id="admin-page" ui-view></div>

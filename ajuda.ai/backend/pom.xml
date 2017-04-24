@@ -1,0 +1,144 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>ajuda.ai</groupId>
+		<artifactId>ajuda.ai</artifactId>
+		<version>1.0</version>
+	</parent>
+	<artifactId>backend</artifactId>
+	<packaging>war</packaging>
+	<name>Servidor Back-end do Ajuda.Ai</name>
+	
+	<build>
+		<finalName>ajuda-ai</finalName>
+		<outputDirectory>${basedir}/src/main/webapp/WEB-INF/classes</outputDirectory>
+		
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Dependencies>org.hibernate,org.slf4j,com.google.guava,org.infinispan export</Dependencies>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<developers>
+		<developer>
+			<id>g0dkar</id>
+			<name>Rafael Lins</name>
+			<email>rafael@ajuda.ai</email>
+			<url>https://ajuda.ai/rafael</url>
+			<roles>
+				<role>founder</role>
+			</roles>
+		</developer>
+	</developers>
+	
+	<dependencies>
+		<dependency>
+			<groupId>br.com.caelum</groupId>
+			<artifactId>vraptor</artifactId>
+			<version>${vraptor.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>guava</artifactId>
+					<groupId>com.google.guava</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>${javaee-web-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>1.2</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!--dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-admin-client</artifactId>
+			<version>${keycloak.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-core</artifactId>
+			<version>${keycloak.version}</version>
+			<scope>provided</scope>
+		</dependency-->
+		
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-core</artifactId>
+			<version>${infinispan.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-commons</artifactId>
+			<version>${infinispan.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.5.3</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>ajuda.ai</groupId>
+			<artifactId>persistence-sql</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>ajuda.ai</groupId>
+			<artifactId>payment-impl-moip</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+</project>

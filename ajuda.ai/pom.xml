@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ajuda.ai</groupId>
+	<artifactId>ajuda.ai</artifactId>
+	<version>1.0</version>
+	<packaging>pom</packaging>
+	<name>Projeto Ajuda.Ai</name>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<wildfly.version>10.0.0.Final</wildfly.version>
+		<hibernate.version>5.0.7.Final</hibernate.version>
+		<keycloak.version>1.9.4.Final</keycloak.version>
+		<vraptor.version>4.1.4</vraptor.version>
+		<infinispan.version>8.1.0.Final</infinispan.version>
+		<javaee-web-api.version>7.0</javaee-web-api.version>
+		<slf4j.version>1.7.7</slf4j.version>
+	</properties>
+	
+	<modules>
+		<module>persistence-sql</module>
+		<module>model</module>
+		<module>backend</module>
+		<module>util</module>
+		<module>payment-api</module>
+		<module>payment-impl-moip</module>
+		<module>frontend</module>
+	</modules>
+</project>
