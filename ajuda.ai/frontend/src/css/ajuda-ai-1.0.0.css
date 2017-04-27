@@ -6761,6 +6761,9 @@ body {
 	background: #f5f3f2;
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+.ng-hide {
+	animation: none !important;
+}
 .loading-indicator {
 	margin: auto;
 	border-radius: 50%;
