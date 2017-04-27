@@ -77,5 +77,11 @@
 			<version>${javaee-web-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>ajuda.ai</groupId>
+			<artifactId>persistence-sql</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 </project>

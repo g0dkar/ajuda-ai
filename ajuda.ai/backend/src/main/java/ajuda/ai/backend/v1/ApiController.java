@@ -50,7 +50,12 @@ public abstract class ApiController {
 				result.nothing();
 			}
 			else {
-				serializer(object).recursive().serialize();
+				if (object instanceof String) {
+					result.use(Results.http()).body((String) object);
+				}
+				else {
+					serializer(object).recursive().serialize();
+				}
 			}
 		}
 	}

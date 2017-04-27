@@ -2,16 +2,20 @@ package ajuda.ai.payment.moip;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
+import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
 
 import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.billing.PaymentEvent;
 import ajuda.ai.model.institution.Institution;
-import ajuda.ai.model.user.User;
 import ajuda.ai.payment.PaymentGateway;
-import ajuda.ai.payment.annotation.PaymentService;
+import ajuda.ai.payment.annotation.PaymentServiceImpl;
+import ajuda.ai.persistence.model.billing.PaymentPersistence;
+import ajuda.ai.util.StringUtils;
 import br.com.caelum.vraptor.Result;
 
 /**
@@ -19,23 +23,51 @@ import br.com.caelum.vraptor.Result;
  * @author Rafael Lins
  *
  */
-@PaymentService("moip")
+@PaymentServiceImpl("moip")
 public class MoipPaymentProcessor implements PaymentGateway {
-	public Payment createPayment(final Institution institution, final User helper, final int value, final boolean addCosts, final int paymentType, final Result result, final Logger log) {
+	private static final int STATUS_CONCLUIDO = 4;
+	private static final int STATUS_PAGO = 1;
+	private static final int STATUS_CANCELADO = 5;
+	private static final String MOIP_PAYMENT_ACTION_URL = "https://www.moip.com.br/PagamentoMoIP.do";
+//	private static final String MOIP_PAYMENT_ACTION_URL = "https://desenvolvedor.moip.com.br/sandbox/PagamentoMoIP.do";
+	
+	@Inject
+	private Logger log;
+	
+	@Inject
+	private PaymentPersistence pp;
+	
+	public int calculateCosts(final int value, final int paymentType) {
+		return (int)(Math.ceil((value + 65) / (paymentType == 0 ? .9451 : .9651)) - value);
+	}
+	
+	@Override
+	public Payment createPayment(final Institution institution, final boolean anonymous, final String payeeName, final String payeeEmail, final int value, final boolean addCosts, final int paymentType) {
+		if (log.isDebugEnabled()) {
+			log.debug("Criando Payment para MoIP: Instituição #{}, Anonymous? {}, Valor: {}", institution.getId(), anonymous, value);
+		}
+		
 		final Payment payment = new Payment();
 		payment.setInstitution(institution);
-		payment.setHelper(helper);
 		payment.setPaymentServiceId(null);
 		payment.setDescription("Doação MoIP");
 		payment.setPaymentService(institution.getPaymentService());
 		payment.setTimestamp(new Date());
 		payment.setValue(value);
-//		payment.setRealValue(addCosts ? PaymentServiceEnum.MOIP.valuePlusTariffs(value, paymentType) : value);
+		payment.setRealValue(value + (addCosts ? calculateCosts(value, paymentType) : 0));
 		payment.setPaid(false);
 		payment.setCancelled(false);
 		payment.setReadyForAccounting(false);
-		payment.setPayeeName((helper.getFirstname() + " " + helper.getLastname()).trim());
-		payment.setPayeeEmail(helper.getEmail());
+		payment.setAnonymous(anonymous);
+		payment.setPayeeName(payeeName);
+		payment.setPayeeEmail(payeeEmail);
+		
+		return payment;
+	}
+	
+	@Override
+	public void redirectToPayment(final Payment payment, final Result result) {
+		final Institution institution = payment.getInstitution();
 		
 		final HashMap<String, Object> params = new HashMap<>(8);
 		params.put("id_carteira", institution.getAttributes().get("moip_email"));
@@ -43,49 +75,71 @@ public class MoipPaymentProcessor implements PaymentGateway {
 		params.put("nome", maxSize("Doação: " + institution.getName(), 64));
 		params.put("descricao", "Doação através do Projeto Ajuda.Ai");
 		params.put("id_transacao", payment.getId());
-//		params.put("pagador_nome", maxSize(helper.isAnonymous() || StringUtils.isBlank(helper.getName()) ? "Anônimo" : helper.getName(), 90));
-		params.put("pagador_email", maxSize(helper.getEmail(), 45));
+		params.put("pagador_nome", maxSize(payment.isAnonymous() ? "Anonimo" : payment.getPayeeName(), 90));
+		params.put("pagador_email", maxSize(payment.getPayeeEmail(), 45));
 		
-//		result.redirectTo(PostRedirectController.class).postRedirect("https://www.moip.com.br/PagamentoMoIP.do", params, "ISO-8859-1");
-		return payment;
+		result.include("action", MOIP_PAYMENT_ACTION_URL);
+		result.include("paramMap", params);
+		result.include("charset", "ISO-8859-1");
+		
+		if (log.isDebugEnabled()) {
+			log.debug("Redirecionando para MoIP (action = {}) com os parâmetros: {}", MOIP_PAYMENT_ACTION_URL, params);
+		}
 	}
 	
-	public PaymentEvent processEvent(final Institution institution, final HttpServletRequest request, final Result result, final Logger log) throws Exception {
-		if (request.getMethod().equals("POST")) {
-			final String idPayment = request.getParameter("id_transacao");
-//			final Payment payment = ps.find(Payment.class, idPayment);
-			
-//			if (payment != null) {
-//				final String idMoip = request.getParameter("cod_moip");
-//				final int valor = StringUtils.parseInteger(request.getParameter("valor"), 0);
-//				final int status = StringUtils.parseInteger(request.getParameter("status_pagamento"), -1);
-//				
-//				final PaymentEvent newEvent = new PaymentEvent();
-//				newEvent.setCurrency("BRL");	// Apenas BRL é suportado pelo MoIP
-//				newEvent.setPayment(payment);
-//				newEvent.setPaymentType(request.getParameter("forma_pagamento"));
-//				newEvent.setPaymentTypeInfo(request.getParameter("tipo_pagamento"));
-//				newEvent.setStatus(status);
-//				newEvent.setTimestamp(new Date());
-//				newEvent.setTransactionServiceId(idMoip);
-//				newEvent.setValue(valor);
-//				ps.persist(newEvent);
-//				
-//				final Query updatePayment = ps.createQuery("UPDATE Payment SET paid = :paid, cancelled = :cancelled, readyForAccounting = :readyForAccounting WHERE id = :id").setParameter("id", payment.getId());
-//				updatePayment.setParameter("paid", PaymentServiceEnum.MOIP.isPaid(newEvent.getStatus()));
-//				updatePayment.setParameter("cancelled", PaymentServiceEnum.MOIP.isCancelled(newEvent.getStatus()));
-//				updatePayment.setParameter("readyForAccounting", PaymentServiceEnum.MOIP.isReadyForAccounting(newEvent.getStatus()));
-//				updatePayment.executeUpdate();
-//				
-//				result.nothing();
-//				return newEvent;
-//			}
-//			else {
-//				result.nothing();
-//				return null;
-//			}
+	@Override
+	public PaymentEvent processEvent(final HttpServletRequest request, final Result result) throws Exception {
+		if (log.isDebugEnabled()) {
+			log.debug("Recebendo notificação de transação do MoIP. Checando método HTTP (deve ser POST)");
 		}
 		
+		if (request.getMethod().equals("POST")) {
+			if (log.isDebugEnabled()) {
+				log.debug("É um HTTP POST. Buscando Payment no banco. Parâmetros do Request: {}", request.getParameterMap());
+			}
+			
+			final Long idPayment = StringUtils.parseLong(request.getParameter("id_transacao"), 0);
+			final Payment payment = pp.get(idPayment);
+			
+			if (payment != null) {
+				if (log.isDebugEnabled()) {
+					log.debug("Payment ID {} encontrado. Continuando...", payment.getId());
+				}
+				
+				final String idMoip = request.getParameter("cod_moip");
+				final int valor = StringUtils.parseInteger(request.getParameter("valor"), 0);
+				final int status = StringUtils.parseInteger(request.getParameter("status_pagamento"), -1);
+				
+				final PaymentEvent newEvent = new PaymentEvent();
+				newEvent.setCurrency("BRL");	// Apenas BRL é suportado pelo MoIP
+				newEvent.setPayment(payment);
+				newEvent.setPaymentType(request.getParameter("forma_pagamento"));
+				newEvent.setPaymentTypeInfo(request.getParameter("tipo_pagamento"));
+				newEvent.setStatus(status);
+				newEvent.setTimestamp(new Date());
+				newEvent.setTransactionServiceId(idMoip);
+				newEvent.setValue(valor);
+				pp.persist(newEvent);
+				
+				if (log.isDebugEnabled()) {
+					log.debug("Atualizando status dos campos paid, cancelled e readyForAccounting do Payment #{}", payment.getId());
+				}
+				
+				final Query updatePayment = pp.query("UPDATE Payment SET paid = :paid, cancelled = :cancelled, readyForAccounting = :readyForAccounting WHERE id = :id").setParameter("id", payment.getId());
+				updatePayment.setParameter("paid", newEvent.getStatus() == STATUS_PAGO);
+				updatePayment.setParameter("cancelled", newEvent.getStatus() == STATUS_CANCELADO);
+				updatePayment.setParameter("readyForAccounting", newEvent.getStatus() == STATUS_CONCLUIDO);
+				updatePayment.executeUpdate();
+				
+				if (log.isDebugEnabled()) {
+					log.debug("Atualizados para: paid = {}, cancelled = {} e readyForAccounting = {} - Payment #{}", newEvent.getStatus() == STATUS_PAGO, newEvent.getStatus() == STATUS_CANCELADO, newEvent.getStatus() == STATUS_CONCLUIDO, payment.getId());
+				}
+				
+				return newEvent;
+			}
+		}
+		
+		result.nothing();
 		return null;
 	}
 	

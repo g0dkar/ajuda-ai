@@ -1,5 +1,6 @@
 package ajuda.ai.backend.v1.institution;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,13 +15,18 @@ import org.slf4j.Logger;
 import ajuda.ai.backend.v1.ApiController;
 import ajuda.ai.backend.v1.auth.Auth;
 import ajuda.ai.backend.v1.auth.AuthenticatedUser;
-import ajuda.ai.backend.v1.recaptcha.ReCaptchaService;
+import ajuda.ai.model.billing.Payment;
 import ajuda.ai.model.extra.CreationInfo;
 import ajuda.ai.model.institution.Institution;
 import ajuda.ai.model.institution.InstitutionPost;
+import ajuda.ai.model.user.User;
+import ajuda.ai.payment.PaymentGateway;
 import ajuda.ai.payment.PaymentService;
+import ajuda.ai.payment.exception.UnsupportedPaymentServiceException;
 import ajuda.ai.persistence.model.ConfigurationPersistence;
+import ajuda.ai.persistence.model.billing.PaymentPersistence;
 import ajuda.ai.persistence.model.institution.InstitutionPersistence;
+import ajuda.ai.persistence.model.user.UserPersistence;
 import ajuda.ai.util.StringUtils;
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -31,6 +37,8 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.serialization.gson.WithoutRoot;
 import br.com.caelum.vraptor.validator.I18nMessage;
 import br.com.caelum.vraptor.validator.Validator;
+import ch.compile.recaptcha.ReCaptchaVerify;
+import ch.compile.recaptcha.model.SiteVerifyResponse;
 
 /**
  * Representa a parte da API relacionada a {@link Institution} e {@link InstitutionPost}.
@@ -41,24 +49,26 @@ import br.com.caelum.vraptor.validator.Validator;
 @Path("/institution")
 public class InstitutionController extends ApiController {
 	private final InstitutionPersistence ip;
+	private final PaymentPersistence pp;
+	private final UserPersistence up;
 	private final PaymentService paymentService;
-	private final ReCaptchaService recaptcha;
 	private final AuthenticatedUser authUser;
 	private final ConfigurationPersistence conf;
 	
 	/** @deprecated CDI **/ @Deprecated
-	InstitutionController() { this(null, null, null, null, null, null, null, null, null); }
+	InstitutionController() { this(null, null, null, null, null, null, null, null, null, null); }
 	
 	@Inject
-	public InstitutionController(final Logger log, final Result result, final HttpServletRequest request, final Validator validator, final InstitutionPersistence ip, final PaymentService paymentService, final ReCaptchaService recaptcha, final AuthenticatedUser authUser, final ConfigurationPersistence conf) {
+	public InstitutionController(final Logger log, final Result result, final HttpServletRequest request, final Validator validator, final InstitutionPersistence ip, final PaymentPersistence pp, final UserPersistence up, final PaymentService paymentService, final AuthenticatedUser authUser, final ConfigurationPersistence conf) {
 		this.log = log;
 		this.result = result;
 		this.request = request;
 		this.validator = validator;
 		
 		this.ip = ip;
+		this.pp = pp;
+		this.up = up;
 		this.paymentService = paymentService;
-		this.recaptcha = recaptcha;
 		this.authUser = authUser;
 		this.conf = conf;
 	}
@@ -310,5 +320,148 @@ public class InstitutionController extends ApiController {
 		response(post);
 		
 		return post;
+	}
+	
+	@Auth
+	@Post("/{slug:[a-z][a-z0-9\\-]*[a-z0-9]}/donate")
+	@Consumes(value = { "application/json", "application/x-www-form-urlencoded" }, options = WithoutRoot.class)
+	@Transactional
+	public Payment donate(final DonationRequest donation, final String slug) {
+		final Institution institution = ip.getSlug(slug);
+		
+		if (institution != null) {
+			Payment payment = null;
+			
+			if (checkCaptcha(donation.getCaptcha())) {
+				PaymentGateway gateway = null;
+				
+				try {
+					gateway = paymentService.get(institution.getPaymentService());
+				} catch (final UnsupportedPaymentServiceException upse) {
+					log.error("Gateway não suportado!", upse);
+				}
+				
+				if (gateway != null) {
+					payment = gateway.createPayment(institution, donation.isAnonymous(), donation.getName(), donation.getEmail(), donation.getValue(), donation.isAddcosts(), donation.getAddcoststype());
+					
+					if (payment != null) {
+						payment.generateUUID();
+						
+						if (!validator.validate(payment).hasErrors()) {
+							final User helper = up.getUsernameOrEmail(donation.getEmail());
+							payment.setHelper(helper);
+							
+							try {
+								pp.persist(payment);
+							} catch (final Exception e) {
+								log.error("Erro ao persistir pagamento", e);
+								validator.add(new I18nMessage("error", "institutionController.donate.paymentPersistError"));
+							}
+						}
+					}
+				}
+				else {
+					validator.add(new I18nMessage("error", "institutionController.donate.unsupportedGateway"));
+				}
+				
+				if (payment == null) {
+					validator.add(new I18nMessage("error", "institutionController.donate.paymentError"));
+				}
+			}
+			else {
+				validator.add(new I18nMessage("error", "institutionController.donate.wrongCaptcha"));
+			}
+			
+			response(payment != null ? payment.getUuid() : "");
+			
+			return payment;
+		}
+		else {
+			result.notFound();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Verifica um Google ReCAPTCHA
+	 * @param captcha Resultado da verificação feita na tela
+	 * @return {@code true} se o desafio foi feito com sucesso
+	 */
+	private boolean checkCaptcha(final String captcha) {
+		try {
+			final ReCaptchaVerify reCaptchaVerify = new ReCaptchaVerify(conf.get("recaptchaSecretKey"));
+			final SiteVerifyResponse siteVerifyResponse = reCaptchaVerify.verify(captcha, request.getRemoteAddr());
+			return siteVerifyResponse.isSuccess();
+		} catch (final IOException ioe) {
+			log.error("Erro ao verificar captcha", ioe);
+			return false;
+		}
+	}
+	
+	public static class DonationRequest {
+		private int value;
+		private boolean anonymous;
+		private boolean addcosts;
+		private int addcoststype;
+		private String email;
+		private String name;
+		private String captcha;
+
+		public int getValue() {
+			return value;
+		}
+
+		public void setValue(final int value) {
+			this.value = value;
+		}
+
+		public boolean isAnonymous() {
+			return anonymous;
+		}
+
+		public void setAnonymous(final boolean anonymous) {
+			this.anonymous = anonymous;
+		}
+
+		public boolean isAddcosts() {
+			return addcosts;
+		}
+
+		public void setAddcosts(final boolean addcosts) {
+			this.addcosts = addcosts;
+		}
+
+		public int getAddcoststype() {
+			return addcoststype;
+		}
+
+		public void setAddcoststype(final int addcoststype) {
+			this.addcoststype = addcoststype;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public void setEmail(final String email) {
+			this.email = email;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(final String name) {
+			this.name = name;
+		}
+
+		public String getCaptcha() {
+			return captcha;
+		}
+
+		public void setCaptcha(final String captcha) {
+			this.captcha = captcha;
+		}
 	}
 }

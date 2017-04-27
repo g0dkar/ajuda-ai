@@ -82,6 +82,12 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
 			<version>1.2</version>
@@ -139,6 +145,11 @@
 			<groupId>ajuda.ai</groupId>
 			<artifactId>payment-impl-moip</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.keetraxx</groupId>
+			<artifactId>recaptcha</artifactId>
+			<version>0.5</version>
 		</dependency>
 	</dependencies>
 </project>

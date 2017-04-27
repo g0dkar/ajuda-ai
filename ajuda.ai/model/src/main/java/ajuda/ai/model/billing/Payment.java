@@ -104,10 +104,14 @@ public class Payment implements Serializable {
 	@OneToMany(mappedBy = "payment", orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<PaymentEvent> events;
 	
+	public String generateUUID() {
+		return uuid = UUID.randomUUID().toString().replaceAll("-", "").toLowerCase();
+	}
+	
 	@PrePersist
 	public void beforeSave() {
 		if (uuid == null) {
-			uuid = UUID.randomUUID().toString().replaceAll("-", "").toLowerCase();
+			generateUUID();
 		}
 	}
 	
