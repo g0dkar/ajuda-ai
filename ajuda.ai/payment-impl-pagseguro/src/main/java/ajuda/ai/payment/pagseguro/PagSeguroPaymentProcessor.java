@@ -95,8 +95,7 @@ public class PagSeguroPaymentProcessor implements PaymentGateway {
 	
 	@Override
 	public void redirectToPayment(final Payment payment, final Result result) {
-		final String redirectUrl = PAGSEGURO_ENDPOINT + "/v2/checkout/payment.html?code=" + payment.getPaymentServiceId();
-		https://sandbox.pagseguro.uol.com.br/v2/checkout/payment.html?code=400D67BB0000E70004526F936EC1307F
+		final String redirectUrl = PAGSEGURO_REDIRECT_ENDPOINT + "/v2/checkout/payment.html?code=" + payment.getPaymentServiceId();
 		
 		if (log.isDebugEnabled()) {
 			log.debug("Redirecionando para PagSeguro: {}", redirectUrl);
@@ -122,8 +121,11 @@ public class PagSeguroPaymentProcessor implements PaymentGateway {
 //			notificationType=transaction
 			
 			final String notificationCode = request.getParameter("notificationCode");
-			final String transactionRequest = PAGSEGURO_ENDPOINT + "/v3/transactions/" + notificationCode + "?email=" + StringUtils.encodeURLComponent(institution.getAttributes().get("pagseguro_email")) + "&token=" + institution.getAttributes().get("pagseguro_token");
+			final String transactionRequest = PAGSEGURO_ENDPOINT + "/v3/transactions/notifications/" + notificationCode + "?email=" + StringUtils.encodeURLComponent(institution.getAttributes().get("pagseguro_email")) + "&token=" + institution.getAttributes().get("pagseguro_token");
 			final String transactionData = httpGet(transactionRequest);
+			
+			log.info("transactionRequest: {}", transactionRequest);
+			log.info("Dados da transação: {}", transactionData);
 			
 			final String idPayment = extractTagValue("reference", transactionData);
 			final Payment payment = pp.get(idPayment);
