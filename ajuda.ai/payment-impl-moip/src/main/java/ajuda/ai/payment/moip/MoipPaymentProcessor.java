@@ -25,9 +25,16 @@ import br.com.caelum.vraptor.Result;
  */
 @PaymentServiceImpl("moip")
 public class MoipPaymentProcessor implements PaymentGateway {
-	private static final int STATUS_CONCLUIDO = 4;
+	// Retirado de: https://labs.moip.com.br/parametro/statuspagamento/
 	private static final int STATUS_PAGO = 1;
+	private static final int STATUS_INICIADO = 2;
+	private static final int STATUS_BOLETO_IMPRESSO = 3;
+	private static final int STATUS_CONCLUIDO = 4;
 	private static final int STATUS_CANCELADO = 5;
+	private static final int STATUS_EM_ANALISE = 6;
+	private static final int STATUS_ESTORNADO = 7;
+	private static final int STATUS_REEMBOLSADO = 9;
+	
 	private static final String MOIP_PAYMENT_ACTION_URL = "https://www.moip.com.br/PagamentoMoIP.do";
 //	private static final String MOIP_PAYMENT_ACTION_URL = "https://desenvolvedor.moip.com.br/sandbox/PagamentoMoIP.do";
 	
@@ -61,6 +68,7 @@ public class MoipPaymentProcessor implements PaymentGateway {
 		payment.setAnonymous(anonymous);
 		payment.setPayeeName(payeeName);
 		payment.setPayeeEmail(payeeEmail);
+		payment.generateUUID();
 		
 		return payment;
 	}
@@ -88,7 +96,7 @@ public class MoipPaymentProcessor implements PaymentGateway {
 	}
 	
 	@Override
-	public PaymentEvent processEvent(final HttpServletRequest request, final Result result) throws Exception {
+	public PaymentEvent processEvent(final HttpServletRequest request, final Result result, Institution institution) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("Recebendo notificação de transação do MoIP. Checando método HTTP (deve ser POST)");
 		}
@@ -126,15 +134,16 @@ public class MoipPaymentProcessor implements PaymentGateway {
 				}
 				
 				final Query updatePayment = pp.query("UPDATE Payment SET paid = :paid, cancelled = :cancelled, readyForAccounting = :readyForAccounting WHERE id = :id").setParameter("id", payment.getId());
-				updatePayment.setParameter("paid", newEvent.getStatus() == STATUS_PAGO);
-				updatePayment.setParameter("cancelled", newEvent.getStatus() == STATUS_CANCELADO);
-				updatePayment.setParameter("readyForAccounting", newEvent.getStatus() == STATUS_CONCLUIDO);
+				updatePayment.setParameter("paid", isPago(newEvent.getStatus()));
+				updatePayment.setParameter("cancelled", isCancelado(newEvent.getStatus()));
+				updatePayment.setParameter("readyForAccounting", isConcluido(newEvent.getStatus()));
 				updatePayment.executeUpdate();
 				
 				if (log.isDebugEnabled()) {
-					log.debug("Atualizados para: paid = {}, cancelled = {} e readyForAccounting = {} - Payment #{}", newEvent.getStatus() == STATUS_PAGO, newEvent.getStatus() == STATUS_CANCELADO, newEvent.getStatus() == STATUS_CONCLUIDO, payment.getId());
+					log.debug("Atualizados para: paid = {}, cancelled = {} e readyForAccounting = {} - Payment #{}", isPago(newEvent.getStatus()), isCancelado(newEvent.getStatus()), isConcluido(newEvent.getStatus()), payment.getId());
 				}
 				
+				result.nothing();
 				return newEvent;
 			}
 		}
@@ -145,5 +154,17 @@ public class MoipPaymentProcessor implements PaymentGateway {
 	
 	private String maxSize(final String string, final int size) {
 		return string.length() <= size ? string : string.substring(0, size + 1);
+	}
+	
+	private boolean isPago(final int status) {
+		return status != STATUS_INICIADO;
+	}
+	
+	private boolean isCancelado(final int status) {
+		return status == STATUS_CANCELADO || status == STATUS_ESTORNADO || status == STATUS_REEMBOLSADO;
+	}
+	
+	private boolean isConcluido(final int status) {
+		return status == STATUS_CONCLUIDO;
 	}
 }

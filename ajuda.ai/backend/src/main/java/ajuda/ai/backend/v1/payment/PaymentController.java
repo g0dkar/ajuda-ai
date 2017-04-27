@@ -21,7 +21,7 @@ import br.com.caelum.vraptor.Result;
  *
  */
 @Controller
-@Path({"/pagar", "/payment"})
+@Path("/pagar")
 public class PaymentController {
 	private final Logger log;
 	private final Result result;

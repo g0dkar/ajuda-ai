@@ -27,5 +27,6 @@
 		<module>payment-api</module>
 		<module>payment-impl-moip</module>
 		<module>frontend</module>
+		<module>payment-impl-pagseguro</module>
 	</modules>
 </project>

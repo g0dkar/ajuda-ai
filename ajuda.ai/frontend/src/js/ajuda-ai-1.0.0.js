@@ -46793,7 +46793,7 @@ https://github.com/pc035860/angular-easyfb.git */
 			else {
 				switch ($scope.institution.paymentService) {
 					case "moip": return ((Math.ceil((100 * value + 65) / .9651) - 100 * value) / 100).toFixed(2);
-					case "pagseguro": return ((Math.ceil((100 * value + 65) / .9651) - 100 * value) / 100).toFixed(2);
+					case "pagseguro": return ((Math.ceil((100 * value + 65) / .9451) - 100 * value) / 100).toFixed(2);
 					default: return 0;
 				}
 			}
@@ -46815,7 +46815,7 @@ https://github.com/pc035860/angular-easyfb.git */
 					$window.alert(msg);
 				}
 				else {
-					window.location = apiEndpoint + "/payment/" + data;
+					window.location = apiEndpoint + "/pagar/" + data;
 				}
 			});
 		};

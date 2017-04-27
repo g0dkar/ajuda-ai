@@ -345,8 +345,6 @@ public class InstitutionController extends ApiController {
 					payment = gateway.createPayment(institution, donation.isAnonymous(), donation.getName(), donation.getEmail(), donation.getValue(), donation.isAddcosts(), donation.getAddcoststype());
 					
 					if (payment != null) {
-						payment.generateUUID();
-						
 						if (!validator.validate(payment).hasErrors()) {
 							final User helper = up.getUsernameOrEmail(donation.getEmail());
 							payment.setHelper(helper);

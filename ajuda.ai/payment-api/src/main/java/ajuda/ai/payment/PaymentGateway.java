@@ -63,7 +63,7 @@ public interface PaymentGateway {
 	 *            {@code POST} deve ser feita {@link HttpServletRequest#getMethod() manualmente})
 	 * @param result
 	 *            {@link Result} para se configurar a resposta.
-	 * 
+	 * @param institution TODO
 	 * @return Um {@link PaymentEvent}. Caso essa função <strong>NÃO</strong> retorne {@code null}
 	 *         espera-se que ela tenha utilizado o {@code result} para enviar como resposta o que o
 	 *         serviço de pagamento espera como resposta da notificação (se for apenas um HTTP 200
@@ -75,7 +75,7 @@ public interface PaymentGateway {
 	 * @see Results#http()
 	 * @see HttpResult#body(String)
 	 */
-	default PaymentEvent processEvent(final HttpServletRequest request, final Result result) throws Exception {
+	default PaymentEvent processEvent(final HttpServletRequest request, final Result result, Institution institution) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 }
