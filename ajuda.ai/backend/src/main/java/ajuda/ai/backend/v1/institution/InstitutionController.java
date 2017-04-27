@@ -26,6 +26,7 @@ import ajuda.ai.payment.exception.UnsupportedPaymentServiceException;
 import ajuda.ai.persistence.model.ConfigurationPersistence;
 import ajuda.ai.persistence.model.billing.PaymentPersistence;
 import ajuda.ai.persistence.model.institution.InstitutionPersistence;
+import ajuda.ai.persistence.model.institution.InstitutionPostPersistence;
 import ajuda.ai.persistence.model.user.UserPersistence;
 import ajuda.ai.util.StringUtils;
 import br.com.caelum.vraptor.Consumes;
@@ -49,6 +50,7 @@ import ch.compile.recaptcha.model.SiteVerifyResponse;
 @Path("/institution")
 public class InstitutionController extends ApiController {
 	private final InstitutionPersistence ip;
+	private final InstitutionPostPersistence ipt;
 	private final PaymentPersistence pp;
 	private final UserPersistence up;
 	private final PaymentService paymentService;
@@ -56,16 +58,17 @@ public class InstitutionController extends ApiController {
 	private final ConfigurationPersistence conf;
 	
 	/** @deprecated CDI **/ @Deprecated
-	InstitutionController() { this(null, null, null, null, null, null, null, null, null, null); }
+	InstitutionController() { this(null, null, null, null, null, null, null, null, null, null, null); }
 	
 	@Inject
-	public InstitutionController(final Logger log, final Result result, final HttpServletRequest request, final Validator validator, final InstitutionPersistence ip, final PaymentPersistence pp, final UserPersistence up, final PaymentService paymentService, final AuthenticatedUser authUser, final ConfigurationPersistence conf) {
+	public InstitutionController(final Logger log, final Result result, final HttpServletRequest request, final Validator validator, final InstitutionPersistence ip, final InstitutionPostPersistence ipt, final PaymentPersistence pp, final UserPersistence up, final PaymentService paymentService, final AuthenticatedUser authUser, final ConfigurationPersistence conf) {
 		this.log = log;
 		this.result = result;
 		this.request = request;
 		this.validator = validator;
 		
 		this.ip = ip;
+		this.ipt = ipt;
 		this.pp = pp;
 		this.up = up;
 		this.paymentService = paymentService;
@@ -279,12 +282,11 @@ public class InstitutionController extends ApiController {
 	@Post("/post-save")
 	@Consumes(value = { "application/json", "application/x-www-form-urlencoded" }, options = WithoutRoot.class)
 	@Transactional
-	public InstitutionPost saveInstitutionPost(Institution institution, final InstitutionPost post) {
-		final Institution inst = ip.get(institution.getId());
-		
+	public InstitutionPost saveInstitutionPost(InstitutionPost post) {
+		final Institution inst = ip.get(post.getInstitution().getId());
+
 		if (inst != null && inst.getCreation().getCreator().equals(authUser.get())) {
-			final Long institutionId = institution.getId() == null ? 0 : institution.getId();
-			CreationInfo creation = (CreationInfo) ip.query("SELECT creation FROM Institution WHERE id = :id").setParameter("id", institutionId).getSingleResult();
+			CreationInfo creation = post.getId() == null ? null : (CreationInfo) ip.query("SELECT creation FROM InstitutionPost WHERE id = :id").setParameter("id", post.getId()).getSingleResult();
 			
 			if (creation == null) {
 				creation = new CreationInfo();
@@ -296,23 +298,23 @@ public class InstitutionController extends ApiController {
 				creation.setLastUpdateBy(authUser.get());
 			}
 			
-			institution.setCreation(creation);
-			
-			final boolean isSlugAvailable = ((Number) ip.query("SELECT count(*) FROM Institution WHERE slug = :slug AND id <> :id").setParameter("slug", institution.getSlug()).setParameter("id", institutionId).getSingleResult()).intValue() == 0;
+			post.setCreation(creation);
+
+			final boolean isSlugAvailable = ((Number) ip.query("SELECT count(*) FROM InstitutionPost WHERE institution = :inst AND slug = :slug AND id <> :id").setParameter("inst", inst).setParameter("slug", post.getSlug()).setParameter("id", post.getId() == null ? 0 : post.getId()).getSingleResult()).intValue() == 0;
 			if (!isSlugAvailable) {
-				validator.add(new I18nMessage("slug", "institutionController.save.slugUnavailable", institution.getSlug()));
+				validator.add(new I18nMessage("slug", "institutionController.savePost.slugUnavailable", post.getSlug()));
 			}
-			
-			if (!validator.validate(institution).hasErrors()) {
+
+			if (!validator.validate(post).hasErrors()) {
 				try {
-					if (institution.getId() == null) {
-						ip.persist(institution);
+					if (post.getId() == null) {
+						ipt.persist(post);
 					}
 					else {
-						institution = ip.merge(institution);
+						post = ipt.merge(post);
 					}
 				} catch (final Exception e) {
-					log.error("Erro ao salvar/alterar Instituição (id = " + institutionId + ")", e);
+					log.error("Erro ao salvar/alterar Instituição (id = " + post.getId() + ")", e);
 				}
 			}
 		}

@@ -218,8 +218,34 @@
 		$scope.institutionPosts = institutionPosts;
 	}]);
 	
-	app.controller("AdminInstituicaoPostController", ["$scope", "institution", "post", function ($scope, $state, institution, post) {
-		$scope.post = post;
+	app.controller("AdminInstituicaoPostController", ["$scope", "$state", "$http", "institution", "post", function ($scope, $state, $http, institution, post) {
+		$scope.post = post || {};
+		$scope.post.institution = { id: institution.id };
+		var slug = post.slug;
+		
+		$scope.doSubmit = function (evt) {
+			evt.preventDefault();
+			$scope.submitting = true;
+			
+			$http.post(apiEndpoint + "/institution/post-save", $scope.post).then(function (response) { 
+				$scope.submitting = false;
+				
+				if (!angular.isArray(response.data)) {
+					$scope.institution = response.data;
+					if ($scope.institution.slug != slug) {
+						$state.go("admin.instituicao.post", { slug: $scope.institution.slug, institution: $scope.institution, post: $scope.post });
+					}
+				}
+				else {
+					var errors = response.data;
+					for (var i = 0; i < errors.length; i++) {
+						angular.element(document.getElementById("post_" + errors[i].category)).addClass("has-error");
+					}
+				}
+			}, function () {
+				$scope.submitting = false;
+			});
+		};
 	}]);
 	
 	app.controller("AdminInstituicaoEditarController", ["$scope", "$http", "$state", "institution", function ($scope, $http, $state, institution) {
@@ -237,7 +263,7 @@
 				if (!angular.isArray(response.data)) {
 					$scope.institution = response.data;
 					if ($scope.institution.slug != slug) {
-						$state.go("admin.instituicaoEditar", { slug: $scope.institution.slug, institution: $scope.institution });
+						$state.go("admin.instituicao.editar", { slug: $scope.institution.slug, institution: $scope.institution });
 					}
 				}
 				else {
@@ -582,7 +608,7 @@
 						return $stateParams.post;
 					}
 					else {
-						return requireHttp("adminInstPost", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug);
+						return requireHttp("adminInstPost", $q, $http, apiEndpoint + "/institution/" + $stateParams.slug + "/" + $stateParams.postSlug);
 					}
 				}]
 			},

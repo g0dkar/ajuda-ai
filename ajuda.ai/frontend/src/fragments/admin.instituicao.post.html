@@ -1,0 +1,79 @@
+<div id="dashboard">
+	<div class="container">
+		<div class="loading-modal" ng-show="loading"><div class="loading-indicator"></div></div>
+		
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-title" ng-bind="post.name"></div>
+					<div class="panel-body">
+						<form action="#" class="form-horizontal" method="post" ng-submit="doSubmit($event)">
+							<h2 style="margin-top:0">Informações Básicas</h2>
+							
+							<div class="form-group" id="post_title">
+								<label for="post.title" class="col-sm-2 control-label required-label">Título</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" maxlength="128" id="post.title" placeholder="Título do Post" aria-describedby="post-title-help-block" ng-model="post.title" autofocus required ng-disabled="submitting">
+									<p id="post-title-help-block" class="help-block">Título do Post.</p>
+								</div>
+							</div>
+							
+							<div class="form-group" id="post_subtitle">
+								<label for="post.subtitle" class="col-sm-2 control-label required-label">Subtítulo</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" maxlength="128" id="post.subtitle" placeholder="Nome da sua Instituição" aria-describedby="post-subtitle-help-block" ng-model="post.subtitle" required ng-disabled="submitting">
+									<p id="post-subtitle-help-block" class="help-block">Subtítulo do Post.</p>
+								</div>
+							</div>
+							
+							<div class="form-group" id="post_slug">
+								<label for="post.slug" class="col-sm-2 control-label required-label">URL</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<span class="input-group-addon">https://ajuda.ai/{{::institution.slug}}/</span>
+										<input type="text" class="form-control" maxlength="128" id="post.slug" placeholder="Endereço do Post" aria-describedby="post-slug-help-block" ng-model="post.slug" required ng-disabled="submitting">
+									</div>
+									<p id="post-slug-help-block" class="help-block">Endereço do seu post. Tente usar algo parecido com o título :)</p>
+								</div>
+							</div>
+							
+							<div class="form-group" id="post_headerImage">
+								<label for="post.headerImage" class="col-sm-2 control-label">Imagem de Cabeçalho</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" maxlength="1024" id="post.headerImage" placeholder="Endereço para a imagem do Dbanner da Instituição" aria-describedby="post-headerImage-help-block" ng-model="post.headerImage" ng-disabled="submitting">
+									<p id="post-headerImage-help-block" class="help-block">Endereço para a imagem de cabeçalho deste post. Imagem do Banner:<br><img ng-src="{{post.headerImage}}" style="max-width:100%"></p>
+								</div>
+							</div>
+							
+							<div class="form-group" id="post_published">
+								<label for="post.published" class="col-sm-2 control-label">Publicar?</label>
+								<div class="col-sm-10">
+									<label class="checkbox"><input type="checkbox" ng-model="post.published" aria-describedby="post-headerImage-help-block" ng-disabled="submitting" /> <strong>Sim</strong>, este post pode ser publicado</label>
+									<p id="post-published-help-block" class="help-block">Apenas posts publicados serão mostrados na página da sua instituição</p>
+								</div>
+							</div>
+							
+							<div class="form-group" id="post_content">
+								<label for="post.content" class="col-sm-2 control-label required-label">Conteúdo</label>
+								<div class="col-sm-5">
+									<textarea class="form-control" maxlength="60000" id="post.content" placeholder="Conteúdo do post" aria-describedby="post-content-help-block" ng-model="post.content" required ng-disabled="submitting" rows="20"></textarea>
+									<p id="post-content-help-block" class="help-block">Conteúdo do post. É feito em <a href="/markdown-help.html" target="_blank" title="Quer ajuda com Markdown? Vamos te ensinar tudo que você quer saber!">Markdown</a>, uma tecnonlogia que ajuda a fazer algo bonito de forma simples. Siga <a href="/markdown-help.html" target="_blank" title="Quer ajuda com Markdown? Vamos te ensinar tudo que você quer saber!">esse link</a> para saber mais :)</p>
+								</div>
+								<div class="col-sm-5">
+									<h4>Previsão:</h4>
+									<div id="post-content-preview" markdown-to-html="post.content"></div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<div class="col-sm-10 col-sm-offset-2">
+									<button type="submit" class="ajuda-ai-btn" ng-disabled="submitting">Salvar todas as Alterações</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
