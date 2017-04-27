@@ -344,17 +344,17 @@ public class InstitutionController extends ApiController {
 				if (gateway != null) {
 					payment = gateway.createPayment(institution, donation.isAnonymous(), donation.getName(), donation.getEmail(), donation.getValue(), donation.isAddcosts(), donation.getAddcoststype());
 					
-					if (payment != null) {
-						if (!validator.validate(payment).hasErrors()) {
-							final User helper = up.getUsernameOrEmail(donation.getEmail());
-							payment.setHelper(helper);
-							
-							try {
-								pp.persist(payment);
-							} catch (final Exception e) {
-								log.error("Erro ao persistir pagamento", e);
-								validator.add(new I18nMessage("error", "institutionController.donate.paymentPersistError"));
-							}
+					log.info("Payment = {}", payment);
+					
+					if (payment != null && !validator.validate(payment).hasErrors()) {
+						final User helper = up.getUsernameOrEmail(donation.getEmail());
+						payment.setHelper(helper);
+						
+						try {
+							pp.persist(payment);
+						} catch (final Exception e) {
+							log.error("Erro ao persistir pagamento", e);
+							validator.add(new I18nMessage("error", "institutionController.donate.paymentPersistError"));
 						}
 					}
 				}

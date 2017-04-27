@@ -154,7 +154,7 @@
 								<div class="form-group">
 									<label for="institution.attributes.moip_email" class="col-sm-2 control-label required-label">E-mail no MoIP</label>
 									<div class="col-sm-10">
-										<input type="text" class="form-control" maxlength="512" id="institution.attributes.moip_email" placeholder="E-mail que você usou para se cadastrar no MoIP" aria-describedby="institution-attributes-moip_email-help-block" ng-model="institution.attributes.moip_email" required ng-disabled="submitting">
+										<input type="text" class="form-control" maxlength="60" id="institution.attributes.moip_email" placeholder="E-mail que você usou para se cadastrar no MoIP" aria-describedby="institution-attributes-moip_email-help-block" ng-model="institution.attributes.moip_email" required ng-disabled="submitting">
 										<p id="institution-attributes-moip_email-help-block" class="help-block">E-mail que você usou para se cadastrar no MoIP. Vamos direcionar as doações para a conta MoIP deste e-mail.</p>
 									</div>
 								</div>
@@ -173,6 +173,44 @@
 												<li>Preencha o campo "URL de notificação" com o seguinte: <code>https://api.ajuda.ai/v1/transaction/moip</code><br><img src="/img/moip-passo-02.jpg" alt="Opção de menu a ser selecionada" style="max-width:100%"></li>
 												<li>Clique em <strong>confirmar alterações</strong>;</li>
 												<li><strong class="heart-right">Pronto</strong></li>
+											</ol>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div ng-if="institution.paymentService === 'pagseguro'">
+								<div class="form-group">
+									<label for="institution.attributes.pagseguro_email" class="col-sm-2 control-label required-label">E-mail no PagSeguro</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" maxlength="60" id="institution.attributes.pagseguro_email" placeholder="E-mail que você usou para se cadastrar no PagSeguro" aria-describedby="institution-attributes-pagseguro_email-help-block" ng-model="institution.attributes.pagseguro_email" required ng-disabled="submitting">
+										<p id="institution-attributes-pagseguro_email-help-block" class="help-block">E-mail que você usou para se cadastrar no PagSeguro. Vamos direcionar as doações para a conta PagSeguro deste e-mail.</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="institution.attributes.pagseguro_email" class="col-sm-2 control-label required-label">Token do PagSeguro</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" maxlength="60" id="institution.attributes.pagseguro_token" placeholder="Token dado a você pelo PagSeguro" aria-describedby="institution-attributes-pagseguro_token-help-block" ng-model="institution.attributes.pagseguro_token" required ng-disabled="submitting">
+										<p id="institution-attributes-pagseguro_token-help-block" class="help-block">Token dado a você pelo PagSeguro. É um código composto por letras de A a F e números de 0 a 9.</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Instruções para o PagSeguro</label>
+									<div class="col-sm-10">
+										<p style="margin-top:10px"><button type="button" class="btn btn-primary btn-sm" ng-click="exibirInstrucoesPagSeguro = !exibirInstrucoesPagSeguro">{{exibirInstrucoesPagSeguro ? 'Ocultar' : 'Exibir'}} Instruções</button></p>
+										
+										<div ng-show="exibirInstrucoesPagSeguro">
+											<p>Para que o sistema funcione corretamente, precisamos que o PagSeguro nos deixe a par do que acontece com suas doações. Para isso é necessário que você faça o seguinte:</p>
+											<ol>
+												<li>Entre em sua conta no PagSeguro (<a href="https://pagseguro.uol.com.br/hub.jhtml" target="_blank">neste link</a>);</li>
+												<li>Navegue para a aba Minha Conta;</li>
+												<li>No Menu Lateral, navegue para Preferências &gt; Integrações (ou use <a href="https://pagseguro.uol.com.br/preferencias/integracoes.jhtml" target="_blank">este link</a>);</li>
+												<li>Preencha o campo "Notificação de transação" com o seguinte: <code>https://api.ajuda.ai/v1/transaction/pagseguro/{{institution.slug}}</code><br><img src="/img/pagseguro-notificacao.png" alt="Opção de a ser alterada" style="max-width:100%"></li>
+												<li>Clique em <strong>Salvar Configurações</strong>;</li>
+												<li>Para ter acesso ao seu token, clique no link <strong>[Enviar por email]</strong> disponível na mesma tela;</li>
+												<li><strong class="heart-right">Pronto!</strong></li>
 											</ol>
 										</div>
 									</div>

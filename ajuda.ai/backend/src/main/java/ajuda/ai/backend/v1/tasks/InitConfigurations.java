@@ -158,9 +158,11 @@ public class InitConfigurations {
 			apipa.getAttributes().put("contact", "Aqui, nós estamos abertos ao diálogo. Use o [nosso formulário de contato](http://www.apipa10.org/apipa-forms/contato.php) para nos enviar a sua mensagem.\n\nNós teremos prazer em dialogar com você!\n\n[ABRIR FORMULÁRIO DE CONTATO](http://www.apipa10.org/apipa-forms/contato.php)\n\nE-mail: **(apipa10@apipa10.org)**\n\nTelefone: **(86) 98846-8020**");
 			apipa.getAttributes().put("website", "http://www.apipa10.org");
 			apipa.getAttributes().put("facebook", "apipa.piaui");
-			apipa.getAttributes().put("moip_email", "rafael.lins777@gmail.com");
+			apipa.getAttributes().put("pagseguro_email", "rafael.lins777@gmail.com");
+//			apipa.getAttributes().put("pagseguro_token", "9FCFC504381E4033A3F01466ACC13203");
+			apipa.getAttributes().put("pagseguro_token", "59F38C180E154E4BA9AD4DB049E33B4B");
 			apipa.getAttributes().put("nationalId", "10.216.609/0001-56");
-			final int postsCount = 3 + rng.nextInt(15);
+			final int postsCount = 3 + rng.nextInt(20);
 			int activePosts = 0;
 			
 			entityManager.persist(apipa);

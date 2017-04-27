@@ -43,7 +43,9 @@ public class PagSeguroPaymentProcessor implements PaymentGateway {
 	private static final int STATUS_RETENCAO_TEMP = 9;
 	
 	private static final String PAGSEGURO_ENDPOINT = "https://ws.sandbox.pagseguro.uol.com.br";
+	private static final String PAGSEGURO_REDIRECT_ENDPOINT = "https://sandbox.pagseguro.uol.com.br/v2";
 //	private static final String PAGSEGURO_ENDPOINT = "https://ws.pagseguro.uol.com.br";
+//	private static final String PAGSEGURO_REDIRECT_ENDPOINT = "https://ws.sandbox.pagseguro.uol.com.br";
 	
 	@Inject
 	private Logger log;
@@ -94,6 +96,7 @@ public class PagSeguroPaymentProcessor implements PaymentGateway {
 	@Override
 	public void redirectToPayment(final Payment payment, final Result result) {
 		final String redirectUrl = PAGSEGURO_ENDPOINT + "/v2/checkout/payment.html?code=" + payment.getPaymentServiceId();
+		https://sandbox.pagseguro.uol.com.br/v2/checkout/payment.html?code=400D67BB0000E70004526F936EC1307F
 		
 		if (log.isDebugEnabled()) {
 			log.debug("Redirecionando para PagSeguro: {}", redirectUrl);
@@ -122,7 +125,7 @@ public class PagSeguroPaymentProcessor implements PaymentGateway {
 			final String transactionRequest = PAGSEGURO_ENDPOINT + "/v3/transactions/" + notificationCode + "?email=" + StringUtils.encodeURLComponent(institution.getAttributes().get("pagseguro_email")) + "&token=" + institution.getAttributes().get("pagseguro_token");
 			final String transactionData = httpGet(transactionRequest);
 			
-			final Long idPayment = StringUtils.parseLong(extractTagValue("reference", transactionData), 0);
+			final String idPayment = extractTagValue("reference", transactionData);
 			final Payment payment = pp.get(idPayment);
 			
 			if (payment != null) {
@@ -213,21 +216,32 @@ public class PagSeguroPaymentProcessor implements PaymentGateway {
 		xml.append(maxSize(StringUtils.stripHTML(payment.getInstitution().getName()), 92));
 		xml.append("</description>");
 		xml.append("<amount>");
-		xml.append(payment.getRealValue() / 100.0);
+		if (payment.getRealValue() < 100) {
+			xml.append(String.format("0.%02d", payment.getRealValue()));
+		}
+		else {
+			final String realValue = String.valueOf(payment.getRealValue());
+			xml.append(realValue.substring(0, realValue.length() - 2));
+			xml.append(".");
+			xml.append(realValue.substring(realValue.length() - 2, realValue.length()));
+		}
 		xml.append("</amount>");
 		xml.append("<quantity>1</quantity>");
 		xml.append("</item>");
 		xml.append("</items>");
 		
 		xml.append("<reference>");
-		xml.append(payment.getId());
+		xml.append(payment.getUuid());
 		xml.append("</reference>");
 		
 		xml.append("</checkout>");
 		
+		final String pagSeguroCall = PAGSEGURO_ENDPOINT + "/v2/checkout?email=" + StringUtils.encodeURLComponent(payment.getInstitution().getAttributes().get("pagseguro_email")) + "&token=" + payment.getInstitution().getAttributes().get("pagseguro_token");
+		
+		log.info("Mandando requisição para {} com {}", pagSeguroCall, xml.toString());
 		
 		try {
-			final String resp = httpPost(PAGSEGURO_ENDPOINT + "/v2/checkout?email=" + StringUtils.encodeURLComponent(payment.getInstitution().getAttributes().get("pagseguro_email")) + "&token=" + payment.getInstitution().getAttributes().get("pagseguro_token"), xml.toString());
+			final String resp = httpPost(pagSeguroCall, xml.toString());
 			return resp != null ? extractTagValue("code", resp) : null;
 		} catch (final IOException e) {
 			log.error("Erro ao ler/escrever dados do PagSeguro para criar cobrança", e);
@@ -241,7 +255,7 @@ public class PagSeguroPaymentProcessor implements PaymentGateway {
 		final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
 		conn.setRequestProperty("Content-Type", "application/xml; charset=ISO-8859-1");
-		conn.getOutputStream().write(data.getBytes("ISO-8895-1"));
+		conn.getOutputStream().write(data.getBytes("ISO-8859-1"));
 		
 		if (conn.getResponseCode() == 200) {
 			final StringBuilder resp = new StringBuilder();

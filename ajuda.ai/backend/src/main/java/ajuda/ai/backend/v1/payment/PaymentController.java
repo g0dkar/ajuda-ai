@@ -42,7 +42,15 @@ public class PaymentController {
 	@Transactional
 	@Get("/{uuid:[a-f0-9]+}")
 	public void redirectToPayment(final String uuid) {
+		if (log.isDebugEnabled()) {
+			log.debug("Buscando Payment: {}", uuid);
+		}
+		
 		final Payment payment = pp.get(uuid);
+		
+		if (log.isDebugEnabled()) {
+			log.debug("Payment encontrado: {}", payment);
+		}
 		
 		if (payment != null) {
 			if (!payment.isCancelled() && !payment.isPaid()) {

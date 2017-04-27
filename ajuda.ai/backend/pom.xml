@@ -146,6 +146,13 @@
 			<artifactId>payment-impl-moip</artifactId>
 			<version>1.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>ajuda.ai</groupId>
+			<artifactId>payment-impl-pagseguro</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>io.github.keetraxx</groupId>
 			<artifactId>recaptcha</artifactId>
