@@ -2,8 +2,8 @@
 	var app = angular.module("ajuda-ai", ["ngAnimate", "ui.router", "ng-showdown", "ezfb", "vcRecaptcha"]);
 	var debug = true;
 	var html5mode = false;
-//	var apiEndpoint = "http://localhost:8080/v1";
-	var apiEndpoint = "https://api.ajuda.ai/v1";
+	var apiEndpoint = "http://localhost:8080/v1";
+//	var apiEndpoint = "https://api.ajuda.ai/v1";
 	
 	window.isMobile = (function() {
 		var check = false;

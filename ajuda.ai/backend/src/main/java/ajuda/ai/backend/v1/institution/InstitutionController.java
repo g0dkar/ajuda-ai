@@ -192,7 +192,7 @@ public class InstitutionController extends ApiController {
 		if (institution != null) {
 			final InstitutionPost post = (InstitutionPost) ip.query("FROM InstitutionPost WHERE slug = :slug AND institution = :institution").setParameter("slug", postSlug).setParameter("institution", institution).getSingleResult();
 			
-			if (post != null && (post.isPublished() || (!post.isPublished() && authUser.get().isInstitution()))) {
+			if (post != null && (post.isPublished() || (!post.isPublished() && authUser.get() != null && authUser.get().isInstitution()))) {
 				serializer(post).recursive().exclude("institution").serialize();
 				return post;
 			}
